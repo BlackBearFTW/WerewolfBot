@@ -1,4 +1,3 @@
-const mysql = require('mysql');
 const fs = require('fs');
 const Discord = require('discord.js');
 const {
@@ -18,18 +17,6 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-// DATABASE CONNECTION
-global.link = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "werewolfbot"
-});
-
-// IF THERE IS A CONNECTION ERRROR
-link.connect(function (err) {
-    if (err) console.log(err);
-});
 
 client.once('ready', () => {
     console.log('Ready!');
