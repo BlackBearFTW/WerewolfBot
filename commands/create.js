@@ -1,14 +1,17 @@
 const mysql = require('mysql');
 const Discord = require('discord.js');
+const {
+    host
+} = require('./config.json');
 const client = new Discord.Client();
 
 const link = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "werewolfbot"
-
+    host: host.host,
+    user: host.user,
+    password: host.password,
+    database: host.database,
 });
+
 module.exports = {
     name: 'create',
     description: 'Create a new game',
@@ -24,7 +27,7 @@ module.exports = {
             }
         });
 
-        function createGameCategory(params) {
+        function createGameCategory() {
             message.guild.channels.create(`${message.author.username}'s GAME`, {
                 type: 'category',
                 permissionOverwrites: [{
@@ -76,7 +79,8 @@ module.exports = {
                 lobbyChannel.send({
                     embed
                 }).then(inviteMessage => {
-                    inviteMessage.pin().then(lobbyChannel.bulkDelete(1));
+                    inviteMessage.pin();
+                    // FIXME REMOVE THE 'WEREWOLF PINNED A MESSAGE' MESSAGE .then(lobbyChannel.bulkDelete(1));
 
                     insertGameInDB(lobbyChannel.id, movesChannel.id, voiceChannel.id, gameCategory.id, inviteMessage.id);
                 });
