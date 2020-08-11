@@ -1,15 +1,15 @@
 const mysql = require('mysql');
 const Discord = require('discord.js');
 const {
-    host
-} = require('./config.json');
+    db
+} = require('../config.json');
 const client = new Discord.Client();
 
 const link = mysql.createConnection({
-    host: host.host,
-    user: host.user,
-    password: host.password,
-    database: host.database,
+    host: db.host,
+    user: db.user,
+    password: db.password,
+    database: db.database,
 });
 
 module.exports = {
@@ -18,17 +18,17 @@ module.exports = {
     selfDestruct: true,
     execute(message, args) {
 
-        link.query(`SELECT games_players.USER_ID FROM games_players, players WHERE games_players.USER_ID = players.USER_ID AND games_players.LEADER = 1 AND players.DISCORD_USER_ID = ${message.author.id}`, (err, results) => {
+        link.query(`SELECT games.GUILD_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID JOIN players ON games_players.USER_ID = players.USER_ID WHERE games.GUILD_ID = ${message.guild.id} AND players.DISCORD_USER_ID = ${message.author.id}`, (err, results) => {
 
             if (results.length > 0) {
-                return message.channel.send("<@" + message.author.id + "> You already have an active game");
+                return message.channel.send("<@" + message.author.id + "> You are already part of an active game");
             } else {
                 createGameCategory();
             }
         });
 
         function createGameCategory() {
-            message.guild.channels.create(`${message.author.username}'s GAME`, {
+            message.guild.channels.create(`WEREWOLF GAME: ${message.author.username}`, {
                 type: 'category',
                 permissionOverwrites: [{
                     id: message.guild.roles.everyone.id,
@@ -73,8 +73,8 @@ module.exports = {
             ]).then(([lobbyChannel, movesChannel, voiceChannel]) => {
 
                 const embed = new Discord.MessageEmbed();
-                embed.setTitle("Nobody invited yet!");
-                embed.setDescription("Use `!w invite @mention` to invite people to your game!")
+                embed.setTitle("Joined players (1/6)");
+                embed.setDescription("```" + `${message.author.username}(GameLeader)\n` + "```");
 
                 lobbyChannel.send({
                     embed
@@ -90,7 +90,7 @@ module.exports = {
         function insertGameInDB(lobbyChannelID, movesChannelID, voiceChannelID, gameCategoryID, inviteMessageID) {
             link.query(`INSERT IGNORE INTO players (DISCORD_USER_ID) VALUES (${message.author.id})`);
             link.query(`INSERT INTO games (GUILD_ID, CATEGORY_ID, VILLAGE_CHANNEL_ID, MOVES_CHANNEL_ID, VOICE_CHANNEL_ID, INVITE_MESSAGE_ID) VALUES (${message.guild.id}, ${gameCategoryID}, ${lobbyChannelID}, ${movesChannelID}, ${voiceChannelID}, ${inviteMessageID})`);
-            link.query(`INSERT INTO games_players (GAME_ID, USER_ID, STATUS, LEADER) SELECT games.GAME_ID, players.USER_ID, "A", true FROM games, players WHERE games.VILLAGE_CHANNEL_ID = ${lobbyChannelID} AND players.DISCORD_USER_ID = ${message.author.id}`);
+            link.query(`INSERT INTO games_players (GAME_ID, USER_ID, LEADER) SELECT games.GAME_ID, players.USER_ID, "A" FROM games, players WHERE games.VILLAGE_CHANNEL_ID = ${lobbyChannelID} AND players.DISCORD_USER_ID = ${message.author.id}`);
         }
     },
 };
