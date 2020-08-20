@@ -11,6 +11,6 @@
   "dependencies": {
     "discord.js": "^12.2.0",
     "fs": "0.0.1-security",
-    "mysql": "^2.18.1"
+    "mysql2": "^2.1.0"
   }
 }

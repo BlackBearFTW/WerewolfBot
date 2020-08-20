@@ -1,13 +1,21 @@
 const fs = require('fs');
-const Discord = require('discord.js');
 const {
     prefix,
     token,
+    db
 } = require('./config.json');
+const mysql = require('mysql2/promise');
 
-const client = new Discord.Client();
+global.Discord = require('discord.js');
+global.client = new Discord.Client();
 client.commands = new Discord.Collection();
 
+global.link = mysql.createPool({
+    host: db.host,
+    user: db.user,
+    password: db.password,
+    database: db.database,
+});
 // GET ALL FILES IN COMMANDS FOLDER
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
