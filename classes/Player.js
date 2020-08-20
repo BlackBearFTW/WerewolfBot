@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 class Player {
     static async getPlayer(user) {
         const [results, fields] = await link.execute(`SELECT PLAYER_ID FROM players WHERE DISCORD_USER_ID = ?`, [user.id]);
@@ -32,8 +30,8 @@ class Player {
 
     }
 
-    static async joinGame(playerID, gameID, message) {
-        await link.execute(`INSERT INTO games_players (GAME_ID, PLAYER_ID) VALUES (?, ?)`, [playerID, gameID]);
+    static async joinGame(playerID, gameID, message, leader = false) {
+        await link.execute(`INSERT INTO games_players (GAME_ID, PLAYER_ID, LEADER) VALUES (?, ?, ?)`, [playerID, gameID, leader]);
 
         let [results] = await link.execute(`SELECT CATEGORY_ID FROM games WHERE GAME_ID = ?`, [gameID]);
 
