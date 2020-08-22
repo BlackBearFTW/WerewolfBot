@@ -31,7 +31,7 @@ class Player {
     }
 
     static async joinGame(playerID, gameID, message, leader = false) {
-        await link.execute(`INSERT INTO games_players (GAME_ID, PLAYER_ID, LEADER) VALUES (?, ?, ?)`, [playerID, gameID, leader]);
+        await link.execute(`INSERT INTO games_players (PLAYER_ID, GAME_ID, LEADER) VALUES (?, ?, ?)`, [playerID, gameID, leader]);
 
         let [results] = await link.execute(`SELECT CATEGORY_ID FROM games WHERE GAME_ID = ?`, [gameID]);
 

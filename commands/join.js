@@ -8,8 +8,13 @@ module.exports = {
 
         async function main() {
             const playerID = await Player.createPlayer(message.author);
-            const mentionedUser = await Player.getPlayer(message.mentions.users.first());
             const guildID = message.guild.id;
+
+            if (!args.length || !message.mentions.users.size) {
+                return message.reply("No mentioned gameleader: `!w join @mention`");
+            }
+
+            const mentionedUser = await Player.getPlayer(message.mentions.users.first());
 
             if (!mentionedUser) {
                 return message.reply(`Could not find this game`)
@@ -26,7 +31,7 @@ module.exports = {
 
             const GameID = await Player.gameLeaderCheck(mentionID, guildID);
             await Player.joinGame(playerID, GameID, message);
-            await Game.updateJoinMessage(GameID);
+            await Game.updateJoinMessage(message, GameID);
         }
 
     },

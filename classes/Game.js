@@ -58,8 +58,8 @@ class Game {
     static async sendJoinMessage(message, lobbyChannel) {
 
         const embed = new Discord.MessageEmbed();
-        embed.setTitle("Joined players (1/6)");
-        embed.setDescription("```" + `${message.author.username} (GameLeader)\n` + "```");
+        embed.setTitle("Your all by yourself! Find atleast 5 other players to start the game");
+        embed.setDescription("```css\n" + `${message.author.username} (GameLeader)\n` + "```");
 
 
         const joinMessage = await lobbyChannel.send(embed);
@@ -75,8 +75,42 @@ class Game {
         return results.insertId;
     }
 
-    static async updateJoinMessage(gameID) {
+    static async updateJoinMessage(message, gameID) {
+        let updatedDesc = '```css\n';
+        let joinCount = 0;
+        let [results] = await link.execute(`SELECT GUILD_ID, VILLAGE_CHANNEL_ID, JOIN_MESSAGE_ID FROM games WHERE GAME_ID = ?`, [gameID]);
+        const guild = await message.guild;
+        const lobbyChannel = await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID);
+        const fetchedMessage = await lobbyChannel.messages.fetch(results[0].JOIN_MESSAGE_ID);
 
+
+        let [leaderResults] = await link.execute(`SELECT DISCORD_USER_ID FROM players JOIN games_players ON players.PLAYER_ID = games_players.PLAYER_ID WHERE games_players.LEADER = 1 AND games_players.GAME_ID = ?`, [gameID]);
+
+        for (let i = 0; i < leaderResults.length; i++) {
+            let joinedPlayer = await guild.members.fetch(leaderResults[i].DISCORD_USER_ID);
+            updatedDesc += joinedPlayer.user.username + ' (GAMELEADER)\n';
+            joinCount++
+        }
+
+        let [playerResults] = await link.execute(`SELECT DISCORD_USER_ID FROM players JOIN games_players ON players.PLAYER_ID = games_players.PLAYER_ID WHERE games_players.LEADER = 0 AND games_players.GAME_ID = ?`, [gameID]);
+
+        for (let i = 0; i < playerResults.length; i++) {
+            let joinedPlayer = await guild.members.fetch(playerResults[i].DISCORD_USER_ID);
+            updatedDesc += joinedPlayer.user.username + '\n';
+            joinCount++
+        }
+        updatedDesc += '```';
+
+        let embed = new Discord.MessageEmbed();
+
+        if (joinCount < 6) {
+            embed.setTitle(`You need atleast 6 players, currently there are ${joinCount} players`);
+        } else {
+            embed.setTitle(`There are currently ${joinCount} players in this game`);
+        }
+
+        embed.setDescription(updatedDesc)
+        fetchedMessage.edit(embed);
     }
 }
 
