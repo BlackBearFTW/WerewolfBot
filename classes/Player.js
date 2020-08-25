@@ -1,6 +1,6 @@
 class Player {
     static async getPlayer(user) {
-        const [results, fields] = await link.execute(`SELECT PLAYER_ID FROM players WHERE DISCORD_USER_ID = ?`, [user.id]);
+        const [results] = await link.execute(`SELECT PLAYER_ID FROM players WHERE DISCORD_USER_ID = ?`, [user.id]);
 
         if (results.length > 0) {
             return results[0];

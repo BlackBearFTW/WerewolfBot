@@ -7,6 +7,7 @@ module.exports = {
         main();
 
         async function main() {
+
             const playerID = await Player.createPlayer(message.author);
             const guildID = message.guild.id;
 
@@ -30,6 +31,11 @@ module.exports = {
             }
 
             const GameID = await Player.gameLeaderCheck(mentionID, guildID);
+
+            if (await Game.statusCheck(GameID) == true) {
+                return message.reply(`This game has already started`);
+            }
+
             await Player.joinGame(playerID, GameID, message);
             await Game.updateJoinMessage(message, GameID);
         }

@@ -112,6 +112,16 @@ class Game {
         embed.setDescription(updatedDesc)
         fetchedMessage.edit(embed);
     }
+
+    static async statusCheck(gameID) {
+        let [results] = await link.execute(`SELECT STARTED FROM games WHERE GAME_ID = ?`, [gameID]);
+
+        if (results[0].STARTED == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
 
 module.exports = Game
