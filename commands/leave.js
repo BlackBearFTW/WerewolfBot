@@ -16,6 +16,8 @@ module.exports = {
             const playerID = player.PLAYER_ID;
 
 
+            if (await Player.activeGameCheck(playerID, message.guild.id) == false) return;
+
             if (await Player.gameLeaderCheck(playerID, message.guild.id) != false) {
                 return message.reply("You cannot leave, because you are the game leader");
             }
@@ -30,11 +32,7 @@ module.exports = {
 
             const gameID = results[0].GAME_ID;
 
-            if (!playerID) {
-                return message.reply("Your not part of this game");
-            }
-
-            let [deleteResults] = await link.execute(`DELETE FROM games_players WHERE PLAYER_ID = ? AND GAME_ID = ?`, [playerID, gameID]);
+            await link.execute(`DELETE FROM games_players WHERE PLAYER_ID = ? AND GAME_ID = ?`, [playerID, gameID]);
 
             const gameCategory = message.channel.parent;
             gameCategory.permissionOverwrites.get(message.author.id).delete();
