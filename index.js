@@ -48,10 +48,7 @@ client.on('message', message => {
         return message.channel.send("Unknown command");
     }
     client.commands.get(command).execute(message, args);
-
-    if (client.commands.get(command).selfDestruct) {
-        message.delete();
-    }
+    message.delete();
 });
 
 

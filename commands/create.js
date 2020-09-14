@@ -2,7 +2,6 @@ const Player = require('../classes/Player');
 const Game = require('../classes/Game');
 module.exports = {
     name: 'create',
-    selfDestruct: true,
     execute(message, args) {
         main();
 
