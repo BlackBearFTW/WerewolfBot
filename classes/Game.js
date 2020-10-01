@@ -60,6 +60,7 @@ class Game {
         const embed = new Discord.MessageEmbed();
         embed.setTitle("Your all by yourself! Find atleast 5 other players to start the game");
         embed.setDescription("```css\n" + `${message.author.username} (GameLeader)\n` + "```");
+        embed.setColor('#ff861f');
 
 
         const joinMessage = await lobbyChannel.send(embed);
@@ -109,7 +110,8 @@ class Game {
             embed.setTitle(`There are currently ${joinCount} players in this game`);
         }
 
-        embed.setDescription(updatedDesc)
+        embed.setDescription(updatedDesc);
+        embed.setColor('#ff861f');
         fetchedMessage.edit(embed);
     }
 

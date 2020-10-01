@@ -19,7 +19,6 @@ global.link = mysql.createPool({
 // GET ALL FILES IN COMMANDS FOLDER
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-// ????
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
@@ -29,8 +28,8 @@ for (const file of commandFiles) {
 client.once('ready', () => {
     console.log('Ready!');
 
-    client.user.setActivity("the moon", {
-        type: "WATCHING",
+    client.user.setActivity("with your fears", {
+        type: "PLAYING",
     });
 });
 

@@ -22,8 +22,15 @@ class Player {
         return results[0].PLAYER_ID;
     }
 
-    static getStats(playerID) {
+    static async getStats(user) {
+        const [results] = await link.execute(`SELECT WIN_COUNT, LOSE_COUNT, DEATH_COUNT FROM players WHERE DISCORD_USER_ID = ?`, [user.id]);
 
+
+        if (results.length > 0) {
+            return results[0];
+        } else {
+            return false
+        }
     }
 
     static updateStat(playerID, statName, value) {
