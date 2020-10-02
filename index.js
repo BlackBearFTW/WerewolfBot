@@ -1,7 +1,6 @@
 const fs = require('fs');
 const {
     prefix,
-    token,
     db
 } = require('./config.json');
 const mysql = require('mysql2/promise');
@@ -51,4 +50,4 @@ client.on('message', message => {
 });
 
 
-client.login(token);
+client.login(process.env.BOT_TOKEN);
