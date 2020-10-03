@@ -32,7 +32,7 @@ client.once('ready', () => {
 
 
 client.on('message', message => {
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type != 'text') return;
 
     let mContent = message.content;
 
