@@ -34,10 +34,9 @@ client.once('ready', () => {
 client.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type != 'text') return;
 
-    let mContent = message.content;
+    let mContent = message.content.substring(2);
 
     let args = mContent.match(/[^\s"]+|"([^"]*)"/gi).map((mContent) => mContent.replace(/^"(.+(?="$))"$/, '$1'));
-    args.shift()
     const command = args.shift();
 
     if (!client.commands.has(command)) {
