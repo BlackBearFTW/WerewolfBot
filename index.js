@@ -1,6 +1,6 @@
 const fs = require('fs');
 const mysql = require('mysql2/promise');
-const prefix = '!w';
+const prefix = 'w!';
 
 
 global.Discord = require('discord.js');
