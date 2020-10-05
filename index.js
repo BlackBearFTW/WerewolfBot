@@ -1,6 +1,6 @@
 const fs = require('fs');
 const mysql = require('mysql2/promise');
-const prefix = 'w!';
+const prefix = '!w';
 
 
 global.Discord = require('discord.js');
@@ -34,9 +34,10 @@ client.once('ready', () => {
 client.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type != 'text') return;
 
-    let mContent = message.content.substring(2);
+    let mContent = message.content;
 
     let args = mContent.match(/[^\s"]+|"([^"]*)"/gi).map((mContent) => mContent.replace(/^"(.+(?="$))"$/, '$1'));
+    args.shift()
     const command = args.shift();
 
     if (!client.commands.has(command)) {
