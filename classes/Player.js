@@ -47,11 +47,6 @@ class Player {
                 VIEW_CHANNEL: true
             });
         });
-
-        await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID).then(lobbyChannel => {
-            quickMention = await lobbyChannel.send(`<@${message.author.id}>`);
-            quickMention.delete();
-        });
     }
 
     static async activeGameCheck(playerID, guildID) {
