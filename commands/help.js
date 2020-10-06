@@ -13,8 +13,15 @@ module.exports = {
 
 
             commands.forEach(command => {
+
+                let cmdArgs = command.arguments;
+
+                if (cmdArgs == undefined) {
+                    cmdArgs = '';
+                }
+
                 if (command.name !== 'help') {
-                    embed.addField(`!w ${command.name} ${command.arguments}`, command.description);
+                    embed.addField(`!w ${command.name} ${cmdArgs}`, command.description);
                 }
             });
 
