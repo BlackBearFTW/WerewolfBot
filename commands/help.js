@@ -21,7 +21,7 @@ module.exports = {
                 }
 
                 if (command.name !== 'help') {
-                    embed.addField(`!w ${command.name} ${cmdArgs}`, command.description);
+                    embed.addField(`!w ${command.name} ${cmdArgs}`, '↳ ' + command.description);
                 }
             });
 
