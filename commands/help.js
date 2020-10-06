@@ -14,7 +14,7 @@ module.exports = {
 
             commands.forEach(command => {
                 if (command.name !== 'help') {
-                    embed.addField(`!w ${command.name} ${command.arguments}`, "Description");
+                    embed.addField(`!w ${command.name} ${command.arguments}`, command.description);
                 }
             });
 

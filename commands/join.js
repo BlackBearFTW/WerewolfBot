@@ -2,6 +2,8 @@ const Player = require('../classes/Player');
 const Game = require('../classes/Game');
 module.exports = {
     name: 'join',
+    description: 'Join a game',
+    arguments: '<@mention>',
     execute(message, args) {
         main();
 

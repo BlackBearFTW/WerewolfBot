@@ -3,7 +3,7 @@ const Game = require('../classes/Game');
 module.exports = {
     name: 'stats',
     description: 'Look at your stats',
-    arguments: '<@mention>',
+    arguments: '(@mention)',
     execute(message, args) {
         main();
 
