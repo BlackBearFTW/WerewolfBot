@@ -24,7 +24,6 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
     console.log('Ready!');
-    console.log(client.commands);
     client.user.setActivity("with your fears", {
         type: "PLAYING",
     });
