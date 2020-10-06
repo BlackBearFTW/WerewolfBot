@@ -40,12 +40,17 @@ class Player {
     static async joinGame(playerID, gameID, message, leader = false) {
         await link.execute(`INSERT INTO games_players (PLAYER_ID, GAME_ID, LEADER) VALUES (?, ?, ?)`, [playerID, gameID, leader]);
 
-        let [results] = await link.execute(`SELECT CATEGORY_ID FROM games WHERE GAME_ID = ?`, [gameID]);
+        let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM games WHERE GAME_ID = ?`, [gameID]);
 
         await client.channels.fetch(results[0].CATEGORY_ID).then(gameCategory => {
             gameCategory.createOverwrite(message.author, {
                 VIEW_CHANNEL: true
             });
+        });
+
+        await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID).then(lobbyChannel => {
+            quickMention = await lobbyChannel.send(`<@${message.author.id}>`);
+            quickMention.delete();
         });
     }
 

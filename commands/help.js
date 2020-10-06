@@ -8,7 +8,7 @@ module.exports = {
             const commands = client.commands;
             const embed = new Discord.MessageEmbed()
                 .setColor('#ff861f')
-                .setTitle('You shouldnt ask me for help!')
+                .setTitle("You shouldn't ask me for help!")
                 .setFooter('<> = required, () = optional');
 
 
