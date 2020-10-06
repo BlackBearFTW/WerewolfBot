@@ -2,6 +2,8 @@ const Player = require('../classes/Player');
 const Game = require('../classes/Game');
 module.exports = {
     name: 'stats',
+    description: 'Look at your stats',
+    arguments: '<@mention>',
     execute(message, args) {
         main();
 
