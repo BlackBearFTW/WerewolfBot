@@ -40,7 +40,9 @@ client.on('message', message => {
     const command = args.shift();
 
     if (!client.commands.has(command)) {
-        return message.channel.send("Unknown command");
+        return message.channel.send("Unknown command").then(msg => msg.delete({
+            timeout: 10000
+        }));
     }
     client.commands.get(command).execute(message, args);
     message.delete();
