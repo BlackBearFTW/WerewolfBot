@@ -49,7 +49,9 @@ class Player {
         });
 
         await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID).then(lobbyChannel => {
-            lobbyChannel.send(`<@${message.author.id}>`);
+            lobbyChannel.send(`<@${message.author.id}>`), then(quickMention => {
+                quickMention.delete();
+            });
         });
 
     }
