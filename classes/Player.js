@@ -49,7 +49,7 @@ class Player {
         });
 
         await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID).then(lobbyChannel => {
-            console.log(lobbyChannel);
+            lobbyChannel.send(message.author);
         });
 
     }
