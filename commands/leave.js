@@ -23,7 +23,7 @@ module.exports = {
 
             const guildID = message.guild.id;
 
-            let [results] = await link.execute(`SELECT GAME_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID JOIN players ON games_players.PLAYER_ID = players.PLAYER_ID WHERE players.PLAYER_ID = ? AND games_players.LEADER = 1 AND games.GUILD_ID = ?`, [playerID, guildID]);
+            let [results] = await link.execute(`SELECT games.GAME_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID JOIN players ON games_players.PLAYER_ID = players.PLAYER_ID WHERE players.PLAYER_ID = ? AND games_players.LEADER = 1 AND games.GUILD_ID = ?`, [playerID, guildID]);
 
             if (!results.length) {
                 return message.reply("This channel does not belong to a game");
