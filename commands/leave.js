@@ -23,19 +23,9 @@ module.exports = {
 
             const guildID = message.guild.id;
 
-            let [results] = await link.execute(`SELECT games.GAME_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ?`, [playerID, guildID]);
+            Player.leaveGame(playerID, guildID);
+            Game.updateJoinMessage(message, gameID);
 
-            if (!results.length) {
-                return message.reply("This channel does not belong to a game");
-            }
-
-            const gameID = results[0].GAME_ID;
-
-            await link.execute(`DELETE FROM games_players WHERE PLAYER_ID = ? AND GAME_ID = ?`, [playerID, gameID]);
-
-            const gameCategory = message.channel.parent;
-            gameCategory.permissionOverwrites.get(message.author.id).delete();
-            Game.updateJoinMessage(message, gameID)
         }
     },
 };

@@ -56,6 +56,24 @@ class Player {
 
     }
 
+    static async leaveGame(playerID, guildID) {
+        let [results] = await link.execute(`SELECT games.GAME_ID, games.CATEGORY_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ?`, [playerID, guildID]);
+
+        if (!results.length) {
+            return message.reply("This channel does not belong to a game");
+        }
+
+        const gameID = results[0].GAME_ID;
+
+        await link.execute(`DELETE FROM games_players WHERE PLAYER_ID = ? AND GAME_ID = ?`, [playerID, gameID]);
+
+        await client.channels.fetch(results[0].CATEGORY_ID).then(gameCategory => {
+            gameCategory.createOverwrite(message.author, {
+                VIEW_CHANNEL: false
+            });
+        });
+    }
+
     static async activeGameCheck(playerID, guildID) {
         let [results] = await link.execute(`SELECT games_players.GAME_ID FROM games_players JOIN games ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ?`, [playerID, guildID]);
 
