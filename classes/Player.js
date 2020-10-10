@@ -56,7 +56,7 @@ class Player {
 
     }
 
-    static async leaveGame(playerID, guildID) {
+    static async leaveGame(playerID, guildID, message) {
         let [results] = await link.execute(`SELECT games.GAME_ID, games.CATEGORY_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ?`, [playerID, guildID]);
 
         if (!results.length) {

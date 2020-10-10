@@ -23,8 +23,8 @@ module.exports = {
 
             const guildID = message.guild.id;
 
-            Player.leaveGame(playerID, guildID);
-            Game.updateJoinMessage(message, gameID);
+            Player.leaveGame(playerID, guildID, message);
+            // FIXME Game.updateJoinMessage(message, gameID);
 
         }
     },
