@@ -2,7 +2,7 @@ class Global {
 
     static async throwError(message, errorMessage) {
         let error = await message.reply(errorMessage);
-        error.delete({ timeout: 5000 });
+        error.delete({ timeout: 7500 });
     }
 }
 
