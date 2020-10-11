@@ -1,5 +1,6 @@
 const Player = require('../classes/Player');
 const Game = require('../classes/Game');
+const Global = require('../classes/Global');
 module.exports = {
     name: 'delete',
     execute(message, args) {
@@ -8,7 +9,7 @@ module.exports = {
         async function main() {
 
             if (await Player.getPlayer(message.author) == false) {
-                return message.reply("Your not part of this game");
+                return Global.throwError(message, "Your not part of this game");
             }
 
             const player = await Player.getPlayer(message.author);
@@ -18,7 +19,7 @@ module.exports = {
             if (await Player.activeGameCheck(playerID, message.guild.id) == false) return;
 
             if (await Player.gameLeaderCheck(playerID, message.guild.id) == false) {
-                return message.reply("You cannot delete this game, because you aren't the game leader");
+                return Global.throwError(message, "You cannot delete this game, because you aren't the game leader");
             }
 
             const category = message.channel.parent;
