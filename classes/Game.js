@@ -41,7 +41,7 @@ class Game {
         });
 
         const voiceChannel = await message.guild.channels.create(`🔊 VOICE CHANNEL`, {
-            type: 'text',
+            type: 'voice',
             parent: gameCategory.id
         }).then(voiceChannel => {
             return voiceChannel
