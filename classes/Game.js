@@ -22,14 +22,14 @@ class Game {
 
     static async createChannels(message, gameCategory) {
 
-        const lobbyChannel = await message.guild.channels.create(`🔑 LOBBY`, {
+        const lobbyChannel = await message.guild.channels.create(`🔑-lobby`, {
             type: 'text',
             parent: gameCategory.id
         }).then(lobbyChannel => {
             return lobbyChannel
         });
 
-        const movesChannel = await message.guild.channels.create(`🎲 MOVES`, {
+        const movesChannel = await message.guild.channels.create(`🎲-moves`, {
             type: 'text',
             parent: gameCategory.id,
             permissionOverwrites: [{
@@ -40,7 +40,7 @@ class Game {
             return movesChannel
         });
 
-        const voiceChannel = await message.guild.channels.create(`🔊 VOICE CHANNEL`, {
+        const voiceChannel = await message.guild.channels.create(`🔊-voice`, {
             type: 'voice',
             parent: gameCategory.id
         }).then(voiceChannel => {
