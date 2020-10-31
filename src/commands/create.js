@@ -1,6 +1,6 @@
-import * as Player from '../classes/Player';
-import * as Game from '../classes/Game';
-import * as Global from '../classes/Global';
+import * as Player from '../collection/Player';
+import * as Game from '../collection/Game';
+import * as Global from '../collection/Global';
 module.exports = {
     name: 'create',
     execute: async(message, args) => {

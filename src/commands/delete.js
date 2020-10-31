@@ -1,5 +1,5 @@
-import * as Player from '../classes/Player';
-import * as Global from '../classes/Global';
+import * as Player from '../collection/Player';
+import * as Global from '../collection/Global';
 module.exports = {
     name: 'delete',
     execute: async(message, args) => {

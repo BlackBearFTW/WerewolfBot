@@ -1,4 +1,4 @@
-import * as Player from '../classes/Player';
+import * as Player from '../collection/Player';
 
 module.exports = {
     name: 'stats',

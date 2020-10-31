@@ -1,4 +1,4 @@
-import * as Role from '../classes/Role';
+import * as Role from '../collection/Role';
 module.exports = {
     name: 'roles',
     execute: async(message, args) => {
