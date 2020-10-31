@@ -5,10 +5,7 @@ module.exports = {
     name: 'join',
     description: 'Join a game',
     arguments: '<@mention>',
-    execute(message, args) {
-        main();
-
-        async function main() {
+    execute: async(message, args) => {
 
             const playerID = await Player.createPlayer(message.author);
             const guildID = message.guild.id;
@@ -40,7 +37,6 @@ module.exports = {
 
             await Player.joinGame(playerID, GameID, message);
             await Game.updateJoinMessage(message, GameID);
-        }
 
     },
 };

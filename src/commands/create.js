@@ -3,10 +3,7 @@ const Game = require('../classes/Game');
 const Global = require('../classes/Global');
 module.exports = {
     name: 'create',
-    execute(message, args) {
-        main();
-
-        async function main() {
+    execute: async(message, args) => {
             const playerID = await Player.createPlayer(message.author);
             const guildID = message.guild.id;
 
@@ -16,6 +13,5 @@ module.exports = {
 
             const gameID = await Game.createGame(message);
             await Player.joinGame(playerID, gameID, message, true);
-        }
     },
 };

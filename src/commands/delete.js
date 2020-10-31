@@ -3,10 +3,7 @@ const Game = require('../classes/Game');
 const Global = require('../classes/Global');
 module.exports = {
     name: 'delete',
-    execute(message, args) {
-        main();
-
-        async function main() {
+    execute: async(message, args) => {
 
             if (await Player.getPlayer(message.author) == false) {
                 return Global.throwError(message, "Your not part of this game");
@@ -30,6 +27,5 @@ module.exports = {
 
             let [results] = await link.execute(`DELETE FROM games WHERE CATEGORY_ID = ?`, [category.id]);
 
-        }
     },
 };

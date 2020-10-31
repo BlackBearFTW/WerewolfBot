@@ -1,9 +1,6 @@
 module.exports = {
     name: 'help',
-    execute(message, args) {
-        main();
-
-        async function main() {
+    execute: async(message, args) => {
 
             const commands = client.commands;
             const embed = new Discord.MessageEmbed()
@@ -26,6 +23,6 @@ module.exports = {
             });
 
             message.channel.send(embed);
-        }
+
     },
 };

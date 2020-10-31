@@ -1,11 +1,7 @@
 const Role = require('../classes/Role');
 module.exports = {
     name: 'roles',
-    execute(message, args) {
-        main();
-
-        async function main() {
-
+    execute: async(message, args) => {
             const roles = await Role.getRoles();
             console.log(roles);
 
@@ -18,6 +14,5 @@ module.exports = {
             });
 
             await message.channel.send(embed);
-        }
     },
 };

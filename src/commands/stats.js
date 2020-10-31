@@ -4,10 +4,7 @@ module.exports = {
     name: 'stats',
     description: 'Look at your stats',
     arguments: '(@mention)',
-    execute(message, args) {
-        main();
-
-        async function main() {
+    execute: async(message, args) => {
 
             const user = args.length > 0 ? message.mentions.users.first() : message.author;
             const userStats = await Player.getStats(user);
@@ -28,8 +25,6 @@ module.exports = {
             }
 
             await message.channel.send(embed);
-
-
-        }
+            
     },
 };
