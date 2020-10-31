@@ -1,5 +1,5 @@
 import * as Player from '../collection/Player';
-import * as Game from '../collection/Game';
+const Game = require('../collection/Game');
 import * as Global from '../collection/Global';
 module.exports = {
     name: 'create',
