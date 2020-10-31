@@ -7,7 +7,7 @@ module.exports = {
         async function main() {
 
             const roles = await Role.getRoles();
-
+            console.log(roles);
 
             const embed = new Discord.MessageEmbed()
                 .setColor('#ff861f')

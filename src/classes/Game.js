@@ -1,5 +1,15 @@
 class Game {
 
+    static async getGame(guildID, CategoryID) {
+        let [results] = await link.execute(`SELECT GAME_ID FROM games WHERE GUILD_ID = ? AND CATEGORY_ID = ?`, [guildID, CategoryID]);
+
+        if (results.length > 0) {
+            return results[0];
+        } else {
+            return false;
+        }
+    }
+
     static async createGame(message) {
         const gameCategory = await this.createCategory(message);
         const gameChannels = await this.createChannels(message, gameCategory);
@@ -137,17 +147,6 @@ class Game {
 
         return playerList;
     }
-
-    static async getGame(guildID, CategoryID) {
-        let [results] = await link.execute(`SELECT GAME_ID FROM games WHERE GUILD_ID = ? AND CATEGORY_ID = ?`, [guildID, CategoryID]);
-
-        if (results.length > 0) {
-            return results[0];
-        } else {
-            return false;
-        }
-    }
-
 
 }
 
