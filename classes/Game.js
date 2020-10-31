@@ -58,7 +58,7 @@ class Game {
     static async sendJoinMessage(message, lobbyChannel) {
 
         const embed = new Discord.MessageEmbed();
-        embed.setTitle("Your all by yourself! Find atleast 5 other players to start the game");
+        embed.setTitle("Your all by yourself! Find atleast 7 other players to start the game");
         embed.setDescription("```css\n" + `${message.author.username} (GameLeader)\n` + "```");
         embed.setColor('#ff861f');
 
@@ -104,8 +104,10 @@ class Game {
 
         let embed = new Discord.MessageEmbed();
 
-        if (joinCount < 6) {
-            embed.setTitle(`You need atleast 6 players, currently there are ${joinCount} players`);
+        if (joinCount == 1) {
+            embed.setTitle("Your all by yourself! Find atleast 7 other players to start the game");
+        }  else if (joinCount < 8) {
+            embed.setTitle(`You need atleast 8 players, currently there are ${joinCount} players`);
         } else {
             embed.setTitle(`There are currently ${joinCount} players in this game`);
         }
@@ -124,6 +126,29 @@ class Game {
             return true;
         }
     }
+
+    static async getPlayers(gameID) {
+        let [results] = await link.execute(`SELECT players.DISCORD_USER_ID FROM players JOIN games_players ON players.PLAYER_ID = games_players.PLAYER_ID WHERE games_players.GAME_ID = ?`, [gameID]);
+        let playerList = []
+
+        results.forEach(result => {
+            playerList.push(result.DISCORD_USER_ID);
+        })
+
+        return playerList;
+    }
+
+    static async getGame(guildID, CategoryID) {
+        let [results] = await link.execute(`SELECT GAME_ID FROM games WHERE GUILD_ID = ? AND CATEGORY_ID = ?`, [guildID, CategoryID]);
+
+        if (results.length > 0) {
+            return results[0];
+        } else {
+            return false;
+        }
+    }
+
+
 }
 
 module.exports = Game
