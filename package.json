@@ -1,13 +1,12 @@
 {
   "name": "werewolfbot",
   "version": "1.0.0",
-  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "",
+  "author": "BlackBearFTW#1331",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.3.1",
