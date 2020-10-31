@@ -13,7 +13,7 @@ global.link = mysql.createPool({
     database: process.env.DB_NAME,
 });
 // GET ALL FILES IN COMMANDS FOLDER
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
     const command = require(`./src/commands`);
