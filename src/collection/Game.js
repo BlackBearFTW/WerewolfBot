@@ -1,6 +1,6 @@
+class Game {
 
-const Game = {
-    getGame: async function (guildID, CategoryID) {
+    static async getGame(guildID, CategoryID) {
         let [results] = await link.execute(`SELECT GAME_ID FROM games WHERE GUILD_ID = ? AND CATEGORY_ID = ?`, [guildID, CategoryID]);
 
         if (results.length > 0) {
@@ -8,17 +8,17 @@ const Game = {
         } else {
             return false;
         }
-    },
+    }
 
-    createGame: async function (message) {
+    static async createGame(message) {
         const gameCategory = await this.createCategory(message);
         const gameChannels = await this.createChannels(message, gameCategory);
         const joinMessage = await this.sendJoinMessage(message, gameChannels.lobbyChannel);
         const gameID = await this.insertGame(message.guild.id, gameCategory.id, gameChannels.lobbyChannel.id, gameChannels.movesChannel.id, gameChannels.voiceChannel.id, joinMessage.id);
         return gameID
-    },
+    }
 
-    createCategory: async function (message) {
+    static async createCategory(message) {
         const gameCategory = await message.guild.channels.create(`WEREWOLF GAME: ${message.author.username}`, {
             type: 'category',
             permissionOverwrites: [{
@@ -28,9 +28,9 @@ const Game = {
         });
 
         return gameCategory;
-    },
+    }
 
-    createChannels: async function (message, gameCategory) {
+    static async createChannels(message, gameCategory) {
 
         const lobbyChannel = await message.guild.channels.create(`🔑-lobby`, {
             type: 'text',
@@ -63,9 +63,9 @@ const Game = {
             voiceChannel: voiceChannel
         }
         return gameChannels
-    },
+    }
 
-    sendJoinMessage: async function (message, lobbyChannel) {
+    static async sendJoinMessage(message, lobbyChannel) {
 
         const embed = new Discord.MessageEmbed();
         embed.setTitle("Your all by yourself! Find atleast 7 other players to start the game");
@@ -78,15 +78,15 @@ const Game = {
         await lobbyChannel.bulkDelete(1);
 
         return joinMessage
-    },
+    }
 
-    insertGame: async function (guildID, categoryID, lobbyChannelID, movesChannelID, voiceChannelID, joinMessageID) {
+    static async insertGame(guildID, categoryID, lobbyChannelID, movesChannelID, voiceChannelID, joinMessageID) {
         let [results] = await link.execute(`INSERT INTO games (GUILD_ID, CATEGORY_ID, VILLAGE_CHANNEL_ID, MOVES_CHANNEL_ID, VOICE_CHANNEL_ID, JOIN_MESSAGE_ID) VALUES (?, ?, ?, ?, ?, ?)`, [guildID, categoryID, lobbyChannelID, movesChannelID, voiceChannelID, joinMessageID]);
 
         return results.insertId;
-    },
+    }
 
-    updateJoinMessage: async function (message, gameID) {
+    static async updateJoinMessage(message, gameID) {
         let updatedDesc = '```css\n';
         let joinCount = 0;
         let [results] = await link.execute(`SELECT GUILD_ID, VILLAGE_CHANNEL_ID, JOIN_MESSAGE_ID FROM games WHERE GAME_ID = ?`, [gameID]);
@@ -116,7 +116,7 @@ const Game = {
 
         if (joinCount == 1) {
             embed.setTitle("Your all by yourself! Find atleast 7 other players to start the game");
-        } else if (joinCount < 8) {
+        }  else if (joinCount < 8) {
             embed.setTitle(`You need atleast 8 players, currently there are ${joinCount} players`);
         } else {
             embed.setTitle(`There are currently ${joinCount} players in this game`);
@@ -125,9 +125,9 @@ const Game = {
         embed.setDescription(updatedDesc);
         embed.setColor('#ff861f');
         fetchedMessage.edit(embed);
-    },
+    }
 
-    statusCheck: async function (gameID) {
+    static async statusCheck(gameID) {
         let [results] = await link.execute(`SELECT STARTED FROM games WHERE GAME_ID = ?`, [gameID]);
 
         if (results[0].STARTED == 0) {
@@ -135,9 +135,9 @@ const Game = {
         } else {
             return true;
         }
-    },
+    }
 
-    getPlayers: async function (gameID) {
+    static async getPlayers(gameID) {
         let [results] = await link.execute(`SELECT players.DISCORD_USER_ID FROM players JOIN games_players ON players.PLAYER_ID = games_players.PLAYER_ID WHERE games_players.GAME_ID = ?`, [gameID]);
         let playerList = []
 
@@ -147,6 +147,7 @@ const Game = {
 
         return playerList;
     }
+
 }
 
-module.exports = Game;
+module.exports = Game

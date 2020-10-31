@@ -1,6 +1,6 @@
-import * as Player from '../collection/Player';
-const Game = require('../collection/Game');
-import * as Global from '../collection/Global';
+const Player = require('../classes/Player');
+const Game = require('../classes/Game');
+const Global = require('../classes/Global');
 module.exports = {
     name: 'create',
     execute: async(message, args) => {

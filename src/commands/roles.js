@@ -1,4 +1,5 @@
-import * as Role from '../collection/Role';
+const Role = require('../classes/Role');
+
 module.exports = {
     name: 'roles',
     execute: async(message, args) => {
