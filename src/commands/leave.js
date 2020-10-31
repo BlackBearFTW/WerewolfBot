@@ -1,6 +1,8 @@
-const Player = require('../classes/Player');
-const Game = require('../classes/Game');
-const Global = require('../classes/Global');
+import * as Player from '../classes/Player';
+import * as Game from '../classes/Game';
+import * as Global from '../classes/Global';
+
+
 module.exports = {
     name: 'leave',
     execute: async(message, args) => {
@@ -21,7 +23,7 @@ module.exports = {
 
             const guildID = message.guild.id;
 
-            Player.leaveGame(playerID, guildID, message);
+            await Player.leaveGame(playerID, guildID, message);
             // FIXME Game.updateJoinMessage(message, gameID);
     },
 };

@@ -1,5 +1,5 @@
-const Player = require('../classes/Player');
-const Game = require('../classes/Game');
+import * as Player from '../classes/Player';
+
 module.exports = {
     name: 'stats',
     description: 'Look at your stats',
@@ -25,6 +25,6 @@ module.exports = {
             }
 
             await message.channel.send(embed);
-            
+
     },
 };

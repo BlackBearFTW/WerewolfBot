@@ -1,6 +1,6 @@
-const Player = require('../classes/Player');
-const Game = require('../classes/Game');
-const Global = require('../classes/Global');
+import * as Player from '../classes/Player';
+import * as Game from '../classes/Game';
+import * as Global from '../classes/Global';
 module.exports = {
     name: 'join',
     description: 'Join a game',

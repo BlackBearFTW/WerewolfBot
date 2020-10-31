@@ -1,6 +1,5 @@
-const Player = require('../classes/Player');
-const Game = require('../classes/Game');
-const Global = require('../classes/Global');
+import * as Player from '../classes/Player';
+import * as Global from '../classes/Global';
 module.exports = {
     name: 'delete',
     execute: async(message, args) => {
