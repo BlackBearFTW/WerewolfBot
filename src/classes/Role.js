@@ -10,7 +10,7 @@ class Role {
         let werewolfCount;
         let pickList;
         let disqualifiedList;
-        let werewolfList = this.getWerewolfs(gameID);
+        let werewolfList = this.getWerewolves(gameID);
 
         if (playerList.length < 12) {
             werewolfCount = 2;
@@ -22,7 +22,6 @@ class Role {
 
         if (werewolfList != false) {
 
-            // THIS CODE ONLY RUNS WHEN THERE WAS A PREVIOUS ROUND
 
             // Picks one or multiple werewolfs from lastgame to be disqualified in this game again.
             disqualifiedList = werewolfList.sort(() => 0.5 - Math.random()).slice(0, Math.random() * (enemyList.length - 1) + 1);
@@ -66,7 +65,7 @@ class Role {
     }
 
 
-    static async getWerewolfs(gameID) {
+    static async getWerewolves(gameID) {
         let [results] = await link.execute(`SELECT players.DISCORD_USER_ID FROM players JOIN games_players ON players.PLAYER_ID = games_players.PLAYER_ID WHERE games_players.ROLE_ID = 5 AND games_players.GAME_ID = ?`, [gameID]);
         let werewolfList = [];
 
