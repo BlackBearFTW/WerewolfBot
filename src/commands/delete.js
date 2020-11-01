@@ -21,7 +21,6 @@ module.exports = {
 
             const category = message.channel.parent;
             category.children.forEach((channel) => {
-                setTimeout(() => {}, 3000);
                 channel.delete();
             });
             await category.delete();
