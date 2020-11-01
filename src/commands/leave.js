@@ -1,5 +1,5 @@
 const Player = require('../classes/Player');
-const Game = require('../classes/Game');
+const Match = require('../classes/Match');
 const Global = require('../classes/Global');
 
 module.exports = {
@@ -23,6 +23,6 @@ module.exports = {
             const guildID = message.guild.id;
 
             await Player.leaveMatch(playerID, guildID, message);
-            // FIXME Game.updateJoinMessage(message, matchID);
+            // FIXME Match.updateJoinMessage(message, matchID);
     },
 };

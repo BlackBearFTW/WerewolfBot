@@ -1,5 +1,5 @@
 const Player = require('../classes/Player');
-const Game = require('../classes/Game');
+const Match = require('../classes/Match');
 const Global = require('../classes/Global');
 
 module.exports = {

@@ -1,5 +1,5 @@
 const Player = require('../classes/Player');
-const Game = require('../classes/Game');
+const Match = require('../classes/Match');
 const Global = require('../classes/Global');
 module.exports = {
     name: 'create',
@@ -11,7 +11,7 @@ module.exports = {
                 return Global.throwError(message, "You're already part of an active match");
             }
 
-            const matchID = await Game.createMatch(message);
+            const matchID = await Match.createMatch(message);
             await Player.joinMatch(playerID, matchID, message, true);
     },
 };

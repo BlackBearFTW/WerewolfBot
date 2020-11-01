@@ -1,4 +1,4 @@
-class Game {
+class Match {
 
     static async getMatch(guildID, CategoryID) {
         let [results] = await link.execute(`SELECT MATCH_ID FROM matches WHERE GUILD_ID = ? AND CATEGORY_ID = ?`, [guildID, CategoryID]);
@@ -142,4 +142,4 @@ class Game {
 
 }
 
-module.exports = Game
+module.exports = Match

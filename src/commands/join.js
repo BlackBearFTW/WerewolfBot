@@ -1,5 +1,5 @@
 const Player = require('../classes/Player');
-const Game = require('../classes/Game');
+const Match = require('../classes/Match');
 const Global = require('../classes/Global');
 module.exports = {
     name: 'join',
@@ -31,12 +31,12 @@ module.exports = {
 
             const matchID = await Player.matchLeaderCheck(mentionID, guildID);
 
-            if (await Game.statusCheck(matchID) == true) {
+            if (await Match.statusCheck(matchID) == true) {
                 return Global.throwError(message, "This match has already started");
             }
 
             await Player.joinMatch(playerID, matchID, message);
-            await Game.updateJoinMessage(message, matchID);
+            await Match.updateJoinMessage(message, matchID);
 
     },
 };
