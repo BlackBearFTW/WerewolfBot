@@ -20,7 +20,10 @@ module.exports = {
             }
 
             const category = message.channel.parent;
-            category.children.forEach((channel) => {setTimeout(() => {channel.delete();}, 1000)});
+            category.children.forEach((channel) => {
+                setTimeout(() => {}, 3000);
+                channel.delete();
+            });
             await category.delete();
 
             await link.execute(`DELETE FROM matches WHERE CATEGORY_ID = ?`, [category.id]);
