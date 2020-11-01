@@ -21,9 +21,7 @@ module.exports = {
             }
 
             const category = message.channel.parent;
-            category.children.forEach(async (channel) => {
-               await channel.delete();
-            });
+            category.children.forEach(async (channel) => await channel.delete());
             category.delete();
 
             let [results] = await link.execute(`DELETE FROM matches WHERE CATEGORY_ID = ?`, [category.id]);
