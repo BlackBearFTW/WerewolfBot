@@ -3,7 +3,7 @@ const Game = require('../classes/Game');
 const Global = require('../classes/Global');
 module.exports = {
     name: 'join',
-    description: 'Join a game',
+    description: 'Join a match',
     arguments: '<@mention>',
     execute: async(message, args) => {
 
@@ -11,32 +11,32 @@ module.exports = {
             const guildID = message.guild.id;
 
             if (!args.length || !message.mentions.users.size) {
-                return Global.throwError(message, "No mentioned gameleader: `!w join @mention`");
+                return Global.throwError(message, "No mentioned matchleader: `!w join @mention`");
             }
 
             const mentionedUser = await Player.getPlayer(message.mentions.users.first());
 
             if (!mentionedUser) {
-                return Global.throwError(message, "Could not find this game");
+                return Global.throwError(message, "Could not find this match");
             }
             const mentionID = mentionedUser.PLAYER_ID;
 
-            if (await Player.activeGameCheck(playerID, guildID) === true) {
-                return Global.throwError(message, "Your already part of an active game");
+            if (await Player.activeMatchCheck(playerID, guildID) === true) {
+                return Global.throwError(message, "Your already part of an active match");
             }
 
-            if (await Player.gameLeaderCheck(mentionID, guildID) === false) {
-                return Global.throwError(message, "Could not find this game");
+            if (await Player.matchLeaderCheck(mentionID, guildID) === false) {
+                return Global.throwError(message, "Could not find this match");
             }
 
-            const GameID = await Player.gameLeaderCheck(mentionID, guildID);
+            const matchID = await Player.matchLeaderCheck(mentionID, guildID);
 
-            if (await Game.statusCheck(GameID) == true) {
-                return Global.throwError(message, "This game has already started");
+            if (await Game.statusCheck(matchID) == true) {
+                return Global.throwError(message, "This match has already started");
             }
 
-            await Player.joinGame(playerID, GameID, message);
-            await Game.updateJoinMessage(message, GameID);
+            await Player.joinMatch(playerID, matchID, message);
+            await Game.updateJoinMessage(message, matchID);
 
     },
 };

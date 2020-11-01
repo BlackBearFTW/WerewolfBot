@@ -37,13 +37,13 @@ class Player {
 
     }
 
-    static async joinGame(playerID, gameID, message, leader = false) {
-        await link.execute(`INSERT INTO games_players (PLAYER_ID, GAME_ID, LEADER) VALUES (?, ?, ?)`, [playerID, gameID, leader]);
+    static async joinMatch(playerID, matchID, message, leader = false) {
+        await link.execute(`INSERT INTO matches_players (PLAYER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [playerID, matchID, leader]);
 
-        let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM games WHERE GAME_ID = ?`, [gameID]);
+        let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [matchID]);
 
-        await client.channels.fetch(results[0].CATEGORY_ID).then(gameCategory => {
-            gameCategory.createOverwrite(message.author, {
+        await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
+            matchCategory.createOverwrite(message.author, {
                 VIEW_CHANNEL: true
             });
         });
@@ -56,26 +56,26 @@ class Player {
 
     }
 
-    static async leaveGame(playerID, guildID, message) {
-        let [results] = await link.execute(`SELECT games.GAME_ID, games.CATEGORY_ID FROM games JOIN games_players ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ?`, [playerID, guildID]);
+    static async leaveMatch(playerID, guildID, message) {
+        let [results] = await link.execute(`SELECT matches.MATCH_ID, matches.CATEGORY_ID FROM matches JOIN matches_players ON matches.MATCH_ID = matches_players.MATCH_ID WHERE matches_players.PLAYER_ID = ? AND matches.GUILD_ID = ?`, [playerID, guildID]);
 
         if (!results.length) {
-            return message.reply("This channel does not belong to a game");
+            return message.reply("This channel does not belong to a match");
         }
 
-        const gameID = results[0].GAME_ID;
+        const matchID = results[0].MATCH_ID;
 
-        await link.execute(`DELETE FROM games_players WHERE PLAYER_ID = ? AND GAME_ID = ?`, [playerID, gameID]);
+        await link.execute(`DELETE FROM matches_players WHERE PLAYER_ID = ? AND MATCH_ID = ?`, [playerID, matchID]);
 
-        await client.channels.fetch(results[0].CATEGORY_ID).then(gameCategory => {
-            gameCategory.createOverwrite(message.author, {
+        await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
+            matchCategory.createOverwrite(message.author, {
                 VIEW_CHANNEL: false
             });
         });
     }
 
-    static async activeGameCheck(playerID, guildID) {
-        let [results] = await link.execute(`SELECT games_players.GAME_ID FROM games_players JOIN games ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ?`, [playerID, guildID]);
+    static async activeMatchCheck(playerID, guildID) {
+        let [results] = await link.execute(`SELECT matches_players.MATCH_ID FROM matches_players JOIN matches ON matches.MATCH_ID = matches_players.MATCH_ID WHERE matches_players.PLAYER_ID = ? AND matches.GUILD_ID = ?`, [playerID, guildID]);
 
         if (results.length > 0) {
             return true
@@ -84,11 +84,11 @@ class Player {
         }
     }
 
-    static async gameLeaderCheck(mentionID, guildID) {
-        let [results] = await link.execute(`SELECT games_players.GAME_ID FROM games_players JOIN games ON games.GAME_ID = games_players.GAME_ID WHERE games_players.PLAYER_ID = ? AND games.GUILD_ID = ? AND games_players.LEADER = 1`, [mentionID, guildID]);
+    static async matchLeaderCheck(mentionID, guildID) {
+        let [results] = await link.execute(`SELECT matches_players.MATCH_ID FROM matches_players JOIN matches ON matches.MATCH_ID = matches_players.MATCH_ID WHERE matches_players.PLAYER_ID = ? AND matches.GUILD_ID = ? AND matches_players.LEADER = 1`, [mentionID, guildID]);
 
         if (results.length > 0) {
-            return results[0].GAME_ID
+            return results[0].MATCH_ID
         } else {
             return false;
         }

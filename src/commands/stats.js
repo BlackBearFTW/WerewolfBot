@@ -16,9 +16,9 @@ module.exports = {
                 embed.setTitle("Unknown Player!").setDescription("Seems like im not the only unknown entity around here.....");
             } else {
                 embed.setTitle(user.username + "'s Stats")
-                    .addField("Total Games Played", userStats.WIN_COUNT + userStats.LOSE_COUNT)
-                    .addField("Games Won", userStats.WIN_COUNT)
-                    .addField("Games Lost", userStats.LOSE_COUNT)
+                    .addField("Total Matches Played", userStats.WIN_COUNT + userStats.LOSE_COUNT)
+                    .addField("Matches Won", userStats.WIN_COUNT)
+                    .addField("Matches Lost", userStats.LOSE_COUNT)
                     .addField("Death Count", userStats.DEATH_COUNT)
                     .setTimestamp()
                     .setFooter('Werewolf Master Bot', client.user.displayAvatarURL());

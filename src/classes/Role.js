@@ -5,12 +5,12 @@ class Role {
         return results;
     }
 
-    static async assignRoles(gameID, playerList) {
+    static async assignRoles(matchID, playerList) {
 
         let werewolfCount;
         let pickList;
         let disqualifiedList;
-        let werewolfList = this.getWerewolves(gameID);
+        let werewolfList = this.getWerewolves(matchID);
 
         if (playerList.length < 12) {
             werewolfCount = 2;
@@ -20,11 +20,11 @@ class Role {
             werewolfCount = 4;
         }
 
-        if (werewolfList != false) {
+        if (werewolfList !== false) {
 
 
-            // Picks one or multiple werewolfs from lastgame to be disqualified in this game again.
-            disqualifiedList = werewolfList.sort(() => 0.5 - Math.random()).slice(0, Math.random() * (enemyList.length - 1) + 1);
+            // Picks one or multiple werewolves from last match to be disqualified in this match again.
+            disqualifiedList = werewolfList.sort(() => 0.5 - Math.random()).slice(0, Math.random() * (werewolfList.length - 1) + 1);
 
             // Removes disqualified players from pickList 
             pickList = playerList.filter(function (element) {
@@ -46,7 +46,7 @@ class Role {
         // Pick other players for other roles
         const seer = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];
         const witch = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];
-        const cupido = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];
+        const cupid = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];
 
         for (const player of villagerList) {
             let roleID;
@@ -54,22 +54,22 @@ class Role {
                 roleID = 3;
             } else if (player === witch) {
                 roleID = 4;
-            } else if (player === cupido) {
+            } else if (player === cupid) {
                 roleID = 6;
             } else {
                 roleID = 2;
             }
-            await link.execute(`UPDATE games_players JOIN players ON games_players.PLAYER_ID = players.PLAYER_ID SET games_players.ROLE_ID = ? WHERE players.DISCORD_USER_ID = ?`, [roleID, player])
+            await link.execute(`UPDATE matches_players JOIN players ON matches_players.PLAYER_ID = players.PLAYER_ID SET matches_players.ROLE_ID = ? WHERE players.DISCORD_USER_ID = ?`, [roleID, player])
         }
 
     }
 
 
-    static async getWerewolves(gameID) {
-        let [results] = await link.execute(`SELECT players.DISCORD_USER_ID FROM players JOIN games_players ON players.PLAYER_ID = games_players.PLAYER_ID WHERE games_players.ROLE_ID = 5 AND games_players.GAME_ID = ?`, [gameID]);
+    static async getWerewolves(matchID) {
+        let [results] = await link.execute(`SELECT players.DISCORD_USER_ID FROM players JOIN matches_players ON players.PLAYER_ID = matches_players.PLAYER_ID WHERE matches_players.ROLE_ID = 5 AND matches_players.MATCH_ID = ?`, [matchID]);
         let werewolfList = [];
 
-        if (results.length == 0) {
+        if (results.length === 0) {
             return false;
         }
 

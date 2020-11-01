@@ -7,11 +7,11 @@ module.exports = {
             const playerID = await Player.createPlayer(message.author);
             const guildID = message.guild.id;
 
-            if (await Player.activeGameCheck(playerID, guildID) === true) {
-                return Global.throwError(message, "You're already part of an active game");
+            if (await Player.activeMatchCheck(playerID, guildID) === true) {
+                return Global.throwError(message, "You're already part of an active match");
             }
 
-            const gameID = await Game.createGame(message);
-            await Player.joinGame(playerID, gameID, message, true);
+            const matchID = await Game.createMatch(message);
+            await Player.joinMatch(playerID, matchID, message, true);
     },
 };
