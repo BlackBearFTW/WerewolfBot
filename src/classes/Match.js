@@ -64,7 +64,7 @@ class Match {
     static async sendJoinMessage(message, lobbyChannel) {
 
         const embed = new Discord.MessageEmbed();
-        embed.setTitle("Your all by yourself! Find at least 7 other players to start the match");
+        embed.setTitle("Your all by yourself! Find at least 7 other users to start the match");
         embed.setDescription("```css\n" + `${message.author.username} (MatchLeader)\n` + "```");
         embed.setColor('#ff861f');
 
@@ -91,19 +91,19 @@ class Match {
         const fetchedMessage = await lobbyChannel.messages.fetch(results[0].JOIN_MESSAGE_ID);
 
 
-        let [leaderResults] = await link.execute(`SELECT DISCORD_USER_ID FROM players JOIN matches_players ON players.PLAYER_ID = matches_players.PLAYER_ID WHERE matches_players.LEADER = 1 AND matches_players.MATCH_ID = ?`, [matchID]);
+        let [leaderResults] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 1 AND matches_users.MATCH_ID = ?`, [matchID]);
 
         for (let i = 0; i < leaderResults.length; i++) {
-            let joinedPlayer = await guild.members.fetch(leaderResults[i].DISCORD_USER_ID);
-            updatedDesc += joinedPlayer.user.username + ' (MATCHLEADER)\n';
+            let joinedUser = await guild.members.fetch(leaderResults[i].DISCORD_USER_ID);
+            updatedDesc += joinedUser.user.username + ' (MATCHLEADER)\n';
             joinCount++
         }
 
-        let [playerResults] = await link.execute(`SELECT DISCORD_USER_ID FROM players JOIN matches_players ON players.PLAYER_ID = matches_players.PLAYER_ID WHERE matches_players.LEADER = 0 AND matches_players.MATCH_ID = ?`, [matchID]);
+        let [userResults] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 0 AND matches_users.MATCH_ID = ?`, [matchID]);
 
-        for (let i = 0; i < playerResults.length; i++) {
-            let joinedPlayer = await guild.members.fetch(playerResults[i].DISCORD_USER_ID);
-            updatedDesc += joinedPlayer.user.username + '\n';
+        for (let i = 0; i < userResults.length; i++) {
+            let joinedUser = await guild.members.fetch(userResults[i].DISCORD_USER_ID);
+            updatedDesc += joinedUser.user.username + '\n';
             joinCount++
         }
         updatedDesc += '```';
@@ -111,11 +111,11 @@ class Match {
         let embed = new Discord.MessageEmbed();
 
         if (joinCount === 1) {
-            embed.setTitle("Your all by yourself! Find at least 7 other players to start the match");
+            embed.setTitle("Your all by yourself! Find at least 7 other users to start the match");
         }  else if (joinCount < 8) {
-            embed.setTitle(`You need at least 8 players, currently there are ${joinCount} players`);
+            embed.setTitle(`You need at least 8 users, currently there are ${joinCount} users`);
         } else {
-            embed.setTitle(`There are currently ${joinCount} players in this match`);
+            embed.setTitle(`There are currently ${joinCount} users in this match`);
         }
 
         embed.setDescription(updatedDesc);
@@ -129,15 +129,15 @@ class Match {
         return results[0].STARTED !== 0;
     }
 
-    static async getPlayers(matchID) {
-        let [results] = await link.execute(`SELECT players.DISCORD_USER_ID FROM players JOIN matches_players ON players.PLAYER_ID = matches_players.PLAYER_ID WHERE matches_players.MATCH_ID = ?`, [matchID]);
-        let playerList = []
+    static async getUsers(matchID) {
+        let [results] = await link.execute(`SELECT users.DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.MATCH_ID = ?`, [matchID]);
+        let userList = []
 
         results.forEach(result => {
-            playerList.push(result.DISCORD_USER_ID);
+            userList.push(result.DISCORD_USER_ID);
         })
 
-        return playerList;
+        return userList;
     }
 
 }

@@ -1,4 +1,4 @@
-const Player = require('../classes/Player');
+const User = require('../classes/User');
 module.exports = {
     name: 'stats',
     description: 'Look at your stats',
@@ -6,13 +6,13 @@ module.exports = {
     execute: async(message, args) => {
 
             const user = args.length > 0 ? message.mentions.users.first() : message.author;
-            const userStats = await Player.getStats(user);
+            const userStats = await User.getStats(user);
 
             const embed = new Discord.MessageEmbed()
                 .setColor('#ff861f');
 
             if (!userStats) {
-                embed.setTitle("Unknown Player!").setDescription("Seems like im not the only unknown entity around here.....");
+                embed.setTitle("Unknown User!").setDescription("Seems like im not the only unknown entity around here.....");
             } else {
                 embed.setTitle(user.username + "'s Stats")
                     .addField("Total Matches Played", userStats.WIN_COUNT + userStats.LOSE_COUNT)

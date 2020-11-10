@@ -1,21 +1,21 @@
-const Player = require('../classes/Player');
+const User = require('../classes/User');
 const Global = require('../classes/Global');
 
 module.exports = {
     name: 'delete',
     execute: async(message, args) => {
 
-            if (await Player.getPlayer(message.author) === false) {
+            if (await User.getUser(message.author) === false) {
                 return Global.throwError(message, "Your not part of this match");
             }
 
-            const player = await Player.getPlayer(message.author);
-            const playerID = player.PLAYER_ID;
+            const user = await User.getUser(message.author);
+            const userID = user.USER_ID;
 
 
-            if (await Player.activeMatchCheck(playerID, message.guild.id) === false) return;
+            if (await User.activeMatchCheck(userID, message.guild.id) === false) return;
 
-            if (await Player.matchLeaderCheck(playerID, message.guild.id) === false) {
+            if (await User.matchLeaderCheck(userID, message.guild.id) === false) {
                 return Global.throwError(message, "You cannot delete this match, because you aren't the match leader");
             }
 
