@@ -2,9 +2,9 @@
   "name": "werewolfbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.ts"
   },
   "author": "BlackBearFTW#1331",
   "license": "ISC",
