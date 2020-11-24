@@ -1,3 +1,4 @@
+const {Discord, client, link} = require('/index');
 const User = require('../classes/User');
 const Match = require('../classes/Match');
 const Global = require('../classes/Global');
