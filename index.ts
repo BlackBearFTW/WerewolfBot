@@ -1,16 +1,16 @@
-const fs = require('fs');
-const mysql = require('mysql2/promise');
+import fs from "fs";
+import Discord from "discord.js";
+import * as mysql from 'mysql2/promise';
 const prefix = '!w';
 
 interface CommandInterface {
     name: string;
     description: string;
-    execute(message: discord.Message, args: string[]): void;
+    execute(message: Discord.Message, args: string[]): void;
 }
 
-import discord = require("discord.js");
-const client = new discord.Client();
-const commands = new discord.Collection<string, CommandInterface>();
+export const client = new Discord.Client();
+const commands = new Discord.Collection<string, CommandInterface>();
 
 export const link = mysql.createPool({
     host: process.env.DB_HOST,
@@ -19,7 +19,7 @@ export const link = mysql.createPool({
     database: process.env.DB_NAME,
 });
 
-module.exports = {client, link};
+
 
 
 // GET ALL FILES IN COMMANDS FOLDER
@@ -36,7 +36,7 @@ client.once('ready', () => {
 
     if (client.user === null) return;
 
-    client.user.setActivity("with your fears", {
+    client.user?.setActivity("with your fears", {
         type: "PLAYING",
     });
 });
@@ -62,8 +62,8 @@ client.on('message', message => {
     }
 
     commands.get(command)?.execute(message, args);
-    message.delete();
+    message?.delete();
 });
 
 
-client.login(process.env.BOT_TOKEN);
+client?.login(process.env.BOT_TOKEN);

@@ -1,8 +1,11 @@
-const {Discord, client, link} = require('/index');
+import Discord from "discord.js";
+import {client, link} from "../../index.js";
 
 class Match {
+    private message: Discord.Message;
+    private args: string[];
 
-    constructor(message, args) {
+    constructor(message: Discord.Message, args: string[]) {
         this.message = message;
         this.args = args;
     }
@@ -31,7 +34,7 @@ class Match {
             });
         }
 
-        async function createChannels(matchCategory) {
+        async function createChannels(matchCategory: any) {
 
             const lobbyChannel = await this.message.guild.channels.create(`🔑-lobby`, {
                 type: 'text',
