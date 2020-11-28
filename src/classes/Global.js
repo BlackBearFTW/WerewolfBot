@@ -1,8 +1,8 @@
 class Global {
 
-    static async throwError(message, errorMessage) {
+    static async throwError(message, errorMessage = 'There was an error') {
         let error = await message.reply(errorMessage);
-        error.delete({ timeout: 7500 });
+        await error.delete({ timeout: 7500 });
     }
 }
 

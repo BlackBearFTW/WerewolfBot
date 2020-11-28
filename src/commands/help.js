@@ -1,3 +1,4 @@
+const {Discord, client, link} = require('/index');
 module.exports = {
     name: 'help',
     execute: async(message, args) => {
