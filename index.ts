@@ -1,16 +1,16 @@
 import fs from "fs";
-import Discord from "discord.js";
+import { Message, Client, Collection } from 'discord.js';
 import * as mysql from 'mysql2/promise';
 const prefix = '!w';
 
 interface CommandInterface {
     name: string;
     description: string;
-    execute(message: Discord.Message, args: string[]): void;
+    execute(message: Message, args: string[]): void;
 }
 
-export const client = new Discord.Client();
-const commands = new Discord.Collection<string, CommandInterface>();
+export const client = new Client();
+const commands = new Collection<string, CommandInterface>();
 
 export const link = mysql.createPool({
     host: process.env.DB_HOST,
@@ -18,9 +18,6 @@ export const link = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
 });
-
-
-
 
 // GET ALL FILES IN COMMANDS FOLDER
 const commandFiles = fs.readdirSync('./src/commands').filter((file: string) => file.endsWith('.js'));
@@ -42,7 +39,7 @@ client.once('ready', () => {
 });
 
 
-client.on('message', message => {
+client.on('message', (message: Message) => {
     if (!message.content.startsWith(prefix) || message.author.bot || message.channel.type != 'text') return;
 
     let mContent: string = message.content;

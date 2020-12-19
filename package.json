@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "build": "npx tsc"
   },
   "jest": {
     "testMatch": [
