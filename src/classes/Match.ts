@@ -1,5 +1,6 @@
 import Discord from "discord.js";
 import {client, link} from "../../index.js";
+import {RowDataPacket} from "mysql";
 
 class Match {
     private message: Discord.Message;
@@ -132,7 +133,7 @@ class Match {
     }
 
     async getLeader() {
-        let [results] = await link.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
+        let [results: Object[]]: RowDataPacket[] = await link.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
 
         return results[0].USER_ID;
     }
@@ -146,7 +147,7 @@ class Match {
 
     async getUsers() {
         let [results] = await link.execute(`SELECT USER_ID FROM matches_players WHERE MATCH_ID = ?`, [this.id]);
-        let userList = []
+        let userList: string[] = [];
 
         results.forEach(result => {
             userList.push(result.USER_ID);
@@ -155,7 +156,7 @@ class Match {
         return userList;
     }
 
-    async addUser(user, leader = false) {
+    async addUser(userID: Discord.User, leader = false) {
         await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [userID, this.id, leader]);
 
         let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
@@ -173,22 +174,20 @@ class Match {
         });
     }
 
-    async removeUser(user) {
+    async removeUser(userID: number):Promise<void> {
         const [results] = await link.execute(`SELECT * FROM games WHERE MATCH_ID = ?`, [this.id]);
 
         if (!results.length) {
-            return message.reply("Match not found. ");
+            await this.message.reply("Match not found. ");
+            return;
         }
 
         await link.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [user.id, this.id]);
 
-        await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
-            matchCategory.createOverwrite(user, {
-                VIEW_CHANNEL: false
-            });
-        });
+        let matchCategory = await client.channels.fetch(results[0].CATEGORY_ID);
+        matchCategory.permissionOverwrites.fetch(user.id)?.delete();
     }
 
 }
 
-module.exports = Match;
+export default Match;
