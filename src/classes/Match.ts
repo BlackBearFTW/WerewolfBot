@@ -2,7 +2,7 @@ import {Message, MessageEmbed, Channel, CategoryChannel, User} from "discord.js"
 import {client, link} from "../../index.js";
 
 class Match {
-    private message: Message;
+    private readonly message: Message;
     private args: string[];
     id: number;
 
@@ -26,33 +26,33 @@ class Match {
 
 
     async createMatch() {
-        async function createCategory() {
-            return await this.message.guild.channels.create(`WEREWOLF MATCH: ${this.message.author.username}`, {
+        async function createCategory(message: Message) {
+            return await message?.guild.channels.create(`WEREWOLF MATCH: ${this.message.author.username}`, {
                 type: 'category',
                 permissionOverwrites: [{
-                    id: this.message.guild.roles.everyone.id,
+                    id: message?.guild.roles.everyone.id,
                     deny: ['VIEW_CHANNEL'],
                 }]
             });
         }
 
-        async function createChannels(matchCategory: CategoryChannel) {
+        async function createChannels(message: Message, matchCategory: CategoryChannel) {
 
-            const lobbyChannel = await this.message.guild.channels.create(`🔑-lobby`, {
+            const lobbyChannel = await message.guild.channels.create(`🔑-lobby`, {
                 type: 'text',
                 parent: matchCategory.id
             });
 
-            const movesChannel = await this.message.guild.channels.create(`🎲-moves`, {
+            const movesChannel = await message.guild.channels.create(`🎲-moves`, {
                 type: 'text',
                 parent: matchCategory.id,
                 permissionOverwrites: [{
-                    id: this.message.guild.roles.everyone.id,
+                    id: message.guild.roles.everyone.id,
                     deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
                 }]
             });
 
-            const voiceChannel = await this.message.guild.channels.create(`🎤-voice`, {
+            const voiceChannel = await message.guild.channels.create(`🎤-voice`, {
                 type: 'voice',
                 parent: matchCategory.id
             });
@@ -61,11 +61,11 @@ class Match {
         }
 
 
-        async function sendJoinMessage(lobbyChannel: Channel) {
+        async function sendJoinMessage(message: Message ,lobbyChannel: Channel) {
 
             const embed = new MessageEmbed();
             embed.setTitle("You're all by yourself! Find at least 7 other users to start the match");
-            embed.setDescription("```css\n" + `${this.message.author.username} (MatchLeader)\n` + "```");
+            embed.setDescription("```css\n" + `${message.author.username} (MatchLeader)\n` + "```");
             embed.setColor('#ff861f');
 
 
@@ -79,15 +79,15 @@ class Match {
             return results[0].insertId;
         }
 
-        const matchCategory = await createCategory();
-        const matchChannels = await createChannels(matchCategory);
-        await sendJoinMessage(matchChannels.lobbyChannel);
+        const matchCategory = await createCategory(this.message);
+        const matchChannels = await createChannels(this.message, matchCategory);
+        await sendJoinMessage(this.message ,matchChannels.lobbyChannel);
         this.id = await insertMatch(matchCategory.id, matchChannels.lobbyChannel.id);
         await this.addUser(this.message.author, true);
     }
 
     async getMatchByLeader() {
-        let [results] = await link.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
+        let [results]: any[] = await link.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
     }
 
 
