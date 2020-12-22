@@ -1,5 +1,5 @@
-import {Message, MessageEmbed, Channel, CategoryChannel, User} from "discord.js";
-import {client, link} from "../../index.js";
+import {Message, MessageEmbed, Channel, CategoryChannel, User, TextChannel} from "discord.js";
+import {client, link} from "../index.js";
 
 class Match {
     private readonly message: Message;
@@ -26,24 +26,27 @@ class Match {
 
 
     async createMatch() {
+
         async function createCategory(message: Message) {
-            return await message?.guild.channels.create(`WEREWOLF MATCH: ${this.message.author.username}`, {
+
+           return await message.guild?.channels.create(`WEREWOLF MATCH: ${this.message.author.username}`, {
                 type: 'category',
                 permissionOverwrites: [{
-                    id: message?.guild.roles.everyone.id,
+                    id: message.guild?.roles.everyone.id,
                     deny: ['VIEW_CHANNEL'],
                 }]
             });
+
         }
 
         async function createChannels(message: Message, matchCategory: CategoryChannel) {
 
-            const lobbyChannel = await message.guild.channels.create(`🔑-lobby`, {
+            const lobbyChannel = await message.guild?.channels.create(`🔑-lobby`, {
                 type: 'text',
                 parent: matchCategory.id
             });
 
-            const movesChannel = await message.guild.channels.create(`🎲-moves`, {
+            const movesChannel = await message.guild?.channels.create(`🎲-moves`, {
                 type: 'text',
                 parent: matchCategory.id,
                 permissionOverwrites: [{
@@ -52,7 +55,7 @@ class Match {
                 }]
             });
 
-            const voiceChannel = await message.guild.channels.create(`🎤-voice`, {
+            const voiceChannel = await message.guild?.channels.create(`🎤-voice`, {
                 type: 'voice',
                 parent: matchCategory.id
             });
@@ -61,7 +64,7 @@ class Match {
         }
 
 
-        async function sendJoinMessage(message: Message ,lobbyChannel: Channel) {
+        async function sendJoinMessage(message: Message ,lobbyChannel: TextChannel) {
 
             const embed = new MessageEmbed();
             embed.setTitle("You're all by yourself! Find at least 7 other users to start the match");
@@ -79,10 +82,12 @@ class Match {
             return results[0].insertId;
         }
 
+        if (this.message === null) return;
+
         const matchCategory = await createCategory(this.message);
-        const matchChannels = await createChannels(this.message, matchCategory);
-        await sendJoinMessage(this.message ,matchChannels.lobbyChannel);
-        this.id = await insertMatch(matchCategory.id, matchChannels.lobbyChannel.id);
+        const matchChannels = await createChannels(this.message, matchCategory!);
+        await sendJoinMessage(this.message ,matchChannels.lobbyChannel!);
+        this.id = await insertMatch(matchCategory!.id, matchChannels.lobbyChannel!.id);
         await this.addUser(this.message.author, true);
     }
 
@@ -96,7 +101,7 @@ class Match {
         let joinCount = 0;
         let [results]: any[] = await link.execute(`SELECT GUILD_ID, VILLAGE_CHANNEL_ID, JOIN_MESSAGE_ID FROM matches WHERE MATCH_ID = ?`, [matchID]);
         const guild = await this.message.guild;
-        const lobbyChannel = await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID);
+        const lobbyChannel: TextChannel = await client!.channels.fetch(results[0].VILLAGE_CHANNEL_ID);
         const fetchedMessage = await lobbyChannel.messages.fetch(results[0].JOIN_MESSAGE_ID);
 
 
@@ -108,7 +113,7 @@ class Match {
             joinCount++
         }
 
-        let [userResults] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 0 AND matches_users.MATCH_ID = ?`, [matchID]);
+        let [userResults]: any[] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 0 AND matches_users.MATCH_ID = ?`, [matchID]);
 
         for (let i = 0; i < userResults.length; i++) {
             let joinedUser = await guild.members.fetch(userResults[i].DISCORD_USER_ID);
@@ -159,7 +164,7 @@ class Match {
     async addUser(userID: User, leader = false) {
         await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [userID, this.id, leader]);
 
-        let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
+        let [results]: any[] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
 
         await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
             matchCategory.createOverwrite(message.author, {
@@ -168,24 +173,24 @@ class Match {
         });
 
         await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID).then(lobbyChannel => {
-            lobbyChannel.send(`<@${message.author.id}>`).then(quickMention => {
+            lobbyChannel.send(`<@${message.author.id}>`).then((quickMention: Message) => {
                 quickMention.delete();
             });
         });
     }
 
     async removeUser(userID: number):Promise<void> {
-        const [results] = await link.execute(`SELECT * FROM games WHERE MATCH_ID = ?`, [this.id]);
+        const [results]: any[] = await link.execute(`SELECT * FROM games WHERE MATCH_ID = ?`, [this.id]);
 
         if (!results.length) {
             await this.message.reply("Match not found. ");
             return;
         }
 
-        await link.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [user.id, this.id]);
+        await link.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [userID, this.id]);
 
         let matchCategory = await client.channels.fetch(results[0].CATEGORY_ID);
-        matchCategory.permissionOverwrites.fetch(this.user.id)?.delete();
+        matchCategory.permissionOverwrites.fetch(userID)?.delete();
     }
 
 }

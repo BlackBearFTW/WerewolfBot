@@ -1,18 +1,19 @@
 import fs from "fs";
 import { Message, Client, Collection } from 'discord.js';
-import * as mysql from 'mysql2/promise';
+import mysqlPromise from "mysql2/promise.js";
 const prefix = '!w';
 
 interface CommandInterface {
     name: string;
     description: string;
+    arguments?: string;
     execute(message: Message, args: string[]): void;
 }
 
 export const client = new Client();
-const commands = new Collection<string, CommandInterface>();
+export const commands = new Collection<string, CommandInterface>();
 
-export const link = mysql.createPool({
+export const link = mysqlPromise.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -20,13 +21,15 @@ export const link = mysql.createPool({
 });
 
 // GET ALL FILES IN COMMANDS FOLDER
-const commandFiles = fs.readdirSync('./src/commands').filter((file: string) => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter((file: string) => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-    const command = require(`./src/commands/${file}`);
-    commands.set(command.name, command);
+    (async() => {
+            const command = await import(`./commands/${file}`);
+             commands.set(command.name, command);
+        })();
 }
-
+console.log(commands);
 
 client.once('ready', () => {
     console.log('Ready!');

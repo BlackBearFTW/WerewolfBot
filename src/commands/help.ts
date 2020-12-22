@@ -1,10 +1,10 @@
-const {Discord, client, link} = require('/index');
-module.exports = {
+import {Message, MessageEmbed} from "discord.js";
+import {commands} from "../index.js";
+export default {
     name: 'help',
-    execute: async(message, args) => {
+    execute: async(message: Message, args: string[]) => {
 
-            const commands = client.commands;
-            const embed = new Discord.MessageEmbed()
+            const embed = new MessageEmbed()
                 .setColor('#ff861f')
                 .setTitle("You shouldn't ask me for help!")
                 .setFooter('<> = required, () = optional');
@@ -23,7 +23,7 @@ module.exports = {
                 }
             });
 
-            message.channel.send(embed);
+            await message.channel.send(embed);
 
     },
 };

@@ -2,7 +2,8 @@
   "name": "werewolfbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "./build/index.js",
   "scripts": {
     "start": "node index.js",
     "test": "jest --verbose",

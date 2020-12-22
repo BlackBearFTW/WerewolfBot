@@ -1,13 +1,14 @@
-import Discord from "discord.js";
-import { client, link } from "../../index.js";
+import { MessageEmbed } from "discord.js";
+import { client, link } from "../index.js";
 class Match {
     constructor(message, args) {
         this.message = message;
         this.args = args;
+        this.id = -1;
     }
     // Saving channels is unnecessary (so is the join message) instead just use this code:
     /*    const channelMap = message.channel.parent.children; // get category
-        const fetchedChannel = channelMap.get(Array.from(channelMap.keys())[0]); // get first channel in category (lobby)
+        const fetchedChannel = channelMap.array()[0]; // get first channel in category (lobby)
         const fetchedMessages = await fetchedChannel.messages.fetch({after: '1', limit: 1}); // get a map with the first message
 
         const embed = new Discord.MessageEmbed();
@@ -17,51 +18,55 @@ class Match {
 
     await fetchedMessages.first().edit(embed);*/ // get first message from map and edit it
     async createMatch() {
-        async function createCategory() {
-            return await this.message.guild.channels.create(`WEREWOLF MATCH: ${this.message.author.username}`, {
+        async function createCategory(message) {
+            var _a, _b;
+            return await ((_a = message.guild) === null || _a === void 0 ? void 0 : _a.channels.create(`WEREWOLF MATCH: ${this.message.author.username}`, {
                 type: 'category',
                 permissionOverwrites: [{
-                        id: this.message.guild.roles.everyone.id,
+                        id: (_b = message.guild) === null || _b === void 0 ? void 0 : _b.roles.everyone.id,
                         deny: ['VIEW_CHANNEL'],
                     }]
-            });
+            }));
         }
-        async function createChannels(matchCategory) {
-            const lobbyChannel = await this.message.guild.channels.create(`🔑-lobby`, {
+        async function createChannels(message, matchCategory) {
+            var _a, _b, _c;
+            const lobbyChannel = await ((_a = message.guild) === null || _a === void 0 ? void 0 : _a.channels.create(`🔑-lobby`, {
                 type: 'text',
                 parent: matchCategory.id
-            });
-            const movesChannel = await this.message.guild.channels.create(`🎲-moves`, {
+            }));
+            const movesChannel = await ((_b = message.guild) === null || _b === void 0 ? void 0 : _b.channels.create(`🎲-moves`, {
                 type: 'text',
                 parent: matchCategory.id,
                 permissionOverwrites: [{
-                        id: this.message.guild.roles.everyone.id,
+                        id: message.guild.roles.everyone.id,
                         deny: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
                     }]
-            });
-            const voiceChannel = await this.message.guild.channels.create(`🎤-voice`, {
+            }));
+            const voiceChannel = await ((_c = message.guild) === null || _c === void 0 ? void 0 : _c.channels.create(`🎤-voice`, {
                 type: 'voice',
                 parent: matchCategory.id
-            });
+            }));
             return { lobbyChannel, movesChannel, voiceChannel };
         }
-        async function sendJoinMessage(lobbyChannel) {
-            const embed = new Discord.MessageEmbed();
+        async function sendJoinMessage(message, lobbyChannel) {
+            const embed = new MessageEmbed();
             embed.setTitle("You're all by yourself! Find at least 7 other users to start the match");
-            embed.setDescription("```css\n" + `${this.message.author.username} (MatchLeader)\n` + "```");
+            embed.setDescription("```css\n" + `${message.author.username} (MatchLeader)\n` + "```");
             embed.setColor('#ff861f');
             const joinMessage = await lobbyChannel.send(embed);
             await joinMessage.pin();
             await lobbyChannel.bulkDelete(1);
-            return joinMessage;
         }
         async function insertMatch(guildID, categoryID) {
             let [results] = await link.execute(`INSERT INTO matches (GUILD_ID, CATEGORY_ID) VALUES (?, ?)`, [guildID, categoryID]);
+            return results[0].insertId;
         }
-        const matchCategory = await createCategory();
-        const matchChannels = await createChannels(matchCategory);
-        const joinMessage = await sendJoinMessage(matchChannels.lobbyChannel);
-        await insertMatch(matchCategory.id, matchChannels.lobbyChannel.id);
+        if (this.message === null)
+            return;
+        const matchCategory = await createCategory(this.message);
+        const matchChannels = await createChannels(this.message, matchCategory);
+        await sendJoinMessage(this.message, matchChannels.lobbyChannel);
+        this.id = await insertMatch(matchCategory.id, matchChannels.lobbyChannel.id);
         await this.addUser(this.message.author, true);
     }
     async getMatchByLeader() {
@@ -73,11 +78,11 @@ class Match {
         let [results] = await link.execute(`SELECT GUILD_ID, VILLAGE_CHANNEL_ID, JOIN_MESSAGE_ID FROM matches WHERE MATCH_ID = ?`, [matchID]);
         const guild = await this.message.guild;
         const lobbyChannel = await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID);
-        const fetchedMessage = await lobbyChannel.this.messages.fetch(results[0].JOIN_MESSAGE_ID);
+        const fetchedMessage = await lobbyChannel.messages.fetch(results[0].JOIN_MESSAGE_ID);
         let [leaderResults] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 1 AND matches_users.MATCH_ID = ?`, [matchID]);
         for (let i = 0; i < leaderResults.length; i++) {
-            let joinedUser = await guild.members.fetch(leaderResults[i].DISCORD_USER_ID);
-            updatedDesc += joinedUser.user.username + ' (MATCHLEADER)\n';
+            let joinedUser = await (guild === null || guild === void 0 ? void 0 : guild.members.fetch(leaderResults[i].DISCORD_USER_ID));
+            updatedDesc += (joinedUser === null || joinedUser === void 0 ? void 0 : joinedUser.user.username) + ' (MATCHLEADER)\n';
             joinCount++;
         }
         let [userResults] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 0 AND matches_users.MATCH_ID = ?`, [matchID]);
@@ -87,7 +92,7 @@ class Match {
             joinCount++;
         }
         updatedDesc += '```';
-        let embed = new Discord.MessageEmbed();
+        let embed = new MessageEmbed();
         if (joinCount === 1) {
             embed.setTitle("Your all by yourself! Find at least 7 other users to start the match");
         }
@@ -112,12 +117,12 @@ class Match {
     async getUsers() {
         let [results] = await link.execute(`SELECT USER_ID FROM matches_players WHERE MATCH_ID = ?`, [this.id]);
         let userList = [];
-        results.forEach(result => {
+        results.forEach((result) => {
             userList.push(result.USER_ID);
         });
         return userList;
     }
-    async addUser(user, leader = false) {
+    async addUser(userID, leader = false) {
         await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [userID, this.id, leader]);
         let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
         await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
@@ -126,22 +131,21 @@ class Match {
             });
         });
         await client.channels.fetch(results[0].VILLAGE_CHANNEL_ID).then(lobbyChannel => {
-            lobbyChannel.send(`<@${message.author.id}>`).then(quickMention => {
+            lobbyChannel.send(`<@${message.author.id}>`).then((quickMention) => {
                 quickMention.delete();
             });
         });
     }
-    async removeUser(user) {
+    async removeUser(userID) {
+        var _a;
         const [results] = await link.execute(`SELECT * FROM games WHERE MATCH_ID = ?`, [this.id]);
         if (!results.length) {
-            return message.reply("Match not found. ");
+            await this.message.reply("Match not found. ");
+            return;
         }
-        await link.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [user.id, this.id]);
-        await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
-            matchCategory.createOverwrite(user, {
-                VIEW_CHANNEL: false
-            });
-        });
+        await link.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [userID, this.id]);
+        let matchCategory = await client.channels.fetch(results[0].CATEGORY_ID);
+        (_a = matchCategory.permissionOverwrites.fetch(userID)) === null || _a === void 0 ? void 0 : _a.delete();
     }
 }
-module.exports = Match;
+export default Match;
