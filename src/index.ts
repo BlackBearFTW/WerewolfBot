@@ -5,7 +5,7 @@ const prefix = '!w';
 
 interface CommandInterface {
     name: string;
-    description: string;
+    description?: string;
     arguments?: string;
     execute(message: Message, args: string[]): void;
 }
@@ -25,11 +25,11 @@ const commandFiles = fs.readdirSync('./commands').filter((file: string) => file.
 
 for (const file of commandFiles) {
     (async() => {
-            const command = await import(`./commands/${file}`);
+        const { default: command } = await import(`./commands/${file}`);
              commands.set(command.name, command);
+             console.log(command.name);
         })();
 }
-console.log(commands);
 
 client.once('ready', () => {
     console.log('Ready!');
