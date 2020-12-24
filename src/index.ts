@@ -21,7 +21,6 @@ for (const file of commandFiles) {
     (async() => {
         const {command} = await import(`./commands/${file}`);
         commands.set(command.name, command);
-        console.log(command.name);
     })();
 }
 
