@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./build/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "cd build && node index.js",
     "test": "jest --verbose",
     "build": "npx tsc"
   },

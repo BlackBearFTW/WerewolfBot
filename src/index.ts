@@ -1,14 +1,8 @@
 import fs from "fs";
 import { Message, Client, Collection } from 'discord.js';
+import {CommandInterface} from "./interfaces/CommandInterface";
 import mysqlPromise from "mysql2/promise.js";
 const prefix = '!w';
-
-interface CommandInterface {
-    name: string;
-    description?: string;
-    arguments?: string;
-    execute(message: Message, args: string[]): void;
-}
 
 export const client = new Client();
 export const commands = new Collection<string, CommandInterface>();
@@ -21,23 +15,15 @@ export const link = mysqlPromise.createPool({
 });
 
 // GET ALL FILES IN COMMANDS FOLDER
-//const commandFiles = fs.readdirSync(`./commands`).filter((file: string) => file.endsWith('.js'));
-//cconsole.log(process.cwd());
-fs.readdir(`./`, (error, files ) => {
-console.log(files);
+const commandFiles = fs.readdirSync(`./commands`).filter((file: string) => file.endsWith('.js'));
 
-/*    const commandFiles = files.filter((file: string) => file.endsWith('.js'));
-
-    for (const file of commandFiles) {
-        (async() => {
-            const { default: command } = await import(`./commands/${file}`);
-            commands.set(command.name, command);
-            console.log(command.name);
-        })();
-    }*/
-})
-
-
+for (const file of commandFiles) {
+    (async() => {
+        const { default: command } = await import(`./commands/${file}`);
+        commands.set(command.name, command);
+        console.log(command.name);
+    })();
+}
 
 client.once('ready', () => {
     console.log('Ready!');
