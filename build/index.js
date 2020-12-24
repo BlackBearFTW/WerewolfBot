@@ -53,5 +53,4 @@ client.on('message', (message) => {
     (_a = commands.get(command)) === null || _a === void 0 ? void 0 : _a.execute(message, args);
     message === null || message === void 0 ? void 0 : message.delete();
 });
-//client?.login(process.env.BOT_TOKEN);
-client === null || client === void 0 ? void 0 : client.login("NzM5OTExNzc0Njk4MjA5MzAw.XyhWiQ.bcUja7CnKEsh4HTjwgW6JOHIISY");
+client === null || client === void 0 ? void 0 : client.login(process.env.BOT_TOKEN);
