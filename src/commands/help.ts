@@ -1,6 +1,8 @@
 import {Message, MessageEmbed} from "discord.js";
 import {commands} from "../index.js";
-export default {
+import {CommandInterface} from "../interfaces/CommandInterface";
+
+export const command: CommandInterface = {
     name: 'help',
     execute: async(message: Message, args: string[]) => {
 

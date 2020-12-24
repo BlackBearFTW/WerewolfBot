@@ -14,7 +14,7 @@ export const link = mysqlPromise.createPool({
 const commandFiles = fs.readdirSync(`./commands`).filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
     (async () => {
-        const { default: command } = await import(`./commands/${file}`);
+        const { command } = await import(`./commands/${file}`);
         commands.set(command.name, command);
         console.log(command.name);
     })();

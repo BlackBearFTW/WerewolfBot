@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { commands } from "../index.js";
-export default {
+export const command = {
     name: 'help',
     execute: async (message, args) => {
         const embed = new MessageEmbed()
