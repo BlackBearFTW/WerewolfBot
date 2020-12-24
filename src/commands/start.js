@@ -1,16 +1,16 @@
 const Match = require('../classes/Match');
 module.exports = {
-    name: 'start',
-    execute: async(message, args) => {
-            await Match.getUsers()
+	name: 'start',
+	execute: async (message, args) => {
+		await Match.getUsers();
 
-            /* TODO
+		/* TODO
              * Update match "STARTED" to 1
              *
-             * 
-             * 
-             * 
-             * 
+             *
+             *
+             *
+             *
              */
-    },
+	},
 };

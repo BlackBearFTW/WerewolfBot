@@ -11,14 +11,20 @@ export const link = mysqlPromise.createPool({
     database: process.env.DB_NAME,
 });
 // GET ALL FILES IN COMMANDS FOLDER
-const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
-for (const file of commandFiles) {
-    (async () => {
-        const { default: command } = await import(`./commands/${file}`);
-        commands.set(command.name, command);
-        console.log(command.name);
-    })();
-}
+//const commandFiles = fs.readdirSync(`./commands`).filter((file: string) => file.endsWith('.js'));
+//cconsole.log(process.cwd());
+fs.readdir(`./`, (error, files) => {
+    console.log(files);
+    /*    const commandFiles = files.filter((file: string) => file.endsWith('.js'));
+    
+        for (const file of commandFiles) {
+            (async() => {
+                const { default: command } = await import(`./commands/${file}`);
+                commands.set(command.name, command);
+                console.log(command.name);
+            })();
+        }*/
+});
 client.once('ready', () => {
     var _a;
     console.log('Ready!');
@@ -47,4 +53,5 @@ client.on('message', (message) => {
     (_a = commands.get(command)) === null || _a === void 0 ? void 0 : _a.execute(message, args);
     message === null || message === void 0 ? void 0 : message.delete();
 });
-client === null || client === void 0 ? void 0 : client.login(process.env.BOT_TOKEN);
+//client?.login(process.env.BOT_TOKEN);
+client === null || client === void 0 ? void 0 : client.login("NzM5OTExNzc0Njk4MjA5MzAw.XyhWiQ.bcUja7CnKEsh4HTjwgW6JOHIISY");

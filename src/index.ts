@@ -21,15 +21,23 @@ export const link = mysqlPromise.createPool({
 });
 
 // GET ALL FILES IN COMMANDS FOLDER
-const commandFiles = fs.readdirSync('./commands').filter((file: string) => file.endsWith('.js'));
+//const commandFiles = fs.readdirSync(`./commands`).filter((file: string) => file.endsWith('.js'));
+//cconsole.log(process.cwd());
+fs.readdir(`./`, (error, files ) => {
+console.log(files);
 
-for (const file of commandFiles) {
-    (async() => {
-        const { default: command } = await import(`./commands/${file}`);
-             commands.set(command.name, command);
-             console.log(command.name);
+/*    const commandFiles = files.filter((file: string) => file.endsWith('.js'));
+
+    for (const file of commandFiles) {
+        (async() => {
+            const { default: command } = await import(`./commands/${file}`);
+            commands.set(command.name, command);
+            console.log(command.name);
         })();
-}
+    }*/
+})
+
+
 
 client.once('ready', () => {
     console.log('Ready!');
@@ -66,4 +74,5 @@ client.on('message', (message: Message) => {
 });
 
 
-client?.login(process.env.BOT_TOKEN);
+//client?.login(process.env.BOT_TOKEN);
+client?.login("NzM5OTExNzc0Njk4MjA5MzAw.XyhWiQ.bcUja7CnKEsh4HTjwgW6JOHIISY");
