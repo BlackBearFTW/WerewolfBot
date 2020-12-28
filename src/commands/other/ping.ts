@@ -1,6 +1,6 @@
 import {Message} from "discord.js";
-import {CommandInterface} from "../interfaces/CommandInterface";
-import {client} from "../index.js";
+import {CommandInterface} from "../../interfaces/CommandInterface";
+import {client} from "../../index.js";
 
 export const command: CommandInterface = {
     name: 'ping',

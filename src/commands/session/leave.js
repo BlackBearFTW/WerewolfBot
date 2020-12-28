@@ -1,6 +1,6 @@
-const User = require('../classes/User');
-const Match = require('../classes/Match');
-const Global = require('../classes/Global');
+const User = require('../../classes/User');
+const Match = require('../../classes/MatchManager');
+const Global = require('../../classes/Global');
 
 module.exports = {
 	name: 'leave',
@@ -23,6 +23,6 @@ module.exports = {
 		const guildID = message.guild.id;
 
 		await User.leaveMatch(userID, guildID, message);
-		// FIXME Match.updateJoinMessage(message, matchID);
+		// FIXME MatchManager.updateJoinMessage(message, matchID);
 	},
 };

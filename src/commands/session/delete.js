@@ -1,5 +1,5 @@
-const User = require('../classes/User');
-const Global = require('../classes/Global');
+const User = require('../../classes/User');
+const Global = require('../../classes/Global');
 
 module.exports = {
 	name: 'delete',

@@ -1,4 +1,4 @@
-import { client } from "../index.js";
+import { client } from "../../index.js";
 export const command = {
     name: 'ping',
     execute(message, args) {

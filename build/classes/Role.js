@@ -1,3 +1,4 @@
+import { link } from "../index";
 class Role {
     static async getRoles() {
         const [results] = await link.execute('SELECT NAME, DESCRIPTION, EMOTE, POSITION FROM roles');
@@ -18,9 +19,7 @@ class Role {
             werewolfCount = 4;
         }
         if (werewolfList !== false) {
-            // Picks one or multiple werewolves from last match to be disqualified in this match again.
             disqualifiedList = werewolfList.sort(() => 0.5 - Math.random()).slice(0, Math.random() * (werewolfList.length - 1) + 1);
-            // Removes disqualified users from pickList
             pickList = userList.filter(function (element) {
                 return disqualifiedList.indexOf(element) === -1;
             });
@@ -28,15 +27,12 @@ class Role {
         else {
             pickList = userList;
         }
-        // Pick werewolf' and removes them from pickList
         werewolfList = pickList.sort(() => 0.5 - Math.random()).slice(0, werewolfCount);
         pickList = pickList.filter(function (element) {
             return werewolfList.indexOf(element) === -1;
         });
-        // Adds disqualified members back to picklist so they can possibly get another role
         pickList = pickList.concat(disqualifiedList);
         const villagerList = pickList;
-        // Pick other users for other roles
         const seer = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];
         const witch = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];
         const cupid = pickList.splice(Math.floor(Math.random() * pickList.length), 1)[0];

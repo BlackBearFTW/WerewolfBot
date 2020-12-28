@@ -10,20 +10,22 @@ export const link = mysqlPromise.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
 });
-// GET ALL FILES IN COMMANDS FOLDER
-const commandFiles = fs.readdirSync(`./commands`).filter((file) => file.endsWith('.js'));
-for (const file of commandFiles) {
-    (async () => {
-        const { command } = await import(`./commands/${file}`);
-        commands.set(command.name, command);
-    })();
+const commandFolders = fs.readdirSync('./commands', { withFileTypes: true }).filter(folder => folder.isDirectory()).map(folder => folder.name);
+for (const folder of commandFolders) {
+    const commandFiles = fs.readdirSync(`./commands/${folder}`).filter((file) => file.endsWith('.js'));
+    for (const file of commandFiles) {
+        (async () => {
+            const { command } = await import(`./commands/${folder}/${file}`);
+            commands.set(command.name, command);
+        })();
+    }
 }
 client.once('ready', () => {
-    var _a;
-    console.log('Ready!');
+    var _a, _b;
+    console.log(`${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username} is ready!`);
     if (client.user === null)
         return;
-    (_a = client.user) === null || _a === void 0 ? void 0 : _a.setActivity("with your fears", {
+    (_b = client.user) === null || _b === void 0 ? void 0 : _b.setActivity("with your fears", {
         type: "PLAYING",
     });
 });

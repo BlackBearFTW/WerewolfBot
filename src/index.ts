@@ -1,7 +1,8 @@
 import fs from "fs";
-import { Message, Client, Collection } from 'discord.js';
+import {Message, Client, Collection} from 'discord.js';
 import {CommandInterface} from "./interfaces/CommandInterface";
 import mysqlPromise from "mysql2/promise.js";
+
 const prefix = '!w';
 
 export const client = new Client();
@@ -14,18 +15,22 @@ export const link = mysqlPromise.createPool({
     database: process.env.DB_NAME,
 });
 
-// GET ALL FILES IN COMMANDS FOLDER
-const commandFiles = fs.readdirSync(`./commands`).filter((file: string) => file.endsWith('.js'));
+// Retrieves all folders inside the commands folder and then the files inside those folders get imported
+const commandFolders = fs.readdirSync('./commands', {withFileTypes: true}).filter(folder => folder.isDirectory()).map(folder => folder.name);
 
-for (const file of commandFiles) {
-    (async() => {
-        const {command} = await import(`./commands/${file}`);
-        commands.set(command.name, command);
-    })();
+for (const folder of commandFolders) {
+    const commandFiles = fs.readdirSync(`./commands/${folder}`).filter((file: string) => file.endsWith('.js'));
+
+    for (const file of commandFiles) {
+        (async () => {
+            const {command} = await import(`./commands/${folder}/${file}`);
+            commands.set(command.name, command);
+        })();
+    }
 }
 
 client.once('ready', () => {
-    console.log('Ready!');
+    console.log(`${client.user?.username} is ready!`);
 
     if (client.user === null) return;
 

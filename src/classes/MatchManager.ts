@@ -1,7 +1,7 @@
 import {Message, MessageEmbed, Channel, CategoryChannel, User, TextChannel} from "discord.js";
 import {client, link} from "../index.js";
 
-class Match {
+class MatchManager {
     private readonly message: Message;
     private args: string[];
     id: number;
@@ -161,8 +161,8 @@ class Match {
         return userList;
     }
 
-    async addUser(userID: User, leader = false) {
-        await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [userID, this.id, leader]);
+    async addUser(user: User, leader = false) {
+        await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [user.id, this.id, leader]);
 
         let [results]: any[] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
 
@@ -195,4 +195,4 @@ class Match {
 
 }
 
-export default Match;
+export default MatchManager;

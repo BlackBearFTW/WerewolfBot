@@ -1,4 +1,4 @@
-"use strict";
+import { link } from "../index";
 class User {
     constructor(user) {
         this.user = user;
@@ -18,7 +18,6 @@ class User {
         return results[0].USER_ID;
     }
     async updateStat(statName, value, relative) {
-        // If relative == true, value will be changed relative to the current value
     }
     async inMatch(userID, guildID) {
         await link.execute('DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?', [userID, matchID]);

@@ -1,3 +1,5 @@
+import {link} from "../index";
+
 class User {
 
 	constructor(user) {
@@ -7,6 +9,8 @@ class User {
 	async createUser() {
 		const [results] = await link.execute('INSERT INTO users (USER_ID) VALUES (?)', [this.user.id]);
 	}
+
+	getUser()
 
 	async getStats() {
 		const [results] = await link.execute('SELECT WIN_COUNT, LOSE_COUNT, DEATH_COUNT FROM users WHERE USER_ID = ?', [this.user.id]);

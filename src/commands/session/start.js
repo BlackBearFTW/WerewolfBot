@@ -1,8 +1,8 @@
-const Match = require('../classes/Match');
+const Match = require('../../classes/MatchManager');
 module.exports = {
 	name: 'start',
 	execute: async (message, args) => {
-		await Match.getUsers();
+		await MatchManager.getUsers();
 
 		/* TODO
              * Update match "STARTED" to 1

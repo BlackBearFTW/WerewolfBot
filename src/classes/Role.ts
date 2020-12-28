@@ -1,7 +1,9 @@
+import {link} from "../index";
+
 class Role {
 
 	static async getRoles() {
-		const [results] = await link.execute('SELECT NAME, DESCRIPTION, EMOTE, POSITION FROM roles');
+		const [results]: any[] = await link.execute('SELECT NAME, DESCRIPTION, EMOTE, POSITION FROM roles');
 		return results;
 	}
 

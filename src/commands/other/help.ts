@@ -1,6 +1,6 @@
 import {Message, MessageEmbed} from "discord.js";
-import {commands} from "../index.js";
-import {CommandInterface} from "../interfaces/CommandInterface";
+import {commands} from "../../index.js";
+import {CommandInterface} from "../../interfaces/CommandInterface";
 
 export const command: CommandInterface = {
     name: 'help',
@@ -10,7 +10,6 @@ export const command: CommandInterface = {
                 .setColor('#ff861f')
                 .setTitle("You shouldn't ask me for help!")
                 .setFooter('<> = required, () = optional');
-
 
             commands.forEach(command => {
 

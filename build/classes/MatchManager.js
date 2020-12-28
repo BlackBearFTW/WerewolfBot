@@ -1,22 +1,11 @@
 import { MessageEmbed } from "discord.js";
 import { client, link } from "../index.js";
-class Match {
+class MatchManager {
     constructor(message, args) {
         this.message = message;
         this.args = args;
         this.id = -1;
     }
-    // Saving channels is unnecessary (so is the join message) instead just use this code:
-    /*    const channelMap = message.channel.parent.children; // get category
-        const fetchedChannel = channelMap.array()[0]; // get first channel in category (lobby)
-        const fetchedMessages = await fetchedChannel.messages.fetch({after: '1', limit: 1}); // get a map with the first message
-
-        const embed = new Discord.MessageEmbed();
-        embed.setTitle("You're all by yourself! Find at least 7 other users to start the match");
-        embed.setDescription("```css\n" + `${message.author.username} (try)\n` + "```");
-    embed.setColor('#ff861f');
-
-    await fetchedMessages.first().edit(embed);*/ // get first message from map and edit it
     async createMatch() {
         async function createCategory(message) {
             var _a, _b;
@@ -122,8 +111,8 @@ class Match {
         });
         return userList;
     }
-    async addUser(userID, leader = false) {
-        await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [userID, this.id, leader]);
+    async addUser(user, leader = false) {
+        await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [user.id, this.id, leader]);
         let [results] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
         await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
             matchCategory.createOverwrite(message.author, {
@@ -148,4 +137,4 @@ class Match {
         (_a = matchCategory.permissionOverwrites.fetch(userID)) === null || _a === void 0 ? void 0 : _a.delete();
     }
 }
-export default Match;
+export default MatchManager;

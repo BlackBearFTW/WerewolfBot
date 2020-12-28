@@ -1,4 +1,4 @@
-const User = require('../classes/User');
+const User = require('../../classes/User');
 module.exports = {
 	name: 'stats',
 	description: 'Look at your stats',

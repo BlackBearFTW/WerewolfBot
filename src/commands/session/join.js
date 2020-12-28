@@ -1,6 +1,6 @@
-const User = require('../classes/User');
-const Match = require('../classes/Match');
-const Global = require('../classes/Global');
+const User = require('../../classes/User');
+const Match = require('../../classes/MatchManager');
+const Global = require('../../classes/Global');
 module.exports = {
 	name: 'join',
 	description: 'Join a match',
@@ -31,12 +31,12 @@ module.exports = {
 
 		const matchID = await User.matchLeaderCheck(mentionID, guildID);
 
-		if (await Match.statusCheck(matchID) == true) {
+		if (await MatchManager.statusCheck(matchID) == true) {
 			return Global.throwError(message, 'This match has already started');
 		}
 
 		await User.joinMatch(userID, matchID, message);
-		await Match.updateJoinMessage(message, matchID);
+		await MatchManager.updateJoinMessage(message, matchID);
 
 	},
 };
