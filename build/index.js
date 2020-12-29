@@ -20,6 +20,13 @@ for (const folder of commandFolders) {
         })();
     }
 }
+const eventFiles = fs.readdirSync(`./events`).filter((file) => file.endsWith('.js'));
+for (const file of eventFiles) {
+    (async () => {
+        const { event } = await import(`./events/${file}`);
+        client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(...args));
+    })();
+}
 client.once('ready', () => {
     var _a, _b;
     console.log(`${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username} is ready!`);

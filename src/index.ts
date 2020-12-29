@@ -29,6 +29,27 @@ for (const folder of commandFolders) {
     }
 }
 
+
+// // Retrieves all the event handlers and imports those.
+// fs.readdir('./events/', (err, files) => { // We use the method readdir to read what is in the events folder
+//
+//     files.forEach(async (file) => {
+//         const eventFunction = await import(`./events/${file}`); // Here we require the event file of the events folder
+//         client[eventFunction.once ? 'once' : 'on'](eventFunction.name, (...args) => eventFunction.run(...args)); // Run the event using the above defined emitter (client)
+//     });
+// });
+
+const eventFiles = fs.readdirSync(`./events`).filter((file: string) => file.endsWith('.js'));
+
+for (const file of eventFiles) {
+    (async () => {
+        const {event} = await import(`./events/${file}`); // Here we require the event file of the events folder
+        client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(...args)); // Run the event using the above defined emitter (client)
+    })();
+}
+
+
+
 client.once('ready', () => {
     console.log(`${client.user?.username} is ready!`);
 
