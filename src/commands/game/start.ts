@@ -1,4 +1,4 @@
-import {Message, TextChannel, User} from "discord.js";
+import {Message, MessageEmbed, ReactionCollector, TextChannel, User} from "discord.js";
 import {CommandInterface} from "../../interfaces/CommandInterface";
 import {client, link} from "../../index.js";
 
@@ -22,16 +22,38 @@ export const command: CommandInterface = {
             VIEW_CHANNEL: true
         });
 
+        const numEmote = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇻", "🇼", "🇽", "🇾", "🇿"];
+        args[0] = "PersonA";
+        args[1] = "PersonB";
+        args[2] = "PersonC";
+        args[3] = "PersonD";
 
-        const sendMessage = await fetchedChannel.send("React to this message");
-        await sendMessage.react("👍");
-        await sendMessage.react("👎");
+        let desc = "";
 
-        const filter = (reaction: any, user: User) => reaction.emoji.name === '👍' || reaction.emoji.name === '👎';
+
+        for (const arg of args) {
+           desc += `${numEmote[args.indexOf(arg)]} ${arg}\n`;
+        }
+
+        const embed = new MessageEmbed();
+        embed.setTitle("Tonight's Menu");
+        embed.setDescription(desc);
+
+
+        const sendMessage = await fetchedChannel.send(embed);
+        for (const arg of args) {
+           sendMessage.react(numEmote[args.indexOf(arg)]);
+        }
+
+        const filter = (reaction: any, user: User) => numEmote.includes(reaction.emoji.name) && !user.bot;
 
         const collected = await sendMessage.awaitReactions(filter, {time: 30000});
-        await sendMessage.channel.send(`Collected ${collected.size} reactions`);
+        for(const [key, value] of collected) {
+            fetchedChannel.send(`${key} was clicked ${value.count! - 1}x`);
+        }
 
+        const sortedCollection = collected.sort((a, b) => a.count! - b.count!);
+        fetchedChannel.send(sortedCollection.firstKey());
 
         // setTimeout(async () => {
         //
