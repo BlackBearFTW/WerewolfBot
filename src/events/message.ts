@@ -5,6 +5,7 @@ import {EventInterface} from "../interfaces/EventInterface";
 export const event: EventInterface = {
     name: 'message',
     once: false,
+    disabled: true,
     async execute(message: Message) {
 
         if (message.author.bot) return;

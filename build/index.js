@@ -24,6 +24,8 @@ const eventFiles = fs.readdirSync(`./events`).filter((file) => file.endsWith('.j
 for (const file of eventFiles) {
     (async () => {
         const { event } = await import(`./events/${file}`);
+        if (event.disabled)
+            return;
         client[event.once ? 'once' : 'on'](event.name, (...args) => event.execute(...args));
     })();
 }
