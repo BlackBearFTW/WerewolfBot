@@ -4,5 +4,5 @@ interface EventInterface {
     name: keyof ClientEvents;
     once: boolean;
     disabled: boolean;
-    execute(arguments?: any): void;
+    execute(...parameters?: any[]): void;
 }

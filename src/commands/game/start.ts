@@ -18,6 +18,8 @@ export const command: CommandInterface = {
 
         const fetchedChannel= channelMap.array()[1] as TextChannel;
 
+        await fetchedChannel.bulkDelete(100);
+
         await fetchedChannel.createOverwrite(message.author, {
             VIEW_CHANNEL: true
         });
@@ -30,7 +32,6 @@ export const command: CommandInterface = {
 
         let desc = "";
 
-
         for (const arg of args) {
            desc += `${numEmote[args.indexOf(arg)]} ${arg}\n`;
         }
@@ -39,26 +40,41 @@ export const command: CommandInterface = {
         embed.setTitle("Tonight's Menu");
         embed.setDescription(desc);
 
-
-        const sendMessage = await fetchedChannel.send(embed);
+        const sendMessage = await fetchedChannel.send({embed: embed, content: "**You Have 30 Seconds To Decide**"});
         for (const arg of args) {
-           sendMessage.react(numEmote[args.indexOf(arg)]);
+           await sendMessage.react(numEmote[args.indexOf(arg)]);
         }
 
-        const filter = (reaction: any, user: User) => numEmote.includes(reaction.emoji.name) && !user.bot;
+        await setTimeout(async() => {
+            const collected = sendMessage.reactions.cache.filter((reaction): boolean => {
+                return reaction.count! > 1;
+            })
 
-        const collected = await sendMessage.awaitReactions(filter, {time: 30000});
-        for(const [key, value] of collected) {
-            fetchedChannel.send(`${key} was clicked ${value.count! - 1}x`);
-        }
+            if (collected.size > 0) {
+                const sortedCollection = collected.sort((a, b):number => {return a.count! - b.count!});
+                const filteredCollection = sortedCollection.filter((item) => {
+                    return sortedCollection.first()?.count === item.count;
+                })
 
-        const sortedCollection = collected.sort((a, b) => a.count! - b.count!);
-        fetchedChannel.send(sortedCollection.firstKey());
+                if (filteredCollection.size > 1) {
+                    embed.setTitle("It's a tie!");
+                    embed.setDescription("Nobody got lynched because the votes tied");
+                } else {
+                    embed.setTitle(`${args[numEmote.indexOf(filteredCollection.firstKey()!)]} was eliminated!`);
+                    embed.setDescription('');
+                }
 
-        // setTimeout(async () => {
-        //
-        //     await fetchedChannel.permissionOverwrites.get(message.author.id)?.delete();
-        //
-        // }, 30000);
+                await sendMessage.delete();
+                await sendMessage.channel.send(embed)
+
+            } else {
+                embed.setTitle("Not hungry?");
+                embed.setDescription("Nobody got lynched because nobody ordered anything");
+                await sendMessage.delete();
+                await sendMessage.channel.send(embed);
+            }
+
+
+        }, 30000);
     }
 };

@@ -13,6 +13,7 @@ export const command = {
         if (channelMap === undefined)
             return;
         const fetchedChannel = channelMap.array()[1];
+        await fetchedChannel.bulkDelete(100);
         await fetchedChannel.createOverwrite(message.author, {
             VIEW_CHANNEL: true
         });
@@ -28,16 +29,37 @@ export const command = {
         const embed = new MessageEmbed();
         embed.setTitle("Tonight's Menu");
         embed.setDescription(desc);
-        const sendMessage = await fetchedChannel.send(embed);
+        const sendMessage = await fetchedChannel.send({ embed: embed, content: "**You Have 30 Seconds To Decide**" });
         for (const arg of args) {
-            sendMessage.react(numEmote[args.indexOf(arg)]);
+            await sendMessage.react(numEmote[args.indexOf(arg)]);
         }
-        const filter = (reaction, user) => numEmote.includes(reaction.emoji.name) && !user.bot;
-        const collected = await sendMessage.awaitReactions(filter, { time: 30000 });
-        for (const [key, value] of collected) {
-            fetchedChannel.send(`${key} was clicked ${value.count - 1}x`);
-        }
-        const sortedCollection = collected.sort((a, b) => a.count - b.count);
-        fetchedChannel.send(sortedCollection.firstKey());
+        await setTimeout(async () => {
+            const collected = sendMessage.reactions.cache.filter((reaction) => {
+                return reaction.count > 1;
+            });
+            if (collected.size > 0) {
+                const sortedCollection = collected.sort((a, b) => { return a.count - b.count; });
+                const filteredCollection = sortedCollection.filter((item) => {
+                    var _a;
+                    return ((_a = sortedCollection.first()) === null || _a === void 0 ? void 0 : _a.count) === item.count;
+                });
+                if (filteredCollection.size > 1) {
+                    embed.setTitle("It's a tie!");
+                    embed.setDescription("Nobody got lynched because the votes tied");
+                }
+                else {
+                    embed.setTitle(`${args[numEmote.indexOf(filteredCollection.firstKey())]} was eliminated!`);
+                    embed.setDescription('');
+                }
+                await sendMessage.delete();
+                await sendMessage.channel.send(embed);
+            }
+            else {
+                embed.setTitle("Not hungry?");
+                embed.setDescription("Nobody got lynched because nobody ordered anything");
+                await sendMessage.delete();
+                await sendMessage.channel.send(embed);
+            }
+        }, 30000);
     }
 };
