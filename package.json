@@ -7,7 +7,7 @@
   "scripts": {
     "start": "cd build && node index.js",
     "test": "jest --verbose",
-    "build": "npx tsc"
+    "build": "tsc"
   },
   "jest": {
     "testMatch": [
