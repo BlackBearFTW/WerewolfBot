@@ -20,13 +20,12 @@
   "author": "BlackBearFTW#1331",
   "license": "ISC",
   "dependencies": {
-    "@lambocreeper/mock-discord.js": "^1.0.9",
     "discord.js": "^12.3.1",
-    "fs": "0.0.1-security",
     "mysql2": "^2.1.0"
   },
   "devDependencies": {
     "@types/mysql2": "github:types/mysql2",
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "@lambocreeper/mock-discord.js": "^1.0.9"
   }
 }
