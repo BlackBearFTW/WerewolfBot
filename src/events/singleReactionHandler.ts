@@ -18,7 +18,5 @@ export const event: EventInterface = {
             if (userReaction === reaction) continue;
             await userReaction.users.remove(user.id);
         }
-
-        //await reaction.users.remove(user);
     }
 };

@@ -74,7 +74,14 @@ export const command: CommandInterface = {
                 await sendMessage.channel.send(embed);
             }
 
+            await setTimeout(async() => {
+                await fetchedChannel.permissionOverwrites.get(message.author.id)?.delete();
+            }, 5000);
+
 
         }, 30000);
+
+
+
     }
 };
