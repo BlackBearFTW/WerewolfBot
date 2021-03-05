@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node build/index.js",
     "test": "jest --verbose",
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "jest": {
     "testMatch": [
