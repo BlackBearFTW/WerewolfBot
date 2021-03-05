@@ -1,14 +1,15 @@
-const {Discord, client, link} = require('/index');
-module.exports = {
-    name: 'help',
-    execute: async(message, args) => {
+import {Message, MessageEmbed} from "discord.js";
+import {commands} from "../../index.js";
+import {CommandInterface} from "../../interfaces/CommandInterface";
 
-            const commands = client.commands;
-            const embed = new Discord.MessageEmbed()
+export const command: CommandInterface = {
+    name: 'help',
+    execute: async(message: Message, args: string[]) => {
+
+            const embed = new MessageEmbed()
                 .setColor('#ff861f')
                 .setTitle("You shouldn't ask me for help!")
                 .setFooter('<> = required, () = optional');
-
 
             commands.forEach(command => {
 
@@ -23,7 +24,7 @@ module.exports = {
                 }
             });
 
-            message.channel.send(embed);
+            await message.channel.send(embed);
 
     },
 };

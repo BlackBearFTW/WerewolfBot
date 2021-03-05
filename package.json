@@ -2,10 +2,12 @@
   "name": "werewolfbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "./build/index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest --verbose"
+    "start": "node build/index.js",
+    "test": "jest --verbose",
+    "build": "tsc"
   },
   "jest": {
     "testMatch": [
@@ -18,12 +20,12 @@
   "author": "BlackBearFTW#1331",
   "license": "ISC",
   "dependencies": {
-    "@lambocreeper/mock-discord.js": "^1.0.9",
     "discord.js": "^12.3.1",
-    "fs": "0.0.1-security",
     "mysql2": "^2.1.0"
   },
   "devDependencies": {
-    "jest": "^26.6.3"
+    "@types/mysql2": "github:types/mysql2",
+    "jest": "^26.6.3",
+    "@lambocreeper/mock-discord.js": "^1.0.9"
   }
 }
