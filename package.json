@@ -4,6 +4,9 @@
   "description": "",
   "type": "module",
   "main": "./build/index.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "node build/index.js",
     "test": "jest --verbose",
