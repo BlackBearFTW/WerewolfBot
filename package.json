@@ -8,7 +8,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "node build/index.js",
+    "start": "cd build && node index.js",
     "test": "jest --verbose",
     "build": "npx tsc"
   },
