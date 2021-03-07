@@ -1,6 +1,6 @@
 import {Message, MessageEmbed, ReactionCollector, TextChannel, User} from "discord.js";
 import {CommandInterface} from "../../interfaces/CommandInterface";
-import {client, link} from "../../index.js";
+import {client, connection} from "../../index.js";
 
 export const command: CommandInterface = {
     name: 'start',
@@ -8,7 +8,7 @@ export const command: CommandInterface = {
 
         const guildID = message.guild?.id;
         const categoryID = (<TextChannel>message.channel).parent?.id;
-        const [result]: any[] = await link.execute("SELECT * FROM matches WHERE CATEGORY_ID = ? AND GUILD_ID = ?", [categoryID, guildID]);
+        const [result]: any[] = await connection.execute("SELECT * FROM matches WHERE CATEGORY_ID = ? AND GUILD_ID = ?", [categoryID, guildID]);
 
         if (result.length < 0) return;
 

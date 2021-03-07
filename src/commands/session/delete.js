@@ -25,7 +25,7 @@ module.exports = {
 		});
 		await category.delete();
 
-		await link.execute('DELETE FROM matches WHERE CATEGORY_ID = ?', [category.id]);
+		await connection.execute('DELETE FROM matches WHERE CATEGORY_ID = ?', [category.id]);
 
 	},
 };

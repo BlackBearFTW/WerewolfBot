@@ -1,5 +1,5 @@
 import {Message, MessageEmbed, Channel, CategoryChannel, User, TextChannel} from "discord.js";
-import {client, link} from "../index.js";
+import {client, connection} from "../index.js";
 
 class MatchManager {
     private readonly message: Message;
@@ -78,7 +78,7 @@ class MatchManager {
         }
 
         async function insertMatch(guildID: string, categoryID: string) {
-            let [results]: any[] = await link.execute(`INSERT INTO matches (GUILD_ID, CATEGORY_ID) VALUES (?, ?)`, [guildID, categoryID]);
+            let [results]: any[] = await connection.execute(`INSERT INTO matches (GUILD_ID, CATEGORY_ID) VALUES (?, ?)`, [guildID, categoryID]);
             return results[0].insertId;
         }
 
@@ -92,20 +92,20 @@ class MatchManager {
     }
 
     async getMatchByLeader() {
-        let [results]: any[] = await link.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
+        let [results]: any[] = await connection.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
     }
 
 
     async updateJoinMessage() {
         let updatedDesc = '```css\n';
         let joinCount = 0;
-        let [results]: any[] = await link.execute(`SELECT GUILD_ID, VILLAGE_CHANNEL_ID, JOIN_MESSAGE_ID FROM matches WHERE MATCH_ID = ?`, [matchID]);
+        let [results]: any[] = await connection.execute(`SELECT GUILD_ID, VILLAGE_CHANNEL_ID, JOIN_MESSAGE_ID FROM matches WHERE MATCH_ID = ?`, [matchID]);
         const guild = await this.message.guild;
         const lobbyChannel: TextChannel = await client!.channels.fetch(results[0].VILLAGE_CHANNEL_ID);
         const fetchedMessage = await lobbyChannel.messages.fetch(results[0].JOIN_MESSAGE_ID);
 
 
-        let [leaderResults]: any[] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 1 AND matches_users.MATCH_ID = ?`, [matchID]);
+        let [leaderResults]: any[] = await connection.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 1 AND matches_users.MATCH_ID = ?`, [matchID]);
 
         for (let i = 0; i < leaderResults.length; i++) {
             let joinedUser = await guild?.members.fetch(leaderResults[i].DISCORD_USER_ID);
@@ -113,7 +113,7 @@ class MatchManager {
             joinCount++
         }
 
-        let [userResults]: any[] = await link.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 0 AND matches_users.MATCH_ID = ?`, [matchID]);
+        let [userResults]: any[] = await connection.execute(`SELECT DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.LEADER = 0 AND matches_users.MATCH_ID = ?`, [matchID]);
 
         for (let i = 0; i < userResults.length; i++) {
             let joinedUser = await guild.members.fetch(userResults[i].DISCORD_USER_ID);
@@ -138,20 +138,20 @@ class MatchManager {
     }
 
     async getLeader() {
-        let [results]: any[] = await link.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
+        let [results]: any[] = await connection.execute(`SELECT USER_ID FROM matches_users WHERE MATCH_ID = ? AND LEADER = 1 LIMIT 1`, [this.id]);
 
         return results[0].USER_ID;
     }
 
 
     async getState() {
-        let [results]: any[] = await link.execute(`SELECT STARTED FROM matches WHERE MATCH_ID = ?`, [this.id]);
+        let [results]: any[] = await connection.execute(`SELECT STARTED FROM matches WHERE MATCH_ID = ?`, [this.id]);
 
         return results[0].STARTED !== 0;
     }
 
     async getUsers() {
-        let [results]: any[] = await link.execute(`SELECT USER_ID FROM matches_players WHERE MATCH_ID = ?`, [this.id]);
+        let [results]: any[] = await connection.execute(`SELECT USER_ID FROM matches_players WHERE MATCH_ID = ?`, [this.id]);
         let userList: string[] = [];
 
         results.forEach((result:Object) => {
@@ -162,9 +162,9 @@ class MatchManager {
     }
 
     async addUser(user: User, leader = false) {
-        await link.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [user.id, this.id, leader]);
+        await connection.execute(`INSERT INTO matches_users (USER_ID, MATCH_ID, LEADER) VALUES (?, ?, ?)`, [user.id, this.id, leader]);
 
-        let [results]: any[] = await link.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
+        let [results]: any[] = await connection.execute(`SELECT CATEGORY_ID, VILLAGE_CHANNEL_ID FROM matches WHERE MATCH_ID = ?`, [this.id]);
 
         await client.channels.fetch(results[0].CATEGORY_ID).then(matchCategory => {
             matchCategory.createOverwrite(message.author, {
@@ -180,14 +180,14 @@ class MatchManager {
     }
 
     async removeUser(userID: number):Promise<void> {
-        const [results]: any[] = await link.execute(`SELECT * FROM games WHERE MATCH_ID = ?`, [this.id]);
+        const [results]: any[] = await connection.execute(`SELECT * FROM games WHERE MATCH_ID = ?`, [this.id]);
 
         if (!results.length) {
             await this.message.reply("Match not found. ");
             return;
         }
 
-        await link.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [userID, this.id]);
+        await connection.execute(`DELETE FROM matches_users WHERE USER_ID = ? AND MATCH_ID = ?`, [userID, this.id]);
 
         let matchCategory = await client.channels.fetch(results[0].CATEGORY_ID);
         matchCategory.permissionOverwrites.fetch(userID)?.delete();

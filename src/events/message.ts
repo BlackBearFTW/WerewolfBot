@@ -1,7 +1,7 @@
 import {Message} from "discord.js";
 import {client} from "../index.js";
 import {EventInterface} from "../interfaces/EventInterface";
-import CommandsHandler from "../handlers/CommandsHandler";
+import CommandsHandler from "../handlers/CommandsHandler.js";
 
 export const event: EventInterface = {
     name: 'message',

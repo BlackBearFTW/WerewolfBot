@@ -1,9 +1,9 @@
-import {link} from "../index";
+import {connection} from "../index";
 
 class Role {
 
 	static async getRoles() {
-		const [results]: any[] = await link.execute('SELECT NAME, DESCRIPTION, EMOTE, POSITION FROM roles');
+		const [results]: any[] = await connection.execute('SELECT NAME, DESCRIPTION, EMOTE, POSITION FROM roles');
 		return results;
 	}
 
@@ -67,14 +67,14 @@ class Role {
 			else {
 				roleID = 2;
 			}
-			await link.execute('UPDATE matches_users JOIN users ON matches_users.USER_ID = users.USER_ID SET matches_users.ROLE_ID = ? WHERE users.DISCORD_USER_ID = ?', [roleID, user]);
+			await connection.execute('UPDATE matches_users JOIN users ON matches_users.USER_ID = users.USER_ID SET matches_users.ROLE_ID = ? WHERE users.DISCORD_USER_ID = ?', [roleID, user]);
 		}
 
 	}
 
 
 	static async getWerewolves(matchID) {
-		const [results] = await link.execute('SELECT users.DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.ROLE_ID = 5 AND matches_users.MATCH_ID = ?', [matchID]);
+		const [results] = await connection.execute('SELECT users.DISCORD_USER_ID FROM users JOIN matches_users ON users.USER_ID = matches_users.USER_ID WHERE matches_users.ROLE_ID = 5 AND matches_users.MATCH_ID = ?', [matchID]);
 		const werewolfList = [];
 
 		if (results.length === 0) {

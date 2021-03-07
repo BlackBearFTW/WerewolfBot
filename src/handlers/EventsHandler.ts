@@ -1,5 +1,5 @@
 import fs from "fs";
-import {client} from "../index";
+import {client} from "../index.js";
 
 class EventsHandler {
     constructor(filePath: string) {
