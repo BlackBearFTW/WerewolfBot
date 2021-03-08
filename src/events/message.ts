@@ -8,8 +8,9 @@ export const event: EventInterface = {
     once: false,
     disabled: false,
     async execute(message: Message) {
-        const commandHandler = new CommandsHandler("!w", "./commands", true);
-        const data = commandHandler.formatMessage(message)!;
-        await commandHandler.executeCommand(data.command, message, data.args);
+        const commandHandler = CommandsHandler.getInstance();
+        commandHandler.registerFiles("!w", "./commands");
+        const data = commandHandler.parseCommand(message)!;
+        await commandHandler.executeCommand(message, data.command, data.args);
     }
 };
