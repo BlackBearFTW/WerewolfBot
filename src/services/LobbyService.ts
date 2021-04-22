@@ -1,9 +1,10 @@
 import {CategoryChannel, Message, MessageEmbed, TextChannel} from "discord.js";
-import {client, connection} from "../index.js";
+import {client} from "../index.js";
 import DiscordUtil from "../utils/DiscordUtil.js";
 import LobbyRepository from "../repositories/LobbyRepository.js";
 import LobbyModel from "../models/LobbyModel.js";
 import UserRepository from "../repositories/UserRepository.js";
+import UserModel from "../models/UserModel.js";
 
 class LobbyService {
     private static instance: LobbyService;
@@ -61,6 +62,10 @@ class LobbyService {
         embed.setDescription(body);
 
         return embed;
+    }
+
+    public async addUser(user: UserModel) {
+        throw "Method not implemented";
     }
 
 
