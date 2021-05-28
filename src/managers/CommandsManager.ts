@@ -1,25 +1,26 @@
 import fs from "fs";
 import {Collection, Message} from "discord.js";
-import {CommandInterface} from "../interfaces/CommandInterface";
+import BaseCommand from "../abstracts/BaseCommand";
 
-class CommandsHandler {
-	private static instance: CommandsHandler;
-	private commands = new Collection<string, CommandInterface>();
+class CommandsManager {
+	private static instance: CommandsManager;
+	private commands = new Collection<string, BaseCommand>();
 	private prefix: string = "";
 
 	// eslint-disable-next-line
 	private constructor() {
 	}
 
-	public static getInstance(): CommandsHandler {
-		if (!CommandsHandler.instance) {
-			CommandsHandler.instance = new CommandsHandler();
+	public static getInstance(): CommandsManager {
+		if (!CommandsManager.instance) {
+			CommandsManager.instance = new CommandsManager();
 		}
 
-		return CommandsHandler.instance;
+		return CommandsManager.instance;
 	}
 
-	public registerFiles(prefix: string, filePath: string) {
+	public loadCommandFiles(prefix: string, filePath: string) {
+		if (this.prefix && this.commands.size > 0) return;
 		this.prefix = prefix;
 
 		// Retrieves all folders inside the given folder and then the files inside those folders get imported
@@ -30,22 +31,22 @@ class CommandsHandler {
 
 			for (const file of commandFiles) {
 				(async () => {
-					const {command} = await import(`.${filePath}/${folder}/${file}`);
+					const {Command} = await import(`.${filePath}/${folder}/${file}`);
 
-					this.commands.set(command.name, command);
+					this.commands.set(new Command().getName().toLowerCase(), new Command());
 				})();
 			}
 		}
 	}
 
-	public async executeCommand(message: Message, command: string, args: string[]) {
+	public executeCommand(message: Message, command: string, args: string[]) {
 		if (!this.commands.has(command)) return;
 
 		this.commands.get(command)?.execute(message, args);
 		message?.delete();
 	}
 
-	public parseCommand(message: Message) {
+	public parseMessage(message: Message) {
 		if (!message.content.startsWith(this.prefix) || message.author.bot || message.channel.type !== "text") return;
 
 		const mContent: string = message.content;
@@ -62,6 +63,11 @@ class CommandsHandler {
 			"args": args
 		};
 	}
+
+	public commandExists(command: string) {
+		if (command === undefined) return false;
+		return this.commands.has(command);
+	}
 }
 
-export default CommandsHandler;
+export default CommandsManager;

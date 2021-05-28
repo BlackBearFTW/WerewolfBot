@@ -1,9 +1,9 @@
 import {Client} from "discord.js";
 import { config as env } from "dotenv";
-import EventsHandler from "./handlers/EventsHandler";
+import EventHandlersManager from "./managers/EventHandlersManager";
 
 export const client = new Client();
-new EventsHandler("./events");
+new EventHandlersManager("./events");
 
 if (process.env.NODE_ENV !== "production") env({path: "../.env"});
 

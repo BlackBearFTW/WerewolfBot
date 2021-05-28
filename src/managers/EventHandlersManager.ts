@@ -1,7 +1,7 @@
 import fs from "fs";
 import {client} from "../index";
 
-class EventsHandler {
+class EventHandlersManager {
 	private readonly filePath: string
 
 	constructor(filePath: string) {
@@ -23,4 +23,4 @@ class EventsHandler {
 	}
 }
 
-export default EventsHandler;
+export default EventHandlersManager;

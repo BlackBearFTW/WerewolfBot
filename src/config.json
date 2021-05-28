@@ -1,0 +1,9 @@
+{
+  "prefix": "!w",
+  "status": {
+    "type": "PLAYING",
+    "message": "with your fears"
+  },
+  "commandsFolder": "commands",
+  "eventHandlersFolder": "events"
+}

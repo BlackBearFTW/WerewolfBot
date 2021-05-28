@@ -1,7 +1,6 @@
 import {Message} from "discord.js";
-
 import {EventInterface} from "../interfaces/EventInterface";
-import CommandsHandler from "../handlers/CommandsHandler";
+import CommandsManager from "../managers/CommandsManager";
 
 export const event: EventInterface = {
 	name: "message",
@@ -9,9 +8,9 @@ export const event: EventInterface = {
 	disabled: false,
 	async execute(message: Message) {
 		try {
-			const commandHandler = CommandsHandler.getInstance();
+			const commandHandler = CommandsManager.getInstance();
 
-			commandHandler.registerFiles("?w", "./commands");
+			commandHandler.loadCommandFiles("?w", "./commands");
 			const data = commandHandler.parseMessage(message)!;
 
 			if (!data || !commandHandler.commandExists(data.command)) return;

@@ -1,5 +1,7 @@
 import {client} from "../index";
+import {status} from "../config.json";
 import {EventInterface} from "../interfaces/EventInterface";
+import {ActivityType} from "discord.js";
 
 export const event: EventInterface = {
 	name: "ready",
@@ -10,8 +12,8 @@ export const event: EventInterface = {
 
 		if (client.user === null) return;
 
-		client.user?.setActivity("with your fears", {
-			type: "PLAYING"
+		client.user?.setActivity(status.message, {
+			type: status.type as ActivityType
 		});
 	}
 };
