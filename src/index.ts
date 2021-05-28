@@ -1,9 +1,7 @@
+import {Client} from "discord.js";
+import EventsHandler from "./handlers/EventsHandler";
 
+export const client = new Client();
+new EventsHandler("./events");
 
-console.log(x)
-
-const x = 5;
-
-     console.log("Hello World")
-
-            console.log("1+1")
+client?.login(process.env.BOT_TOKEN);
