@@ -10,7 +10,7 @@ export const event: EventInterface = {
 	async execute(message: Message) {
 		const commandHandler = CommandsHandler.getInstance();
 
-		commandHandler.registerFiles("!w", "./commands");
+		commandHandler.registerFiles("?w", "./commands");
 		const data = commandHandler.parseCommand(message)!;
 
 		await commandHandler.executeCommand(message, data.command, data.args);
