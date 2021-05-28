@@ -1,9 +1,17 @@
 import {Message} from "discord.js";
-import {CommandInterface} from "../../interfaces/CommandInterface";
+import BaseCommand from "../../abstracts/BaseCommand";
 
-export const command: CommandInterface = {
-	name: "hello",
+class HelloCommand extends BaseCommand {
+	constructor() {
+		super(
+			"hello",
+			"This command greets the user"
+		);
+	}
+
 	async execute(message: Message, args: string[]) {
 		await message.channel.send(`Hello <@${message.author.id}>!`);
 	}
-};
+}
+
+export default HelloCommand;

@@ -12,7 +12,9 @@ export const event: EventInterface = {
 			const commandHandler = CommandsHandler.getInstance();
 
 			commandHandler.registerFiles("?w", "./commands");
-			const data = commandHandler.parseCommand(message)!;
+			const data = commandHandler.parseMessage(message)!;
+
+			if (!data || !commandHandler.commandExists(data.command)) return;
 
 			await commandHandler.executeCommand(message, data.command, data.args);
 		} catch (error) {
