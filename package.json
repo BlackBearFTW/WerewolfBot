@@ -1,24 +1,14 @@
 {
-  "name": "werewolfbot",
+  "name": "WerewolfBot",
   "version": "1.0.0",
   "description": "",
   "type": "module",
   "main": "./build/index.js",
-  "engines": {
-    "node": "14.x"
-  },
+  "license": "MIT",
   "scripts": {
     "start": "cd build && node index.js",
     "test": "jest --verbose",
     "build": "npx tsc"
-  },
-  "jest": {
-    "testMatch": [
-      "**/tests/**/*.[jt]s?(x)",
-      "**/?(*.)+(spec|test).[jt]s?(x)"
-    ],
-    "resetModules": true,
-    "testEnvironment": "node"
   },
   "author": "BlackBearFTW#1331",
   "license": "ISC",
@@ -27,8 +17,7 @@
     "mysql2": "^2.1.0"
   },
   "devDependencies": {
-    "@types/mysql2": "github:types/mysql2",
-    "jest": "^26.6.3",
-    "@lambocreeper/mock-discord.js": "^1.0.9"
+    "@lambocreeper/mock-discord.js": "^1.0.9",
+    "@types/mysql2": "github:types/mysql2"
   }
 }
