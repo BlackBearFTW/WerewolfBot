@@ -1,7 +1,7 @@
 import fs from "fs";
 import {Collection, Message} from "discord.js";
 import {CommandInterface} from "../interfaces/CommandInterface";
-import Global from "../classes/Global.js";
+import Global from "../classes/Global";
 
 class CommandsHandler {
     private static instance: CommandsHandler;

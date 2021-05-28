@@ -1,4 +1,4 @@
-import mysqlPromise from "mysql2/promise.js";
+import mysqlPromise from "mysql2/promise";
 
 abstract class BaseRepository {
     protected connection: mysqlPromise.Pool;

@@ -1,5 +1,5 @@
-import BaseRepository from "../abstracts/BaseRepository.js";
-import LobbyModel from "../models/LobbyModel.js";
+import BaseRepository from "../abstracts/BaseRepository";
+import LobbyModel from "../models/LobbyModel";
 
 class LobbyRepository extends BaseRepository {
     private static instance: LobbyRepository;

@@ -1,7 +1,7 @@
 import {Message} from "discord.js";
 import {CommandInterface} from "../../interfaces/CommandInterface";
-import {client} from "../../index.js";
-import LobbyService from "../../services/LobbyService.js";
+import {client} from "../../index";
+import LobbyService from "../../services/LobbyService";
 
 export const command: CommandInterface = {
     name: 'create',

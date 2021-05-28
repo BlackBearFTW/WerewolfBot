@@ -1,5 +1,5 @@
 import {Client} from 'discord.js';
-import EventsHandler from "./handlers/EventsHandler.js";
+import EventsHandler from "./handlers/EventsHandler";
 
 export const client = new Client();
 

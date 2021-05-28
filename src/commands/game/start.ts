@@ -1,6 +1,6 @@
 import {Message, MessageEmbed, ReactionCollector, TextChannel, User} from "discord.js";
 import {CommandInterface} from "../../interfaces/CommandInterface";
-import {client, connection} from "../../index.js";
+import {client, connection} from "../../index";
 
 export const command: CommandInterface = {
     name: 'start',

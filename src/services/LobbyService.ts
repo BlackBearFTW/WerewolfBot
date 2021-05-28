@@ -1,10 +1,10 @@
 import {CategoryChannel, Message, MessageEmbed, TextChannel} from "discord.js";
-import {client} from "../index.js";
-import DiscordUtil from "../utils/DiscordUtil.js";
-import LobbyRepository from "../repositories/LobbyRepository.js";
-import LobbyModel from "../models/LobbyModel.js";
-import UserRepository from "../repositories/UserRepository.js";
-import UserModel from "../models/UserModel.js";
+import {client} from "../index";
+import DiscordUtil from "../utils/DiscordUtil";
+import LobbyRepository from "../repositories/LobbyRepository";
+import LobbyModel from "../models/LobbyModel";
+import UserRepository from "../repositories/UserRepository";
+import UserModel from "../models/UserModel";
 
 class LobbyService {
     private static instance: LobbyService;

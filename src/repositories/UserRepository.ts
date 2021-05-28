@@ -1,5 +1,5 @@
-import BaseRepository from "../abstracts/BaseRepository.js";
-import UserModel from "../models/UserModel.js";
+import BaseRepository from "../abstracts/BaseRepository";
+import UserModel from "../models/UserModel";
 
 class UserRepository extends BaseRepository {
     private static instance: UserRepository;

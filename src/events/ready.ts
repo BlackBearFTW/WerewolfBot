@@ -1,5 +1,5 @@
 import {Message} from "discord.js";
-import {client} from "../index.js";
+import {client} from "../index";
 import {EventInterface} from "../interfaces/EventInterface";
 
 export const event: EventInterface = {
