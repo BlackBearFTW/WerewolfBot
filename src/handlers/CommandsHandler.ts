@@ -1,7 +1,6 @@
 import fs from "fs";
 import {Collection, Message} from "discord.js";
 import {CommandInterface} from "../interfaces/CommandInterface";
-import Global from "../classes/Global";
 
 class CommandsHandler {
 	private static instance: CommandsHandler;
@@ -40,7 +39,7 @@ class CommandsHandler {
 	}
 
 	public async executeCommand(message: Message, command: string, args: string[]) {
-		if (!this.commands.has(command)) await Global.throwError(message, "Unknown Command");
+		if (!this.commands.has(command)) return;
 
 		this.commands.get(command)?.execute(message, args);
 		message?.delete();
