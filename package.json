@@ -15,6 +15,8 @@
   },
   "devDependencies": {
     "@lambocreeper/mock-discord.js": "^1.0.9",
-    "@types/mysql2": "github:types/mysql2"
+    "@types/mysql2": "github:types/mysql2",
+    "eslint": "^7.27.0",
+    "eslint-config-codesupport": "^1.0.2"
   }
 }
