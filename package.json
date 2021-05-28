@@ -1,17 +1,14 @@
 {
   "name": "WerewolfBot",
+  "description": "A discord bot written in discord.js which allows you to play The Werewolves of Miller's Hollows",
+  "author": "BlackBearFTW#1331",
   "version": "1.0.0",
-  "description": "",
-  "type": "module",
   "main": "./build/index.js",
   "license": "MIT",
   "scripts": {
     "start": "cd build && node index.js",
-    "test": "jest --verbose",
     "build": "npx tsc"
   },
-  "author": "BlackBearFTW#1331",
-  "license": "ISC",
   "dependencies": {
     "discord.js": "^12.3.1",
     "mysql2": "^2.1.0"
