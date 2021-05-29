@@ -3,17 +3,15 @@ import {EventInterface} from "../interfaces/EventInterface";
 import CommandsManager from "../managers/CommandsManager";
 
 export const event: EventInterface = {
-	name: "message",
+	event: "message",
 	once: false,
 	disabled: false,
 	async execute(message: Message) {
 		try {
 			const commandHandler = CommandsManager.getInstance();
-
-			commandHandler.loadCommandFiles("?w", "./commands");
 			const data = commandHandler.parseMessage(message)!;
 
-			if (!data || !commandHandler.commandExists(data.command)) return;
+			if (!data) return;
 
 			await commandHandler.executeCommand(message, data.command, data.args);
 		} catch (error) {

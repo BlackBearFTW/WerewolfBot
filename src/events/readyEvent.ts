@@ -4,7 +4,7 @@ import {EventInterface} from "../interfaces/EventInterface";
 import {ActivityType} from "discord.js";
 
 export const event: EventInterface = {
-	name: "ready",
+	event: "ready",
 	once: true,
 	disabled: false,
 	async execute() {

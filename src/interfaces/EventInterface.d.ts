@@ -1,7 +1,7 @@
 import {ClientEvents} from "discord.js";
 
 interface EventInterface {
-    name: keyof ClientEvents;
+    event: keyof ClientEvents;
     once: boolean;
     disabled: boolean;
     // @ts-ignore

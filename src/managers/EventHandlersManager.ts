@@ -17,7 +17,7 @@ class EventHandlersManager {
 				const {event} = await import(`../${this.filePath}/${file}`);
 
 				if (event.disabled) return;
-				client[event.once ? "once" : "on"](event.name, (...args) => event.execute(...args));
+				client[event.once ? "once" : "on"](event.event, (...args) => event.execute(...args));
 			})();
 		}
 	}
