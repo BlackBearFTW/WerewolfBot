@@ -28,7 +28,7 @@ class CommandsManager {
 
 			for (const file of commandFiles) {
 				(async () => {
-					const {Command} = await import(`./${commandsFolder}/${folder}/${file}`);
+					const {default: Command} = await import(`../${commandsFolder}/${folder}/${file}`);
 
 					this.commands.set(new Command().getName().toLowerCase(), new Command());
 				})();
