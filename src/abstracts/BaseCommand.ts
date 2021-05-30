@@ -1,14 +1,12 @@
 import {Message} from "discord.js";
 
 abstract class BaseCommand {
-	name: string;
-	description: string;
-	options?: Object;
+	private readonly name: string;
+	private readonly description: string;
 
-	protected constructor(name: string, description: string, options?: Object) {
+	protected constructor(name: string, description: string) {
 		this.name = name;
 		this.description = description;
-		this.options = options;
 	}
 
 	// @ts-ignore

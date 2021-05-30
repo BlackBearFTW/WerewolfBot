@@ -1,7 +1,7 @@
 import fs from "fs";
 import {Collection, Message} from "discord.js";
 import BaseCommand from "../abstracts/BaseCommand";
-import {prefix, commandsFolder} from "../config.json";
+import {commandsFolder, prefix} from "../config.json";
 
 class CommandsManager {
 	private static instance: CommandsManager;
@@ -11,7 +11,7 @@ class CommandsManager {
 	private constructor() {
 	}
 
-	public static getInstance(): CommandsManager {
+	static getInstance(): CommandsManager {
 		if (!CommandsManager.instance) {
 			CommandsManager.instance = new CommandsManager();
 		}
@@ -19,32 +19,16 @@ class CommandsManager {
 		return CommandsManager.instance;
 	}
 
-	public loadCommandFiles() {
-		// Retrieves all folders inside the given folder and then the files inside those folders get imported
-		const commandFolderContent = fs.readdirSync(`./${commandsFolder}`, {withFileTypes: true}).filter(folder => folder.isDirectory()).map(folder => folder.name);
+	async executeCommand(message: Message, command: string, args: string[]) {
+		if (this.commands.size === 0) await this.loadCommandFiles();
 
-		for (const folder of commandFolderContent) {
-			const commandFiles = fs.readdirSync(`./${commandsFolder}/${folder}`).filter((file: string) => file.endsWith(".js"));
-
-			for (const file of commandFiles) {
-				(async () => {
-					const {default: Command} = await import(`../${commandsFolder}/${folder}/${file}`);
-
-					this.commands.set(new Command().getName().toLowerCase(), new Command());
-				})();
-			}
-		}
-	}
-
-	public executeCommand(message: Message, command: string, args: string[]) {
-		if (this.commands.size === 0) this.loadCommandFiles();
 		if (!this.commands.has(command)) return;
 
-		this.commands.get(command)?.execute(message, args);
+		await this.commands.get(command)?.execute(message, args);
 		message?.delete();
 	}
 
-	public parseMessage(message: Message) {
+	parseMessage(message: Message) {
 		if (!message.content.startsWith(prefix) || message.author.bot || !message.guild) return;
 
 		const content: string = message.content.substring(prefix.length);
@@ -58,6 +42,21 @@ class CommandsManager {
 			"command": args.shift()!,
 			"args": args
 		};
+	}
+
+	private async loadCommandFiles() {
+		// Retrieves all folders inside the given folder and then the files inside those folders get imported
+		const commandFolderContent = fs.readdirSync(`./${commandsFolder}`, {withFileTypes: true}).filter(folder => folder.isDirectory()).map(folder => folder.name);
+
+		for (const folder of commandFolderContent) {
+			const commandFiles = fs.readdirSync(`./${commandsFolder}/${folder}`).filter((file: string) => file.endsWith(".js"));
+
+			for (const file of commandFiles) {
+				const {default: Command} = await import(`../${commandsFolder}/${folder}/${file}`);
+
+				this.commands.set(new Command().getName().toLowerCase(), new Command());
+			}
+		}
 	}
 }
 
