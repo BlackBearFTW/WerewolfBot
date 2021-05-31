@@ -76,20 +76,33 @@ class LobbyService {
 	}
 
 	async addUser(user: User, inviteCode: string, lobbyLeader = false) {
-		const lobbyRepository = new LobbyRepository();
-		const lobbyData = await lobbyRepository.getByInviteCode(inviteCode);
+		const category = await this.getCategoryByInviteCode(inviteCode) as CategoryChannel;
 
-		const category = await client.channels.fetch(lobbyData.category!);
-
-		// eslint-disable-next-line no-extra-parens
-		await (category as CategoryChannel).createOverwrite(user, {
+		await category.createOverwrite(user, {
 			VIEW_CHANNEL: true
 		});
 
 		// Todo: Check if user exists and if not create in database, otherwise insert as part of lobby
 	}
 
-	async leaveU
+	async removeUser(user: User, inviteCode: string) {
+		const category = await this.getCategoryByInviteCode(inviteCode) as CategoryChannel;
+
+		const permission = category.permissionOverwrites.get(user.id);
+
+		await permission!.delete();
+
+		// Todo: Remove user from lobby in database
+	}
+
+	private async getCategoryByInviteCode(inviteCode: string) {
+		const lobbyRepository = new LobbyRepository();
+		const lobbyData = await lobbyRepository.getByInviteCode(inviteCode);
+
+		const category = await client.channels.fetch(lobbyData.category!);
+
+		return category;
+	}
 }
 
 export default LobbyService;
