@@ -11,9 +11,9 @@ class CommandsManager {
 	async executeCommand(message: Message, command: string, args: string[]) {
 		if (this.commands.size === 0) await this.loadCommandFiles();
 
-		if (!this.commands.has(command)) return;
+		if (!this.commands.has(command.toLowerCase())) return;
 
-		await this.commands.get(command)?.execute(message, args);
+		await this.commands.get(command.toLowerCase())?.execute(message, args);
 		message?.delete();
 	}
 

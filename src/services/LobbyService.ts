@@ -54,7 +54,8 @@ class LobbyService {
 	private async sendInitialMessages(channel: TextChannel, code: string) {
 		const embed = new MessageEmbed();
 
-		embed.setTitle(`Your Invite Code:\n${code}`);
+		embed.setTitle("Invite Code");
+		embed.setDescription(`Use Code \`${code}\` To Join This Lobby`);
 		embed.setColor("#206694");
 
 		await channel.send(embed);
