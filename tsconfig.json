@@ -10,6 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true
-  },
+    "skipLibCheck": true,
+    "experimentalDecorators": true
+  }
 }

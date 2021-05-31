@@ -9,7 +9,7 @@ class MessageCommandHandler extends BaseEventHandler {
 
 	async handle(message: Message) {
 		try {
-			const commandHandler = CommandsManager.getInstance();
+			const commandHandler = new CommandsManager();
 			const data = commandHandler.parseMessage(message);
 
 			if (!data) return;

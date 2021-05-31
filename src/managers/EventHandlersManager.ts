@@ -13,12 +13,12 @@ class EventHandlersManager {
 		const eventFiles = fs.readdirSync(this.filePath).filter((file: string) => file.endsWith(".js"));
 
 		for (const file of eventFiles) {
-			const {default: Event} = await import(`../${this.filePath}/${file}`);
+			const {default: EventHandler} = await import(`../${this.filePath}/${file}`);
 
-			const event = new Event();
+			const eventHandler = new EventHandler();
 
-			if (event.isDisabled()) return;
-			client[event.onlyOnce() ? "once" : "on"](event.event, (...args) => event.execute(...args));
+			if (eventHandler.isDisabled()) return;
+			client[eventHandler.onlyOnce() ? "once" : "on"](eventHandler.event, (...args) => eventHandler.handle(...args));
 		}
 	}
 }

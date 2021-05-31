@@ -2,22 +2,11 @@ import fs from "fs";
 import {Collection, Message} from "discord.js";
 import BaseCommand from "../abstracts/BaseCommand";
 import {commandsFolder, prefix} from "../config.json";
+import Singleton from "../decorators/Singleton";
 
+@Singleton
 class CommandsManager {
-	private static instance: CommandsManager;
 	private commands = new Collection<string, BaseCommand>();
-
-	// eslint-disable-next-line
-	private constructor() {
-	}
-
-	static getInstance(): CommandsManager {
-		if (!CommandsManager.instance) {
-			CommandsManager.instance = new CommandsManager();
-		}
-
-		return CommandsManager.instance;
-	}
 
 	async executeCommand(message: Message, command: string, args: string[]) {
 		if (this.commands.size === 0) await this.loadCommandFiles();
