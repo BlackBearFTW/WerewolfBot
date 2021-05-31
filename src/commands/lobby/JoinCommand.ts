@@ -14,7 +14,7 @@ class CreateCommand extends BaseCommand {
 		try {
 			const lobbyService = new LobbyService();
 
-			lobbyService.addUser(message.author, args[0]);
+			await lobbyService.addUser(message.author, args[0]);
 		} catch (error) {
 			console.log(error);
 		}

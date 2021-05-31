@@ -2,6 +2,9 @@ import Singleton from "../decorators/Singleton";
 import {CategoryChannel, Message, MessageEmbed, TextChannel, User} from "discord.js";
 import {v4 as uuid} from "uuid";
 import { neutralColor } from "../config.json";
+import LobbyRepository from "../repositories/LobbyRepository";
+import {client} from "../index";
+import LobbyData from "../data/LobbyData";
 
 @Singleton
 class LobbyService {
@@ -11,6 +14,16 @@ class LobbyService {
 		const inviteCode = uuid().substr(-6).toUpperCase();
 
 		await this.sendInitialMessages(informationChannel!, inviteCode);
+
+		const lobbyData = new LobbyData();
+		const lobbyRepository = new LobbyRepository();
+
+		lobbyData.invite_code = inviteCode;
+		lobbyData.guild = message.guild!.id;
+		lobbyData.category = category!.id;
+
+		await lobbyRepository.create(lobbyData);
+
 		return inviteCode;
 	}
 
@@ -62,13 +75,21 @@ class LobbyService {
 		await channel.send(embed);
 	}
 
-	addUser(user: User, inviteCode: string, lobbyLeader = false) {
-		// Const LobbyDTO = call repository
+	async addUser(user: User, inviteCode: string, lobbyLeader = false) {
+		const lobbyRepository = new LobbyRepository();
+		const lobbyData = await lobbyRepository.getByInviteCode(inviteCode);
 
-		category.createOverwrite(user, {
+		const category = await client.channels.fetch(lobbyData.category!);
+
+		// eslint-disable-next-line no-extra-parens
+		await (category as CategoryChannel).createOverwrite(user, {
 			VIEW_CHANNEL: true
 		});
+
+		// Todo: Check if user exists and if not create in database, otherwise insert as part of lobby
 	}
+
+	async leaveU
 }
 
 export default LobbyService;
