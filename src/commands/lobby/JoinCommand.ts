@@ -5,17 +5,16 @@ import LobbyService from "../../services/LobbyService";
 class CreateCommand extends BaseCommand {
 	constructor() {
 		super(
-			"create",
-			"Creates a new lobby category"
+			"join",
+			"Joins an existing lobby category"
 		);
 	}
 
 	async execute(message: Message, args: string[]) {
 		try {
 			const lobbyService = new LobbyService();
-			const inviteCode = await lobbyService.setupLobby(message);
 
-			lobbyService.addUser(message.author, inviteCode, true);
+			lobbyService.addUser(message.author, args[0]);
 		} catch (error) {
 			console.log(error);
 		}

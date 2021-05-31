@@ -1,6 +1,7 @@
 import Singleton from "../decorators/Singleton";
 import {CategoryChannel, Message, MessageEmbed, TextChannel, User} from "discord.js";
 import {v4 as uuid} from "uuid";
+import { neutralColor } from "../config.json";
 
 @Singleton
 class LobbyService {
@@ -10,7 +11,7 @@ class LobbyService {
 		const inviteCode = uuid().substr(-6).toUpperCase();
 
 		await this.sendInitialMessages(informationChannel!, inviteCode);
-		return category!;
+		return inviteCode;
 	}
 
 	private async createCategory(message: Message) {
@@ -56,12 +57,14 @@ class LobbyService {
 
 		embed.setTitle("Invite Code");
 		embed.setDescription(`Use Code \`${code}\` To Join This Lobby`);
-		embed.setColor("#206694");
+		embed.setColor(neutralColor);
 
 		await channel.send(embed);
 	}
 
-	addUser(user: User, category: CategoryChannel, lobbyLeader = false) {
+	addUser(user: User, inviteCode: string, lobbyLeader = false) {
+		// Const LobbyDTO = call repository
+
 		category.createOverwrite(user, {
 			VIEW_CHANNEL: true
 		});
