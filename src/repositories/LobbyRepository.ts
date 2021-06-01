@@ -12,6 +12,8 @@ class LobbyRepository extends BaseRepository {
 	async getByInviteCode(code: string) {
 		const [results]: any[] = await this.connection.execute("SELECT * FROM lobbies WHERE invite_code = ? LIMIT 1", [code]);
 
+		if (results.length === 0) return null;
+
 		const lobbyData = new LobbyData();
 
 		lobbyData.id = results[0].id;

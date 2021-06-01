@@ -19,6 +19,8 @@ class CreateCommand extends BaseCommand {
 
 			if (!args[0]) return;
 
+			// Todo: Add check to see if invite code is legit
+
 			await lobbyService.addUser(message.author, args[0]);
 		} catch (error) {
 			console.log(error);

@@ -5,6 +5,8 @@ import { neutralColor } from "../config.json";
 import LobbyRepository from "../repositories/LobbyRepository";
 import {client} from "../index";
 import LobbyData from "../data/LobbyData";
+import UserRepository from "../repositories/UserRepository";
+import UserData from "../data/UserData";
 
 @Singleton
 class LobbyService {
@@ -40,14 +42,10 @@ class LobbyService {
 	private async createChannels(message: Message, category: CategoryChannel) {
 		const informationChannel = await message.guild?.channels.create("📖｜information", {
 			type: "text",
-			parent: category.id,
-			permissionOverwrites: [{
-				id: message.guild.roles.everyone.id,
-				deny: ["SEND_MESSAGES"]
-			}]
+			parent: category.id
 		});
 
-		await message.guild?.channels.create("🎤｜lobby", {
+		await message.guild?.channels.create("🔑｜lobby", {
 			type: "text",
 			parent: category.id
 		});
@@ -66,6 +64,10 @@ class LobbyService {
 			parent: category.id
 		});
 
+		await informationChannel?.updateOverwrite(message.guild?.roles.everyone!, {
+			SEND_MESSAGES: false
+		});
+
 		return informationChannel;
 	}
 
@@ -80,11 +82,22 @@ class LobbyService {
 	}
 
 	async addUser(user: User, inviteCode: string, lobbyLeader = false) {
+		const userRepository = new UserRepository();
 		const category = await this.getCategoryByInviteCode(inviteCode) as CategoryChannel;
 
-		await category.createOverwrite(user, {
+		await category.updateOverwrite(user, {
 			VIEW_CHANNEL: true
 		});
+
+		const userData = await userRepository.getById(user.id);
+
+		if (userData === null) {
+			const newUser = new UserData();
+
+			newUser.id = user.id;
+
+			await userRepository.create(newUser);
+		}
 
 		// Todo: Check if user exists and if not create in database, otherwise insert as part of lobby
 	}
@@ -103,7 +116,7 @@ class LobbyService {
 		const lobbyRepository = new LobbyRepository();
 		const lobbyData = await lobbyRepository.getByInviteCode(inviteCode);
 
-		const category = await client.channels.fetch(lobbyData.category!);
+		const category = await client.channels.fetch(lobbyData?.category!);
 
 		return category;
 	}

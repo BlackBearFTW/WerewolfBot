@@ -8,7 +8,8 @@ class LeaveCommand extends BaseCommand {
 			"leave",
 			"Leaves an existing lobby category",
 			{
-				selfDestruct: true
+				selfDestruct: true,
+				onlyInLobby: true
 			}
 		);
 	}
