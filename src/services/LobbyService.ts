@@ -40,7 +40,11 @@ class LobbyService {
 	private async createChannels(message: Message, category: CategoryChannel) {
 		const informationChannel = await message.guild?.channels.create("📖｜information", {
 			type: "text",
-			parent: category.id
+			parent: category.id,
+			permissionOverwrites: [{
+				id: message.guild.roles.everyone.id,
+				deny: ["SEND_MESSAGES"]
+			}]
 		});
 
 		await message.guild?.channels.create("🎤｜lobby", {
