@@ -6,7 +6,10 @@ class LeaveCommand extends BaseCommand {
 	constructor() {
 		super(
 			"leave",
-			"Leaves an existing lobby category"
+			"Leaves an existing lobby category",
+			{
+				selfDestruct: true
+			}
 		);
 	}
 

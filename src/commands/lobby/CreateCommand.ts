@@ -6,7 +6,10 @@ class CreateCommand extends BaseCommand {
 	constructor() {
 		super(
 			"create",
-			"Creates a new lobby category"
+			"Creates a new lobby category",
+			{
+				selfDestruct: true
+			}
 		);
 	}
 
@@ -14,8 +17,6 @@ class CreateCommand extends BaseCommand {
 		try {
 			const lobbyService = new LobbyService();
 			const inviteCode = await lobbyService.setupLobby(message);
-
-			if (!args[0]) return;
 
 			await lobbyService.addUser(message.author, inviteCode, true);
 		} catch (error) {

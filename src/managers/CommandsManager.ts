@@ -13,8 +13,13 @@ class CommandsManager {
 
 		if (!this.commands.has(command.toLowerCase())) return;
 
-		await this.commands.get(command.toLowerCase())?.execute(message, args);
-		message?.delete();
+		const returnedCommand = await this.commands.get(command.toLowerCase());
+
+		returnedCommand?.execute(message, args);
+
+		if (returnedCommand!.getProperty("selfDestruct")) {
+			message?.delete();
+		}
 	}
 
 	parseMessage(message: Message) {
