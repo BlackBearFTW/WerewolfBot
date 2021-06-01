@@ -4,6 +4,7 @@ import BaseCommand from "../abstracts/BaseCommand";
 import {commandsFolder, prefix} from "../config.json";
 import Singleton from "../decorators/Singleton";
 import LobbyRepository from "../repositories/LobbyRepository";
+import ErrorService from "../services/ErrorService";
 
 @Singleton
 class CommandsManager {
@@ -24,14 +25,19 @@ class CommandsManager {
 
 			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
 
-			if (lobbyData === null) return;
+			const errorService = new ErrorService();
+
+			if (lobbyData === null) {
+				await errorService.throwError(message, "This channel doesn't belong to a lobby.");
+				if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
+
+				return;
+			}
 		}
 
 		returnedCommand?.execute(message, args);
 
-		if (returnedCommand!.getProperty("selfDestruct")) {
-			message?.delete();
-		}
+		if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
 	}
 
 	parseMessage(message: Message) {

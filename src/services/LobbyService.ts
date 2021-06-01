@@ -1,7 +1,7 @@
 import Singleton from "../decorators/Singleton";
 import {CategoryChannel, Message, MessageEmbed, TextChannel, User} from "discord.js";
 import {v4 as uuid} from "uuid";
-import { neutralColor } from "../config.json";
+import { embedColors } from "../config.json";
 import LobbyRepository from "../repositories/LobbyRepository";
 import {client} from "../index";
 import LobbyData from "../data/LobbyData";
@@ -76,7 +76,7 @@ class LobbyService {
 
 		embed.setTitle("Invite Code");
 		embed.setDescription(`Use Code \`${code}\` To Join This Lobby`);
-		embed.setColor(neutralColor);
+		embed.setColor(embedColors.neutralColor);
 
 		await channel.send(embed);
 	}
