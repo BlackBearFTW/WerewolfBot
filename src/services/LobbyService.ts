@@ -30,7 +30,7 @@ class LobbyService {
 	}
 
 	private async createCategory(message: Message) {
-		return await message.guild?.channels.create(`WEREWOLF MATCH: ${message.author.username}`, {
+		return await message.guild?.channels.create(`WEREWOLF LOBBY: ${message.author.username}`, {
 			type: "category",
 			permissionOverwrites: [{
 				id: message.guild?.roles.everyone.id,
@@ -64,9 +64,9 @@ class LobbyService {
 			parent: category.id
 		});
 
-		await informationChannel?.updateOverwrite(message.guild?.roles.everyone!, {
-			SEND_MESSAGES: false
-		});
+		// Await informationChannel?.updateOverwrite(message.guild?.roles.everyone!, {
+		// 	SEND_MESSAGES: false
+		// });
 
 		return informationChannel;
 	}
@@ -83,42 +83,30 @@ class LobbyService {
 
 	async addUser(user: User, inviteCode: string, lobbyLeader = false) {
 		const userRepository = new UserRepository();
-		const category = await this.getCategoryByInviteCode(inviteCode) as CategoryChannel;
+		const lobbyRepository = new LobbyRepository();
+		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
+
+		const category = await client.channels.fetch(lobbyData?.category!) as CategoryChannel;
 
 		await category.updateOverwrite(user, {
 			VIEW_CHANNEL: true
 		});
 
-		const userData = await userRepository.getById(user.id);
+		const userData = new UserData();
 
-		if (userData === null) {
-			const newUser = new UserData();
+		userData.id = user.id;
 
-			newUser.id = user.id;
-
-			await userRepository.create(newUser);
-		}
+		await userRepository.create(userData);
 
 		// Todo: Check if user exists and if not create in database, otherwise insert as part of lobby
 	}
 
-	async removeUser(user: User, inviteCode: string) {
-		const category = await this.getCategoryByInviteCode(inviteCode) as CategoryChannel;
-
+	async removeUser(user: User, category: CategoryChannel) {
 		const permission = category.permissionOverwrites.get(user.id);
 
 		await permission!.delete();
 
 		// Todo: Remove user from lobby in database
-	}
-
-	private async getCategoryByInviteCode(inviteCode: string) {
-		const lobbyRepository = new LobbyRepository();
-		const lobbyData = await lobbyRepository.getByInviteCode(inviteCode);
-
-		const category = await client.channels.fetch(lobbyData?.category!);
-
-		return category;
 	}
 }
 

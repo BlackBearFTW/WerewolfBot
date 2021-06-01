@@ -1,8 +1,9 @@
 import fs from "fs";
-import {Collection, Message} from "discord.js";
+import {CategoryChannel, Collection, Message, TextChannel} from "discord.js";
 import BaseCommand from "../abstracts/BaseCommand";
 import {commandsFolder, prefix} from "../config.json";
 import Singleton from "../decorators/Singleton";
+import LobbyRepository from "../repositories/LobbyRepository";
 
 @Singleton
 class CommandsManager {
@@ -14,6 +15,17 @@ class CommandsManager {
 		if (!this.commands.has(command.toLowerCase())) return;
 
 		const returnedCommand = await this.commands.get(command.toLowerCase());
+
+		// Todo: add check to see if user is leader
+
+		if (returnedCommand!.getProperty("onlyInLobby")) {
+			const lobbyRepository = new LobbyRepository();
+			const channel = message.channel as TextChannel;
+
+			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
+
+			if (lobbyData === null) return;
+		}
 
 		returnedCommand?.execute(message, args);
 

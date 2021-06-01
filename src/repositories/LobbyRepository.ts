@@ -1,6 +1,7 @@
 import Singleton from "../decorators/Singleton";
 import BaseRepository from "../abstracts/BaseRepository";
 import LobbyData from "../data/LobbyData";
+import {CategoryChannel} from "discord.js";
 
 @Singleton
 class LobbyRepository extends BaseRepository {
@@ -9,8 +10,17 @@ class LobbyRepository extends BaseRepository {
 		super();
 	}
 
-	async getByInviteCode(code: string) {
-		const [results]: any[] = await this.connection.execute("SELECT * FROM lobbies WHERE invite_code = ? LIMIT 1", [code]);
+	async findByInviteCode(code: string) {
+		return this.findBy(["invite_code"], [code]);
+	}
+
+	async findByCategory(category: CategoryChannel) {
+		return this.findBy(["category"], [category.id]);
+	}
+
+	private async findBy(where: string[], values: any[]) {
+		const whereClause = `${where.join(" = ? ")} = ? `;
+		const [results]: any[] = await this.connection.execute(`SELECT * FROM lobbies WHERE ${whereClause} LIMIT 1`, values);
 
 		if (results.length === 0) return null;
 

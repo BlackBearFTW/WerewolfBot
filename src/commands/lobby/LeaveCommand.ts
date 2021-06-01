@@ -1,4 +1,4 @@
-import {Message} from "discord.js";
+import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
 
@@ -18,9 +18,9 @@ class LeaveCommand extends BaseCommand {
 		try {
 			const lobbyService = new LobbyService();
 
-			if (!args[0]) return;
+			const channel = message.channel as TextChannel;
 
-			await lobbyService.removeUser(message.author, args[0]);
+			await lobbyService.removeUser(message.author, channel.parent!);
 		} catch (error) {
 			console.log(error);
 		}
