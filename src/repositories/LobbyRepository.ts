@@ -37,7 +37,13 @@ class LobbyRepository extends BaseRepository {
 	}
 
 	async create(lobbyData: LobbyData) {
-		await this.connection.execute("INSERT INTO lobbies(invite_code, guild, category) VALUES (?, ?, ?)", [lobbyData.invite_code, lobbyData.guild, lobbyData.category]);
+		try {
+			await this.connection.execute("INSERT INTO lobbies(invite_code, guild, category) VALUES (?, ?, ?)", [lobbyData.invite_code, lobbyData.guild, lobbyData.category]);
+			return true;
+		} catch (error) {
+			console.log(error);
+			return false;
+		}
 	}
 }
 

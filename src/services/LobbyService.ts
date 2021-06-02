@@ -100,7 +100,7 @@ class LobbyService {
 
 		await userRepository.create(userData);
 
-		// Todo: Check if user exists and if not create in database, otherwise insert as part of lobby
+		// Todo: insert user as part of lobby in database
 	}
 
 	async removeUser(user: User, category: CategoryChannel) {
