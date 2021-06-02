@@ -26,7 +26,7 @@ class UserRepository extends BaseRepository {
 
 	async create(user: UserData) {
 		try {
-			if (await this.getById(user.id!) !== null) return;
+			if (await this.getById(user.id!) !== null) return false;
 
 			await this.connection.execute("INSERT INTO users (id) VALUES (?)", [user.id]);
 			return true;

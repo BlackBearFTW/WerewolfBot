@@ -7,7 +7,7 @@
   "commandsFolder": "commands",
   "eventHandlersFolder": "events",
   "embedColors": {
-    "neutralColor": "#206694",
+    "neutralColor": "#3498DB",
     "errorColor": "#992D22"
   }
 

@@ -4,7 +4,7 @@ import {embedColors} from "../config.json";
 
 @Singleton
 class ErrorService {
-	async throwError(message: Message, errorMessage = "There was an error", errorTitle = "Error") {
+	async throwError(message: Message, errorMessage = "There was an error", errorTitle = "Error", selfDestruct = true) {
 		const embed = new MessageEmbed();
 
 		embed.setTitle(errorTitle);
@@ -13,7 +13,7 @@ class ErrorService {
 
 		const error = await message.channel.send(embed);
 
-		await error.delete({ timeout: 7500 });
+		if (selfDestruct) await error.delete({ timeout: 7500 });
 	}
 }
 

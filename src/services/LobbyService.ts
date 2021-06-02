@@ -86,7 +86,9 @@ class LobbyService {
 		const lobbyRepository = new LobbyRepository();
 		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
 
-		const category = await client.channels.fetch(lobbyData?.category!) as CategoryChannel;
+		if (!lobbyData) return null;
+
+		const category = await client.channels.fetch(lobbyData.category!) as CategoryChannel;
 
 		await category.updateOverwrite(user, {
 			VIEW_CHANNEL: true
