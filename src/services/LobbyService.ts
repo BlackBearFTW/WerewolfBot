@@ -1,5 +1,5 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, Message, MessageEmbed, TextChannel, User} from "discord.js";
+import {CategoryChannel, Channel, Message, MessageEmbed, TextChannel, User} from "discord.js";
 import {v4 as uuid} from "uuid";
 import { embedColors } from "../config.json";
 import LobbyRepository from "../repositories/LobbyRepository";
@@ -9,6 +9,7 @@ import UserRepository from "../repositories/UserRepository";
 import UserData from "../data/UserData";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import ParticipationData from "../data/ParticipationData";
+import DiscordUtil from "../utils/DiscordUtil";
 
 @Singleton
 class LobbyService {
@@ -42,37 +43,26 @@ class LobbyService {
 	}
 
 	private async createChannels(message: Message, category: CategoryChannel) {
-		const informationChannel = await message.guild?.channels.create("📖｜information", {
-			type: "text",
-			parent: category.id,
-			permissionOverwrites: [{
-				id: message.guild.roles.everyone.id,
-				deny: ["SEND_MESSAGES"]
-			}]
+		const channelNames = ["📖｜information", "🔑｜lobby", "🎲｜moves", "🎤｜voice"];
+		const channels: Channel[] = [];
+
+		for (const item of channelNames) {
+			const textChannel = await DiscordUtil.createChannel(item, category) as TextChannel;
+
+			channels.push(textChannel);
+		}
+
+		const informationChannel = channels[0] as TextChannel;
+		const movesChannel = channels[2] as TextChannel;
+
+		await informationChannel?.updateOverwrite(message.guild?.roles.everyone!, {
+			SEND_MESSAGES: false
 		});
 
-		await message.guild?.channels.create("🔑｜lobby", {
-			type: "text",
-			parent: category.id
+		await movesChannel?.updateOverwrite(message.guild?.roles.everyone!, {
+			SEND_MESSAGES: false,
+			VIEW_CHANNEL: false
 		});
-
-		await message.guild?.channels.create("🎲｜moves", {
-			type: "text",
-			parent: category.id,
-			permissionOverwrites: [{
-				id: message.guild.roles.everyone.id,
-				deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-			}]
-		});
-
-		await message.guild?.channels.create("🎤｜voice", {
-			type: "voice",
-			parent: category.id
-		});
-
-		// Await informationChannel?.updateOverwrite(message.guild?.roles.everyone!, {
-		// 	SEND_MESSAGES: false
-		// });
 
 		return informationChannel;
 	}
