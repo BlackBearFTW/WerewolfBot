@@ -1,7 +1,7 @@
 class ParticipationData {
 	id: number | null
 	lobby_id: number | null
-	user_id: number | null
+	user_id: string | null
 	leader: boolean | null
 
 	constructor() {

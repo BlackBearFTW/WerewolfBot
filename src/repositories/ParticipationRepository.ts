@@ -44,6 +44,16 @@ class ParticipationRepository extends BaseRepository {
 			return false;
 		}
 	}
+
+	async delete(participationData: ParticipationData) {
+		try {
+			await this.connection.execute("DELETE FROM participations WHERE lobby_id = ?, user_id = ?", [participationData.lobby_id, participationData.user_id]);
+			return true;
+		} catch (error) {
+			console.log(error);
+			return false;
+		}
+	}
 }
 
 export default ParticipationRepository;

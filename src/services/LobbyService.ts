@@ -7,6 +7,8 @@ import {client} from "../index";
 import LobbyData from "../data/LobbyData";
 import UserRepository from "../repositories/UserRepository";
 import UserData from "../data/UserData";
+import ParticipationRepository from "../repositories/ParticipationRepository";
+import ParticipationData from "../data/ParticipationData";
 
 @Singleton
 class LobbyService {
@@ -42,7 +44,11 @@ class LobbyService {
 	private async createChannels(message: Message, category: CategoryChannel) {
 		const informationChannel = await message.guild?.channels.create("📖｜information", {
 			type: "text",
-			parent: category.id
+			parent: category.id,
+			permissionOverwrites: [{
+				id: message.guild.roles.everyone.id,
+				deny: ["SEND_MESSAGES"]
+			}]
 		});
 
 		await message.guild?.channels.create("🔑｜lobby", {
@@ -84,6 +90,7 @@ class LobbyService {
 	async addUser(user: User, inviteCode: string, lobbyLeader = false) {
 		const userRepository = new UserRepository();
 		const lobbyRepository = new LobbyRepository();
+		const participationRepository = new ParticipationRepository();
 		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
 
 		if (!lobbyData) return null;
@@ -100,13 +107,32 @@ class LobbyService {
 
 		await userRepository.create(userData);
 
+		const participationData = new ParticipationData();
+
+		participationData.user_id = user.id;
+		participationData.lobby_id = lobbyData.id;
+		participationData.leader = lobbyLeader;
+		await participationRepository.create(participationData);
+
 		// Todo: insert user as part of lobby in database
 	}
 
 	async removeUser(user: User, category: CategoryChannel) {
+		const lobbyRepository = new LobbyRepository();
+		const participationRepository = new ParticipationRepository();
+		const lobbyData = await lobbyRepository.findByCategory(category);
+
+		if (!lobbyData) return null;
+
 		const permission = category.permissionOverwrites.get(user.id);
 
 		await permission!.delete();
+
+		const participationData = new ParticipationData();
+
+		participationData.user_id = user.id;
+		participationData.lobby_id = lobbyData.id;
+		await participationRepository.delete(participationData);
 
 		// Todo: Remove user from lobby in database
 	}
