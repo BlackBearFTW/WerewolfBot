@@ -4,6 +4,7 @@ class DiscordUtil {
 	static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: any[]) {
 		return await category.guild.channels.create(name, {
 			type: type || "text",
+			parent: category,
 			permissionOverwrites: permissionOverwrite
 		});
 	}

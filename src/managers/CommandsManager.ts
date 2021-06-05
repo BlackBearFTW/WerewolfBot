@@ -7,7 +7,6 @@ import LobbyRepository from "../repositories/LobbyRepository";
 import ErrorUtil from "../utils/ErrorUtil";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import ParticipationData from "../data/ParticipationData";
-import LobbyData from "../data/LobbyData";
 
 @Singleton
 class CommandsManager {
@@ -22,13 +21,11 @@ class CommandsManager {
 
 		// Todo: add check to see if user is leader
 
-		let lobbyData: LobbyData | null;
-
 		if (returnedCommand!.getProperty("onlyInLobby")) {
 			const lobbyRepository = new LobbyRepository();
 			const channel = message.channel as TextChannel;
 
-			lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
+			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
 
 			if (lobbyData === null) {
 				await ErrorUtil.throwError(message, "This channel doesn't belong to a lobby.");
@@ -41,6 +38,10 @@ class CommandsManager {
 		if (returnedCommand!.getProperty("onlyLeader")) {
 			const participationRepository = new ParticipationRepository();
 			const participationData = new ParticipationData();
+			const lobbyRepository = new LobbyRepository();
+			const channel = message.channel as TextChannel;
+
+			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
 
 			participationData.user_id = message.author.id;
 			participationData.lobby_id = lobbyData!.id;
@@ -48,7 +49,7 @@ class CommandsManager {
 			const isLeader = await participationRepository.isLeader(participationData);
 
 			if (!isLeader) {
-				await ErrorUtil.throwError(message, "Only the lobby leader can use this command");
+				await ErrorUtil.throwError(message, "Only the lobby leader can use this command.");
 				if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
 
 				return;

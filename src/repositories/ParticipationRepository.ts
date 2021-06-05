@@ -47,7 +47,7 @@ class ParticipationRepository extends BaseRepository {
 
 	async delete(participationData: ParticipationData) {
 		try {
-			await this.connection.execute("DELETE FROM participations WHERE lobby_id = ?, user_id = ?", [participationData.lobby_id, participationData.user_id]);
+			await this.connection.execute("DELETE FROM participations WHERE lobby_id = ? AND user_id = ?", [participationData.lobby_id, participationData.user_id]);
 			return true;
 		} catch (error) {
 			console.log(error);
@@ -55,10 +55,22 @@ class ParticipationRepository extends BaseRepository {
 		}
 	}
 
-	async isLeader(participationData: ParticipationData): Promise<boolean> {
-		const [results]: any[] = await this.connection.execute("SELECT leader FROM participations WHERE lobby_id = ?, user_id = ?", [participationData.lobby_id, participationData.user_id]);
+	async isLeader(participationData: ParticipationData) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [participationData.lobby_id, participationData.user_id]);
 
-		return results[0].leader;
+		return results[0].leader === 1;
+	}
+
+	async inLobby(participationData: ParticipationData) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [participationData.lobby_id, participationData.user_id]);
+
+		return results.length > 0;
+	}
+
+	async update(participationData: ParticipationData) {
+		const [results]: any[] = await this.connection.execute("UPDATE participations SET leader = ? WHERE lobby_id = ? AND user_id = ?", [participationData.leader, participationData.lobby_id, participationData.user_id]);
+
+		return results.length > 0;
 	}
 }
 

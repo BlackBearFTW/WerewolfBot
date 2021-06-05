@@ -3,7 +3,7 @@ import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
 import ErrorUtil from "../../utils/ErrorUtil";
 
-class CreateCommand extends BaseCommand {
+class JoinCommand extends BaseCommand {
 	constructor() {
 		super(
 			"join",
@@ -30,4 +30,4 @@ class CreateCommand extends BaseCommand {
 	}
 }
 
-export default CreateCommand;
+export default JoinCommand;

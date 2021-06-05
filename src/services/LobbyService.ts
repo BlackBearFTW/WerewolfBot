@@ -123,6 +123,19 @@ class LobbyService {
 
 		// Todo: Remove user from lobby in database
 	}
+
+	async userIsInLobby(user: User, category: CategoryChannel) {
+		const lobbyRepository = new LobbyRepository();
+		const participationRepository = new ParticipationRepository();
+		const participationData = new ParticipationData();
+		const lobbyData = await lobbyRepository.findByCategory(category);
+
+		if (lobbyData === null) return false;
+
+		participationData.user_id = user.id;
+		participationData.lobby_id = lobbyData.id;
+		return participationRepository.inLobby(participationData);
+	}
 }
 
 export default LobbyService;
