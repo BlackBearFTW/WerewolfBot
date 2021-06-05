@@ -54,6 +54,12 @@ class ParticipationRepository extends BaseRepository {
 			return false;
 		}
 	}
+
+	async isLeader(participationData: ParticipationData): Promise<boolean> {
+		const [results]: any[] = await this.connection.execute("SELECT leader FROM participations WHERE lobby_id = ?, user_id = ?", [participationData.lobby_id, participationData.user_id]);
+
+		return results[0].leader;
+	}
 }
 
 export default ParticipationRepository;

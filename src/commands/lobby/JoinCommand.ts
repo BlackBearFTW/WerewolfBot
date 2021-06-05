@@ -1,7 +1,7 @@
 import {Message} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
-import ErrorService from "../../services/ErrorService";
+import ErrorUtil from "../../utils/ErrorUtil";
 
 class CreateCommand extends BaseCommand {
 	constructor() {
@@ -14,7 +14,6 @@ class CreateCommand extends BaseCommand {
 	async execute(message: Message, args: string[]) {
 		try {
 			const lobbyService = new LobbyService();
-			const errorService = new ErrorService();
 
 			if (!args[0]) return;
 
@@ -23,7 +22,7 @@ class CreateCommand extends BaseCommand {
 			const addedUser = await lobbyService.addUser(message.author, args[0]);
 
 			if (addedUser === null) {
-				await errorService.throwError(message, "Unknown invite code.", undefined, false);
+				await ErrorUtil.throwError(message, "Unknown invite code.", undefined, false);
 			}
 		} catch (error) {
 			console.log(error);

@@ -1,9 +1,16 @@
-import {CategoryChannel, PermissionOverwrites} from "discord.js";
+import {CategoryChannel, Guild} from "discord.js";
 
 class DiscordUtil {
-	static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: PermissionOverwrites[]) {
+	static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: any[]) {
 		return await category.guild.channels.create(name, {
 			type: type || "text",
+			permissionOverwrites: permissionOverwrite
+		});
+	}
+
+	static async createCategory(name: string, guild: Guild, permissionOverwrite?: any[]) {
+		return await guild.channels.create(name, {
+			type: "category",
 			permissionOverwrites: permissionOverwrite
 		});
 	}

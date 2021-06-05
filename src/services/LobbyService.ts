@@ -33,13 +33,10 @@ class LobbyService {
 	}
 
 	private async createCategory(message: Message) {
-		return await message.guild?.channels.create(`WEREWOLF LOBBY: ${message.author.username}`, {
-			type: "category",
-			permissionOverwrites: [{
-				id: message.guild?.roles.everyone.id,
-				deny: ["VIEW_CHANNEL"]
-			}]
-		});
+		return await DiscordUtil.createCategory(`WEREWOLF LOBBY: ${message.author.username}`, message.guild!, [{
+			id: message.guild?.roles.everyone.id!,
+			deny: ["VIEW_CHANNEL"]
+		}]);
 	}
 
 	private async createChannels(message: Message, category: CategoryChannel) {
@@ -47,9 +44,9 @@ class LobbyService {
 		const channels: Channel[] = [];
 
 		for (const item of channelNames) {
-			const textChannel = await DiscordUtil.createChannel(item, category) as TextChannel;
+			const newChannel = await DiscordUtil.createChannel(item, category);
 
-			channels.push(textChannel);
+			channels.push(newChannel);
 		}
 
 		const informationChannel = channels[0] as TextChannel;
