@@ -3,10 +3,7 @@ import {CategoryChannel, Channel, Message, MessageEmbed, TextChannel, User} from
 import {v4 as uuid} from "uuid";
 import { embedColors } from "../config.json";
 import LobbyRepository from "../repositories/LobbyRepository";
-import {client} from "../index";
 import LobbyData from "../data/LobbyData";
-import UserRepository from "../repositories/UserRepository";
-import UserData from "../data/UserData";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import ParticipationData from "../data/ParticipationData";
 import DiscordUtil from "../utils/DiscordUtil";
@@ -74,63 +71,13 @@ class LobbyService {
 		await channel.send(embed);
 	}
 
-	async addUser(user: User, inviteCode: string, lobbyLeader = false) {
-		const userRepository = new UserRepository();
-		const lobbyRepository = new LobbyRepository();
-		const participationRepository = new ParticipationRepository();
-		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
-
-		if (!lobbyData) return null;
-
-		const category = await client.channels.fetch(lobbyData.category!) as CategoryChannel;
-
-		await category.updateOverwrite(user, {
-			VIEW_CHANNEL: true
-		});
-
-		const userData = new UserData();
-
-		userData.id = user.id;
-
-		await userRepository.create(userData);
-
-		const participationData = new ParticipationData();
-
-		participationData.user_id = user.id;
-		participationData.lobby_id = lobbyData.id;
-		participationData.leader = lobbyLeader;
-		await participationRepository.create(participationData);
-
-		// Todo: insert user as part of lobby in database
-	}
-
-	async removeUser(user: User, category: CategoryChannel) {
-		const lobbyRepository = new LobbyRepository();
-		const participationRepository = new ParticipationRepository();
-		const lobbyData = await lobbyRepository.findByCategory(category);
-
-		if (!lobbyData) return null;
-
-		const permission = category.permissionOverwrites.get(user.id);
-
-		await permission!.delete();
-
-		const participationData = new ParticipationData();
-
-		participationData.user_id = user.id;
-		participationData.lobby_id = lobbyData.id;
-		await participationRepository.delete(participationData);
-
-		// Todo: Remove user from lobby in database
-	}
-
 	async userIsInLobby(user: User, category: CategoryChannel) {
 		const lobbyRepository = new LobbyRepository();
 		const participationRepository = new ParticipationRepository();
 		const participationData = new ParticipationData();
 		const lobbyData = await lobbyRepository.findByCategory(category);
 
-		if (lobbyData === null) return false;
+		if (lobbyData === null) return null;
 
 		participationData.user_id = user.id;
 		participationData.lobby_id = lobbyData.id;
