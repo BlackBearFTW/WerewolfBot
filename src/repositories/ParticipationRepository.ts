@@ -50,14 +50,6 @@ class ParticipationRepository extends BaseRepository {
 		return participationData;
 	}
 
-	async isLeader(participationData: ParticipationData) {
-		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [participationData.lobby_id, participationData.user_id]);
-
-		if (!results.length) return false;
-
-		return results[0].leader === 1;
-	}
-
 	async inLobby(participationData: ParticipationData) {
 		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [participationData.lobby_id, participationData.user_id]);
 

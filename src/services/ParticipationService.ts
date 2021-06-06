@@ -79,9 +79,30 @@ class ParticipationService {
 		await participationRepository.update(currentLeader);
 	}
 
-	isLeader() {}
+	async isLeader(user: User, category: CategoryChannel) {
+		const lobbyRepository = new LobbyRepository();
+		const participationRepository = new ParticipationRepository();
+		const lobbyData = await lobbyRepository.findByCategory(category);
 
-	isParticipant() {}
+		if (lobbyData === null) return;
+
+		const currentLeader = await participationRepository.getLeader(lobbyData.id!);
+
+		return user.id === currentLeader?.user_id;
+	}
+
+	async isParticipant(user: User, category: CategoryChannel) {
+		const lobbyRepository = new LobbyRepository();
+		const participationRepository = new ParticipationRepository();
+		const participationData = new ParticipationData();
+		const lobbyData = await lobbyRepository.findByCategory(category);
+
+		if (lobbyData === null) return null;
+
+		participationData.user_id = user.id;
+		participationData.lobby_id = lobbyData.id;
+		return participationRepository.inLobby(participationData);
+	}
 }
 
 export default ParticipationService;

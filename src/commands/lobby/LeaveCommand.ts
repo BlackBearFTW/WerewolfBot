@@ -1,6 +1,6 @@
 import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import LobbyService from "../../services/LobbyService";
+import ParticipationService from "../../services/ParticipationService";
 
 class LeaveCommand extends BaseCommand {
 	constructor() {
@@ -16,11 +16,11 @@ class LeaveCommand extends BaseCommand {
 
 	async execute(message: Message, args: string[]) {
 		try {
-			const lobbyService = new LobbyService();
+			const participationService = new ParticipationService();
 
 			const channel = message.channel as TextChannel;
 
-			await lobbyService.removeUser(message.author, channel.parent!);
+			await participationService.removeUser(message.author, channel.parent!);
 		} catch (error) {
 			console.log(error);
 		}

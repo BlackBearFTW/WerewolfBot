@@ -5,8 +5,7 @@ import {commandsFolder, prefix} from "../config.json";
 import Singleton from "../decorators/Singleton";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ErrorUtil from "../utils/ErrorUtil";
-import ParticipationRepository from "../repositories/ParticipationRepository";
-import ParticipationData from "../data/ParticipationData";
+import ParticipationService from "../services/ParticipationService";
 
 @Singleton
 class CommandsManager {
@@ -36,17 +35,11 @@ class CommandsManager {
 		}
 
 		if (returnedCommand!.getProperty("onlyLeader")) {
-			const participationRepository = new ParticipationRepository();
-			const participationData = new ParticipationData();
-			const lobbyRepository = new LobbyRepository();
+			const participationService = new ParticipationService();
+
 			const channel = message.channel as TextChannel;
 
-			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
-
-			participationData.user_id = message.author.id;
-			participationData.lobby_id = lobbyData!.id;
-
-			const isLeader = await participationRepository.isLeader(participationData);
+			const isLeader = await participationService.isLeader(message.author, channel.parent!);
 
 			if (!isLeader) {
 				await ErrorUtil.throwError(message, "Only the lobby leader can use this command.");

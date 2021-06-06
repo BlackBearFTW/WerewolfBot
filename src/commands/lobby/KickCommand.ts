@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import LobbyService from "../../services/LobbyService";
 import {embedColors} from "../../config.json";
+import ParticipationService from "../../services/ParticipationService";
 
 class KickCommand extends BaseCommand {
 	constructor() {
@@ -22,13 +22,13 @@ class KickCommand extends BaseCommand {
 
 			const kickedUser = message.mentions.users.first()!;
 
-			const lobbyService = new LobbyService();
+			const participationService = new ParticipationService();
 
 			const channel = message.channel as TextChannel;
 
-			if (!await lobbyService.userIsInLobby(kickedUser, channel.parent!)) return;
+			if (!await participationService.isParticipant(kickedUser, channel.parent!)) return;
 
-			await lobbyService.removeUser(kickedUser, channel.parent!);
+			await participationService.removeUser(kickedUser, channel.parent!);
 
 			const embed = new MessageEmbed();
 

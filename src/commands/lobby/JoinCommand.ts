@@ -1,7 +1,7 @@
 import {Message} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import LobbyService from "../../services/LobbyService";
 import ErrorUtil from "../../utils/ErrorUtil";
+import ParticipationService from "../../services/ParticipationService";
 
 class JoinCommand extends BaseCommand {
 	constructor() {
@@ -13,13 +13,13 @@ class JoinCommand extends BaseCommand {
 
 	async execute(message: Message, args: string[]) {
 		try {
-			const lobbyService = new LobbyService();
+			const participationService = new ParticipationService();
 
 			if (!args[0]) return;
 
 			// Todo: Add check to see if invite code is legit
 
-			const addedUser = await lobbyService.addUser(message.author, args[0]);
+			const addedUser = await participationService.addUser(message.author, args[0]);
 
 			if (addedUser === null) {
 				await ErrorUtil.throwError(message, "Unknown invite code.", undefined, false);

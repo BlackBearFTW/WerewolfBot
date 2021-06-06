@@ -1,11 +1,9 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, Channel, Message, MessageEmbed, TextChannel, User} from "discord.js";
+import {CategoryChannel, Channel, Message, MessageEmbed, TextChannel} from "discord.js";
 import {v4 as uuid} from "uuid";
 import { embedColors } from "../config.json";
 import LobbyRepository from "../repositories/LobbyRepository";
 import LobbyData from "../data/LobbyData";
-import ParticipationRepository from "../repositories/ParticipationRepository";
-import ParticipationData from "../data/ParticipationData";
 import DiscordUtil from "../utils/DiscordUtil";
 
 @Singleton
@@ -69,19 +67,6 @@ class LobbyService {
 		embed.setColor(embedColors.neutralColor);
 
 		await channel.send(embed);
-	}
-
-	async userIsInLobby(user: User, category: CategoryChannel) {
-		const lobbyRepository = new LobbyRepository();
-		const participationRepository = new ParticipationRepository();
-		const participationData = new ParticipationData();
-		const lobbyData = await lobbyRepository.findByCategory(category);
-
-		if (lobbyData === null) return null;
-
-		participationData.user_id = user.id;
-		participationData.lobby_id = lobbyData.id;
-		return participationRepository.inLobby(participationData);
 	}
 }
 
