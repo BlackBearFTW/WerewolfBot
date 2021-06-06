@@ -12,7 +12,7 @@ As of writting this (05-05-2021), This project is still in pre-release.
 If you would like to join the testing server you can do that right [here](https://discord.gg/hujUCWZ7Vn)
 
 ## Why is this
-I initialy started making this bot because I enjoyed playing the physical game with my friends, but for various reasons we had a difficult time meeting up for game-night, especially with the ongoing pandemic. Besides that I also wanted to learn more about writing discord bots, since I use discord on a daily basis and I like to automate stuff.
+I initially started making this bot because I enjoyed playing the physical game with my friends, but for various reasons we had a difficult time meeting up for game-night, especially with the ongoing pandemic. Besides that I also wanted to learn more about writing discord bots, since I use discord on a daily basis and I like to automate stuff.
 So all of this inspired me to start making this bot.
 
 ## How is this
