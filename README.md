@@ -4,7 +4,7 @@
 ![Discord.js](https://img.shields.io/github/package-json/dependency-version/BlackBearFTW/WereWolfBot/discord.js?style=for-the-badge)
 
 ## What is this
-This is a discord bot that adds the ability to play **The Werewolves of Millers Hollow** into discord.
+This is a discord bot that adds the ability to play **[The Werewolves of Millers Hollow](https://en.wikipedia.org/wiki/The_Werewolves_of_Millers_Hollow)** into discord.
 As of writting this (05-05-2021), This project is still in pre-release.
 
 If you would like to join the testing server you can do that right [here](https://discord.gg/hujUCWZ7Vn)
