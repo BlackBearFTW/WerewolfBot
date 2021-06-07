@@ -20,6 +20,7 @@ class UserRepository extends BaseRepository {
 		userData.wins = results[0].wins;
 		userData.losses = results[0].losses;
 		userData.deaths = results[0].deaths;
+		userData.as_werewolf = results[0].as_werewolf;
 
 		return userData;
 	}

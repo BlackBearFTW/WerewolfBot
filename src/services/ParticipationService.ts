@@ -91,11 +91,22 @@ class ParticipationService {
 		return user.id === currentLeader?.user_id;
 	}
 
-	async isParticipant(user: User, category: CategoryChannel) {
+	/* eslint-disable */
+	async isParticipant(user: User, category: CategoryChannel): Promise<any>
+	async isParticipant(user: User, inviteCode: string): Promise<any>
+
+	async isParticipant(user: User, categoryOrInviteCode: CategoryChannel | string) {
 		const lobbyRepository = new LobbyRepository();
 		const participationRepository = new ParticipationRepository();
 		const participationData = new ParticipationData();
-		const lobbyData = await lobbyRepository.findByCategory(category);
+		let lobbyData
+
+		if (typeof categoryOrInviteCode === "string") {
+			lobbyData = await lobbyRepository.findByInviteCode(categoryOrInviteCode);
+		} else {
+			lobbyData = await lobbyRepository.findByCategory(categoryOrInviteCode);
+		}
+
 
 		if (lobbyData === null) return null;
 
@@ -103,6 +114,8 @@ class ParticipationService {
 		participationData.lobby_id = lobbyData.id;
 		return participationRepository.inLobby(participationData);
 	}
+
+	/* eslint-enable */
 }
 
 export default ParticipationService;

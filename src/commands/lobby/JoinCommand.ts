@@ -13,11 +13,14 @@ class JoinCommand extends BaseCommand {
 
 	async execute(message: Message, args: string[]) {
 		try {
+			// Todo: Add check to see if invite code is legit
 			const participationService = new ParticipationService();
 
 			if (!args[0]) return;
 
-			// Todo: Add check to see if invite code is legit
+			if (await participationService.isParticipant(message.author, args[0])) {
+				return await ErrorUtil.throwError(message, "You are already part of this lobby.");
+			}
 
 			const addedUser = await participationService.addUser(message.author, args[0]);
 

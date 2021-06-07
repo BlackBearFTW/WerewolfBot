@@ -1,6 +1,7 @@
 import {Message} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
+import ParticipationService from "../../services/ParticipationService";
 
 class CreateCommand extends BaseCommand {
 	constructor() {
@@ -16,9 +17,10 @@ class CreateCommand extends BaseCommand {
 	async execute(message: Message, args: string[]) {
 		try {
 			const lobbyService = new LobbyService();
+			const participationService = new ParticipationService();
 			const inviteCode = await lobbyService.setupLobby(message);
 
-			await lobbyService.addUser(message.author, inviteCode, true);
+			await participationService.addUser(message.author, inviteCode, true);
 		} catch (error) {
 			console.log(error);
 		}

@@ -1,10 +1,8 @@
 import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyRepository from "../../repositories/LobbyRepository";
-import ParticipationRepository from "../../repositories/ParticipationRepository";
-import ParticipationData from "../../data/ParticipationData";
-import LobbyService from "../../services/LobbyService";
 import ErrorUtil from "../../utils/ErrorUtil";
+import ParticipationService from "../../services/ParticipationService";
 
 class TransferCommand extends BaseCommand {
 	constructor() {
@@ -23,33 +21,20 @@ class TransferCommand extends BaseCommand {
 		try {
 			if (message.mentions.users.size === 0) return;
 
-			const kickedUser = message.mentions.users.first()!;
-
-			console.log(kickedUser);
+			const newLeader = message.mentions.users.first()!;
 
 			const lobbyRepository = new LobbyRepository();
-			const participationRepository = new ParticipationRepository();
-			const participationData = new ParticipationData();
 			const channel = message.channel as TextChannel;
-			const lobbyService = new LobbyService();
+			const participationService = new ParticipationService();
 			const lobbyData = await lobbyRepository.findByCategory(channel.parent!);
 
 			if (lobbyData === null) return;
-			console.log("Test");
-			participationData.user_id = kickedUser.id;
-			participationData.lobby_id = lobbyData.id;
-			participationData.leader = true;
 
-			if (!await lobbyService.userIsInLobby(kickedUser, channel.parent!)) {
+			if (!await participationService.isParticipant(newLeader, channel.parent!)) {
 				await ErrorUtil.throwError(message, "This user isn't part of this lobby.");
 			}
 
-			await participationRepository.update(participationData);
-
-			participationData.user_id = message.author.id;
-			participationData.leader = false;
-
-			await participationRepository.update(participationData);
+			await participationService.changeLeader(newLeader, channel.parent!);
 		} catch (error) {
 			console.log(error);
 		}
