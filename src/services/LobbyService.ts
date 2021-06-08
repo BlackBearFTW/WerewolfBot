@@ -35,7 +35,7 @@ class LobbyService {
 	}
 
 	private async createChannels(message: Message, category: CategoryChannel) {
-		const channelNames = ["📖｜information", "🔑｜lobby", "🎲｜moves", "🎤｜voice"];
+		const channelNames = ["📖｜information", "💬｜main", "🎲｜moves", "🎤｜voice"];
 		const channels: Channel[] = [];
 
 		for (const item of channelNames) {
@@ -68,6 +68,8 @@ class LobbyService {
 
 		await channel.send(embed);
 	}
+
+	async deleteLobby(message: Message)
 }
 
 export default LobbyService;

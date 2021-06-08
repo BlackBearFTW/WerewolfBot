@@ -1,8 +1,9 @@
-import {Message, TextChannel} from "discord.js";
+import {Message, MessageEmbed, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyRepository from "../../repositories/LobbyRepository";
-import ErrorUtil from "../../utils/ErrorUtil";
+import NotificationUtil from "../../utils/NotificationUtil";
 import ParticipationService from "../../services/ParticipationService";
+import {embedColors} from "../../config.json";
 
 class TransferCommand extends BaseCommand {
 	constructor() {
@@ -31,10 +32,20 @@ class TransferCommand extends BaseCommand {
 			if (lobbyData === null) return;
 
 			if (!await participationService.isParticipant(newLeader, channel.parent!)) {
-				await ErrorUtil.throwError(message, "This user isn't part of this lobby.");
+				await NotificationUtil.sendErrorEmbed(message, "This user isn't part of this lobby.");
 			}
 
+			await NotificationUtil.sendConfirmationEmbed(message, "Are you sure you want to transfer your leadership?");
+
 			await participationService.changeLeader(newLeader, channel.parent!);
+
+			const embed = new MessageEmbed();
+
+			embed.setTitle("Transferred Leadership");
+			embed.setDescription(`You successfully transferred your leadership to <@${newLeader.id}>.`);
+			embed.setColor(embedColors.neutralColor);
+
+			await message.channel.send(embed);
 		} catch (error) {
 			console.log(error);
 		}

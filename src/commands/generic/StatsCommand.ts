@@ -1,7 +1,7 @@
 import {Message, MessageEmbed} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import UserRepository from "../../repositories/UserRepository";
-import ErrorUtil from "../../utils/ErrorUtil";
+import NotificationUtil from "../../utils/NotificationUtil";
 import { embedColors } from "../../config.json";
 
 class PingCommand extends BaseCommand {
@@ -20,7 +20,7 @@ class PingCommand extends BaseCommand {
 		const result = await userRepository.getById(user.id);
 
 		if (result === null) {
-			return ErrorUtil.throwError(message, "This user hasn't been found on this plane of existence.");
+			return NotificationUtil.sendErrorEmbed(message, "This user hasn't been found on this plane of existence.");
 		}
 
 		const embed = new MessageEmbed();

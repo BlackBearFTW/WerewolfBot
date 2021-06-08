@@ -4,7 +4,7 @@ import BaseCommand from "../abstracts/BaseCommand";
 import {commandsFolder, prefix} from "../config.json";
 import Singleton from "../decorators/Singleton";
 import LobbyRepository from "../repositories/LobbyRepository";
-import ErrorUtil from "../utils/ErrorUtil";
+import NotificationUtil from "../utils/NotificationUtil";
 import ParticipationService from "../services/ParticipationService";
 
 @Singleton
@@ -27,7 +27,7 @@ class CommandsManager {
 			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
 
 			if (lobbyData === null) {
-				await ErrorUtil.throwError(message, "This channel doesn't belong to a lobby.");
+				await NotificationUtil.sendErrorEmbed(message, "This channel doesn't belong to a lobby.");
 				if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
 
 				return;
@@ -42,7 +42,7 @@ class CommandsManager {
 			const isLeader = await participationService.isLeader(message.author, channel.parent!);
 
 			if (!isLeader) {
-				await ErrorUtil.throwError(message, "Only the lobby leader can use this command.");
+				await NotificationUtil.sendErrorEmbed(message, "Only the lobby leader can use this command.");
 				if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
 
 				return;

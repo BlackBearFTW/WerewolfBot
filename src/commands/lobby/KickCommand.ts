@@ -2,7 +2,7 @@ import { Message, MessageEmbed, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import {embedColors} from "../../config.json";
 import ParticipationService from "../../services/ParticipationService";
-import ErrorUtil from "../../utils/ErrorUtil";
+import NotificationUtil from "../../utils/NotificationUtil";
 
 class KickCommand extends BaseCommand {
 	constructor() {
@@ -19,12 +19,12 @@ class KickCommand extends BaseCommand {
 
 	async execute(message: Message, args: string[]) {
 		try {
-			if (message.mentions.users.size === 0) return ErrorUtil.throwError(message, "You need to mention your victim.");
+			if (message.mentions.users.size === 0) return NotificationUtil.sendErrorEmbed(message, "You need to mention your victim.");
 
 			const kickedUser = message.mentions.users.first()!;
 
 			if (kickedUser.id === message.author.id) {
-				return ErrorUtil.throwError(message, "You idiot, did you really just try to kick yourself?");
+				return NotificationUtil.sendErrorEmbed(message, "You idiot, did you really just try to kick yourself?");
 			}
 
 			const participationService = new ParticipationService();
@@ -33,13 +33,15 @@ class KickCommand extends BaseCommand {
 
 			if (!await participationService.isParticipant(kickedUser, channel.parent!)) return;
 
+			await NotificationUtil.sendConfirmationEmbed(message, `Are you sure you want to kick <@${kickedUser.id}>?`);
+
 			await participationService.removeUser(kickedUser, channel.parent!);
 
 			const embed = new MessageEmbed();
 
 			embed.setTitle("Kicked User");
 			embed.setColor(embedColors.neutralColor);
-			embed.setDescription(`Successfully kicked ${kickedUser}`);
+			embed.setDescription(`Successfully kicked ${kickedUser}.`);
 
 			await message.channel.send(embed);
 		} catch (error) {

@@ -3,7 +3,7 @@ import UserRepository from "../repositories/UserRepository";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
-import {CategoryChannel, User} from "discord.js";
+import {CategoryChannel, TextChannel, User} from "discord.js";
 import UserData from "../data/UserData";
 import ParticipationData from "../data/ParticipationData";
 
@@ -23,6 +23,10 @@ class ParticipationService {
 			VIEW_CHANNEL: true
 		});
 
+		const informationChannel = category.children.first();
+
+		await informationChannel!.updateOverwrite(user, {VIEW_CHANNEL: true});
+
 		const userData = new UserData();
 
 		userData.id = user.id;
@@ -35,6 +39,10 @@ class ParticipationService {
 		participationData.lobby_id = lobbyData.id;
 		participationData.leader = lobbyLeader;
 		await participationRepository.create(participationData);
+
+		const mainChannel = category.children.array()[1] as TextChannel;
+
+		await mainChannel.send(`<@${user.id}> just joined this lobby.`);
 	}
 
 	async removeUser(user: User, category: CategoryChannel) {
@@ -47,6 +55,12 @@ class ParticipationService {
 		const permission = category.permissionOverwrites.get(user.id);
 
 		await permission!.delete();
+
+		const informationChannel = category.children.first();
+
+		const channelPermission = informationChannel!.permissionOverwrites.get(user.id);
+
+		await channelPermission!.delete();
 
 		const participationData = new ParticipationData();
 
@@ -76,7 +90,7 @@ class ParticipationService {
 		newLeader.user_id = user.id;
 		newLeader.leader = true;
 
-		await participationRepository.update(currentLeader);
+		await participationRepository.update(newLeader);
 	}
 
 	async isLeader(user: User, category: CategoryChannel) {

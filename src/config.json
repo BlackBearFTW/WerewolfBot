@@ -8,7 +8,8 @@
   "eventHandlersFolder": "events",
   "embedColors": {
     "neutralColor": "#3498DB",
-    "errorColor": "#992D22"
+    "errorColor": "#DB3445",
+    "warningColor": "#DBCB34"
   }
 
 }

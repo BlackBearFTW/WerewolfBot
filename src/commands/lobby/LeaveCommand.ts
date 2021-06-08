@@ -1,7 +1,7 @@
 import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import ParticipationService from "../../services/ParticipationService";
-import ErrorUtil from "../../utils/ErrorUtil";
+import NotificationUtil from "../../utils/NotificationUtil";
 
 class LeaveCommand extends BaseCommand {
 	constructor() {
@@ -22,7 +22,7 @@ class LeaveCommand extends BaseCommand {
 			const channel = message.channel as TextChannel;
 
 			if (await participationService.isLeader(message.author, channel.parent!)) {
-				return ErrorUtil.throwError(message, "You can't leave, use the transfer spell first.");
+				return NotificationUtil.sendErrorEmbed(message, "You can't leave, use the transfer spell first.");
 			}
 
 			await participationService.removeUser(message.author, channel.parent!);
