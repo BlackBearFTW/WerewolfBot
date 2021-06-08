@@ -45,6 +45,16 @@ class LobbyRepository extends BaseRepository {
 			return false;
 		}
 	}
+
+	async delete(lobbyData: LobbyData) {
+		try {
+			await this.connection.execute("DELETE FROM lobbies WHERE id = ?", [lobbyData.id]);
+			return true;
+		} catch (error) {
+			console.log(error);
+			return false;
+		}
+	}
 }
 
 export default LobbyRepository;

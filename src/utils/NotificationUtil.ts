@@ -1,5 +1,6 @@
 import {Message, MessageEmbed} from "discord.js";
 import {embedColors} from "../config.json";
+import {client} from "../index";
 
 class NotificationUtil {
 	static async sendErrorEmbed(message: Message, description = "There was an error", title = "Error", selfDestruct = true) {
@@ -13,8 +14,8 @@ class NotificationUtil {
 		const embed = await this.generateEmbed(description, title, embedColors.warningColor);
 		const confirmMessage = await message.channel.send(embed);
 
-		await confirmMessage.react("✔");
-		await confirmMessage.react("❌");
+		await confirmMessage.react("✅");
+		await confirmMessage.react(client.emojis.cache.get("851796794019282946")!);
 	}
 
 	private static async generateEmbed(description: string, title: string, color: string) {

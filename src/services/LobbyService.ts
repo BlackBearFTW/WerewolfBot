@@ -69,7 +69,19 @@ class LobbyService {
 		await channel.send(embed);
 	}
 
-	async deleteLobby(message: Message)
+	async deleteLobby(message: Message, category: CategoryChannel) {
+		const lobbyRepository = new LobbyRepository();
+
+		const lobbyData = await lobbyRepository.findByCategory(category);
+
+		if (lobbyData === null) return null;
+
+		category.children.map(channel => channel.delete());
+
+		await category.delete();
+
+		await lobbyRepository.delete(lobbyData);
+	}
 }
 
 export default LobbyService;
