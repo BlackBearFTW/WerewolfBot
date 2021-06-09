@@ -2,6 +2,7 @@ import Singleton from "../decorators/Singleton";
 import BaseRepository from "../abstracts/BaseRepository";
 import LobbyData from "../data/LobbyData";
 import {CategoryChannel} from "discord.js";
+import ErrorUtil from "../utils/ErrorUtil";
 
 @Singleton
 class LobbyRepository extends BaseRepository {
@@ -16,6 +17,10 @@ class LobbyRepository extends BaseRepository {
 
 	async findByCategory(category: CategoryChannel) {
 		return this.findBy(["category"], [category.id]);
+	}
+
+	async findById(id: number) {
+		return this.findBy(["id"], [id]);
 	}
 
 	private async findBy(where: string[], values: any[]) {
@@ -47,13 +52,11 @@ class LobbyRepository extends BaseRepository {
 	}
 
 	async delete(lobbyData: LobbyData) {
-		try {
-			await this.connection.execute("DELETE FROM lobbies WHERE id = ?", [lobbyData.id]);
-			return true;
-		} catch (error) {
-			console.log(error);
-			return false;
-		}
+		const result = await ErrorUtil.handle(() => {
+			this.connection.execute("DELETE FROM lobbies WHERE id = ?", [lobbyData.id]);
+		});
+
+		return result[0];
 	}
 }
 

@@ -1,6 +1,7 @@
 import Singleton from "../decorators/Singleton";
 import BaseRepository from "../abstracts/BaseRepository";
 import ParticipationData from "../data/ParticipationData";
+import {lobbySize} from "../config.json";
 
 @Singleton
 class ParticipationRepository extends BaseRepository {
@@ -54,6 +55,12 @@ class ParticipationRepository extends BaseRepository {
 		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [participationData.lobby_id, participationData.user_id]);
 
 		return results.length > 0;
+	}
+
+	async isMaxSize(participationData: ParticipationData) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ?", [participationData.lobby_id]);
+
+		return results.length >= lobbySize.max;
 	}
 }
 

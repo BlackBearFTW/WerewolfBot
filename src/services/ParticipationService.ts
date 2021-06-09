@@ -130,6 +130,20 @@ class ParticipationService {
 	}
 
 	/* eslint-enable */
+
+	async isMaxSize(inviteCode: string) {
+		const lobbyRepository = new LobbyRepository();
+		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
+
+		if (lobbyData === null) return null;
+
+		const participationRepository = new ParticipationRepository();
+		const participationData = new ParticipationData();
+
+		participationData.lobby_id = lobbyData.id;
+
+		return await participationRepository.isMaxSize(participationData);
+	}
 }
 
 export default ParticipationService;

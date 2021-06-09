@@ -10,6 +10,10 @@
     "neutralColor": "#3498DB",
     "errorColor": "#DB3445",
     "warningColor": "#DBCB34"
+  },
+  "lobbySize": {
+    "min": 5,
+    "max": 20
   }
 
 }

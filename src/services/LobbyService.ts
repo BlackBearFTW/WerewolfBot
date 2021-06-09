@@ -82,6 +82,16 @@ class LobbyService {
 
 		await lobbyRepository.delete(lobbyData);
 	}
+
+	async hasStarted(inviteCode: string) {
+		const lobbyRepository = new LobbyRepository();
+
+		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
+
+		if (lobbyData === null) return null;
+
+		return lobbyData.started;
+	}
 }
 
 export default LobbyService;
