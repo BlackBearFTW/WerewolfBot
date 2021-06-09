@@ -33,7 +33,9 @@ class KickCommand extends BaseCommand {
 
 			if (!await participationService.isParticipant(kickedUser, channel.parent!)) return;
 
-			await NotificationUtil.sendConfirmationEmbed(message, `Are you sure you want to kick <@${kickedUser.id}>?`);
+			const confirmation = await NotificationUtil.sendConfirmationEmbed(message, message.author, `Are you sure you want to kick ${kickedUser}?`);
+
+			if (!confirmation) return;
 
 			await participationService.removeUser(kickedUser, channel.parent!);
 

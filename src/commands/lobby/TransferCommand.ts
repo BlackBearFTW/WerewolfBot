@@ -32,17 +32,19 @@ class TransferCommand extends BaseCommand {
 			if (lobbyData === null) return;
 
 			if (!await participationService.isParticipant(newLeader, channel.parent!)) {
-				await NotificationUtil.sendErrorEmbed(message, "This user isn't part of this lobby.");
+				return await NotificationUtil.sendErrorEmbed(message, "This user isn't part of this lobby.");
 			}
 
-			await NotificationUtil.sendConfirmationEmbed(message, "Are you sure you want to transfer your leadership?");
+			const confirmation = await NotificationUtil.sendConfirmationEmbed(message, message.author, "Are you sure you want to transfer your leadership?");
+
+			if (!confirmation) return;
 
 			await participationService.changeLeader(newLeader, channel.parent!);
 
 			const embed = new MessageEmbed();
 
 			embed.setTitle("Transferred Leadership");
-			embed.setDescription(`You successfully transferred your leadership to <@${newLeader.id}>.`);
+			embed.setDescription(`You successfully transferred your leadership to ${newLeader}.`);
 			embed.setColor(embedColors.neutralColor);
 
 			await message.channel.send(embed);

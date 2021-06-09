@@ -22,7 +22,9 @@ class DeleteCommand extends BaseCommand {
 
 			const channel = message.channel as TextChannel;
 
-			await NotificationUtil.sendConfirmationEmbed(message, "Are you sure you want to delete this lobby?");
+			const confirmation = await NotificationUtil.sendConfirmationEmbed(message, message.author, "Are you sure you want to delete this lobby?");
+
+			if (!confirmation) return;
 
 			await lobbyService.deleteLobby(message, channel.parent!);
 		} catch (error) {

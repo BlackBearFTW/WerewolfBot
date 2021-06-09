@@ -36,8 +36,8 @@ class ParticipationRepository extends BaseRepository {
 		}
 	}
 
-	async getLeader(id: number) {
-		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND leader = 1", [id]);
+	async getLeader(lobbyID: number) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND leader = 1", [lobbyID]);
 
 		if (!results.length) return null;
 

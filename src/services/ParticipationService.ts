@@ -42,7 +42,7 @@ class ParticipationService {
 
 		const mainChannel = category.children.array()[1] as TextChannel;
 
-		await mainChannel.send(`<@${user.id}> just joined this lobby.`);
+		await mainChannel.send(`${user} just joined this lobby.`);
 	}
 
 	async removeUser(user: User, category: CategoryChannel) {

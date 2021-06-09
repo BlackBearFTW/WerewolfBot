@@ -1,4 +1,4 @@
-import {Message, MessageEmbed} from "discord.js";
+import {Message, MessageEmbed, MessageReaction, User} from "discord.js";
 import {embedColors} from "../config.json";
 import {client} from "../index";
 
@@ -10,12 +10,26 @@ class NotificationUtil {
 		if (selfDestruct) await errorMessage.delete({ timeout: 7500 });
 	}
 
-	static async sendConfirmationEmbed(message: Message, description = "Confirm this action", title = "Confirm") {
+	static async sendConfirmationEmbed(message: Message, user: User, description = "Confirm this action", title = "Confirm") {
 		const embed = await this.generateEmbed(description, title, embedColors.warningColor, true);
 		const confirmMessage = await message.channel.send(embed);
 
 		await confirmMessage.react("✅");
 		await confirmMessage.react(client.emojis.cache.get("851796794019282946")!);
+
+		// eslint-disable-next-line func-style
+		const filter = (reaction: MessageReaction, _user: User) => ["square_cross", "✅"].includes(reaction.emoji.name!) && _user.id === user.id;
+
+		const reactions = await confirmMessage.awaitReactions(filter, {max: 1, time: 20000});
+
+		if (reactions.size === 0) return false;
+
+		if (reactions.first()!.emoji.name === "✅") {
+			return true;
+		} else {
+			await confirmMessage.delete();
+			return false;
+		}
 	}
 
 	static async sendPollEmbed(message: Message, options: string[], title = "Poll", description = "") {
