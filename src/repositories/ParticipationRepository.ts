@@ -62,6 +62,24 @@ class ParticipationRepository extends BaseRepository {
 
 		return results.length >= lobbySize.max;
 	}
+
+	async getAllParticipants(lobbyID: number) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ?", [lobbyID]);
+		const data: ParticipationData[] = [];
+
+		for (const row of results) {
+			const participationData = new ParticipationData();
+
+			participationData.id = row.id;
+			participationData.lobby_id = row.lobby_id;
+			participationData.user_id = row.user_id;
+			participationData.leader = row.leader;
+
+			data.push(participationData);
+		}
+
+		return data;
+	}
 }
 
 export default ParticipationRepository;
