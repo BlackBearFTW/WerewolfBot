@@ -8,7 +8,7 @@ class PingCommand extends BaseCommand {
 	constructor() {
 		super(
 			"stats",
-			"Shows the stats about a player"
+			"Shows the stats about a user"
 		);
 	}
 

@@ -1,6 +1,6 @@
 import { createSandbox, SinonSandbox } from "sinon";
 import { expect } from "chai";
-import {Client, Message} from "discord.js";
+import {Message} from "discord.js";
 import {BaseMocks, CustomMocks} from "@lambocreeper/mock-discord.js";
 
 import PingCommand from "../../../src/commands/generic/PingCommand";
@@ -22,7 +22,7 @@ describe("PingCommand", () => {
 		});
 	});
 
-	describe("run()", () => {
+	describe("execute()", () => {
 		let sandbox: SinonSandbox;
 		let message: Message;
 		let command: Command;
@@ -44,9 +44,7 @@ describe("PingCommand", () => {
 		it("states the amount of ping latency", async () => {
 			const message = CustomMocks.getMessage();
 
-			sandbox.createStubInstance(Client);
-
-			sandbox.stub(client.ws, "ping").resolves(5);
+			sandbox.stub(client.ws, "ping").value(5);
 
 			const messageMock = sandbox.stub(message.channel, "send");
 
