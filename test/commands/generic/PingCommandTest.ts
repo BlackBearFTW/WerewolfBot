@@ -48,7 +48,11 @@ describe("PingCommand", () => {
 
 			const messageMock = sandbox.stub(message.channel, "send");
 
-			message.createdTimestamp = Date.now();
+			const now = Date.now();
+
+			sandbox.useFakeTimers(now);
+
+			message.createdTimestamp = now;
 
 			await command.execute(message, []);
 

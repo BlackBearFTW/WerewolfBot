@@ -1,6 +1,6 @@
 import { createSandbox, SinonSandbox } from "sinon";
 import { expect } from "chai";
-import {Message} from "discord.js";
+import {Message, MessageEmbed} from "discord.js";
 import {CustomMocks} from "@lambocreeper/mock-discord.js";
 
 import StatsCommand from "../../../src/commands/generic/StatsCommand";
@@ -8,6 +8,7 @@ import Command from "../../../src/abstracts/BaseCommand";
 import UserRepository from "../../../src/repositories/UserRepository";
 import { embedColors } from "../../../src/config.json";
 import NotificationUtil from "../../../src/utils/NotificationUtil";
+import assert from "assert";
 
 describe("StatsCommand", () => {
 	describe("constructor", () => {
@@ -49,13 +50,14 @@ describe("StatsCommand", () => {
 			const message = CustomMocks.getMessage();
 			const messageMock = sandbox.stub(message.channel, "send");
 
-			sandbox.stub(UserRepository.prototype, "getById").resolves(null);
-			sandbox.stub(message.channel, "send").resolves(CustomMocks.getMessage());
+			sandbox.spy(NotificationUtil, "sendErrorEmbed");
 
+			sandbox.stub(UserRepository.prototype, "getById").resolves(null);
 			await command.execute(message, []);
 
 			const embed = messageMock.getCall(0).firstArg.embed;
 
+			assert(NotificationUtil.sendErrorEmbed.calledOnce);
 			expect(messageMock.calledOnce).to.be.true;
 			expect(embed.title).to.equal("Error");
 			expect(embed.description).to.equal("This user hasn't been found on this plane of existence.");
