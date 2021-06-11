@@ -10,7 +10,8 @@
     "build": "tsc",
     "dev": "nodemon --watch src --ext ts --exec npm run dev:serve",
     "dev:serve": "tsc && npm start",
-    "test": "ts-mocha test/**/*Test.ts test/**/**/*Test.ts --exit"
+    "test": "ts-mocha test/**/*Test.ts test/**/**/*Test.ts --exit",
+    "lint": "eslint src test --ext .js,.ts"
   },
   "dependencies": {
     "discord.js": "^12.5.3",
