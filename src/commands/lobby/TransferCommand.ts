@@ -24,6 +24,8 @@ class TransferCommand extends BaseCommand {
 
 			const newLeader = message.mentions.users.first()!;
 
+			if (message.author.id === newLeader.id) return;
+
 			const lobbyRepository = new LobbyRepository();
 			const channel = message.channel as TextChannel;
 			const participationService = new ParticipationService();

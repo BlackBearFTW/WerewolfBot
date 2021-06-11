@@ -6,7 +6,7 @@ class PingCommand extends BaseCommand {
 	constructor() {
 		super(
 			"ping",
-			"This command shows the ping time"
+			"This command shows the ping latency"
 		);
 	}
 

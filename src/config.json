@@ -9,7 +9,9 @@
   "embedColors": {
     "neutralColor": "#3498DB",
     "errorColor": "#DB3445",
-    "warningColor": "#DBCB34"
+    "warningColor": "#DBCB34",
+    "confirmColor": "#77B255",
+    "denyColor": "#DF2A41"
   },
   "lobbySize": {
     "min": 5,

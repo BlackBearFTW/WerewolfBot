@@ -10,8 +10,8 @@ class NotificationUtil {
 		if (selfDestruct) await errorMessage.delete({ timeout: 7500 });
 	}
 
-	static async sendConfirmationEmbed(message: Message, user: User, description = "Confirm this action", title = "Confirm") {
-		const embed = await this.generateEmbed(description, title, embedColors.warningColor, true);
+	static async sendConfirmationEmbed(message: Message, user: User, description = "Confirm this action", title = "Confirm Action") {
+		const embed = await this.generateEmbed(description, title, embedColors.warningColor);
 		const confirmMessage = await message.channel.send(embed);
 
 		await confirmMessage.react("✅");
@@ -24,10 +24,23 @@ class NotificationUtil {
 
 		if (reactions.size === 0) return false;
 
+		await confirmMessage.reactions.removeAll();
+
 		if (reactions.first()!.emoji.name === "✅") {
+			const embed = confirmMessage.embeds[0]!;
+
+			embed.setTitle(`Accepted: ${title}`);
+			embed.setColor(embedColors.confirmColor);
+			await confirmMessage.edit(embed);
+
 			return true;
 		} else {
-			await confirmMessage.delete();
+			const embed = confirmMessage.embeds[0]!;
+
+			embed.setTitle(`Denied: ${title}`);
+			embed.setColor(embedColors.denyColor);
+			await confirmMessage.edit(embed);
+
 			return false;
 		}
 	}
