@@ -3,3 +3,6 @@ node_modules
 .idea
 build
 /src/commands/dev/
+
+# Visual Studio Code stuff
+.vscode

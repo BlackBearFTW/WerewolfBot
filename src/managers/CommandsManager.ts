@@ -6,6 +6,7 @@ import Singleton from "../decorators/Singleton";
 import LobbyRepository from "../repositories/LobbyRepository";
 import NotificationUtil from "../utils/NotificationUtil";
 import ParticipationService from "../services/ParticipationService";
+import path from "path";
 
 @Singleton
 class CommandsManager {
@@ -71,14 +72,16 @@ class CommandsManager {
 	}
 
 	private async loadCommandFiles() {
+		const rootFolder = path.join(__dirname, "../", commandsFolder);
+
 		// Retrieves all folders inside the given folder and then the files inside those folders get imported
-		const commandFolderContent = fs.readdirSync(`./${commandsFolder}`, {withFileTypes: true}).filter(folder => folder.isDirectory()).map(folder => folder.name);
+		const commandFolderContent = fs.readdirSync(rootFolder, {withFileTypes: true}).filter(folder => folder.isDirectory()).map(folder => folder.name);
 
 		for (const folder of commandFolderContent) {
-			const commandFiles = fs.readdirSync(`./${commandsFolder}/${folder}`).filter((file: string) => file.endsWith(".js"));
+			const commandFiles = fs.readdirSync(`${rootFolder}/${folder}`).filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
 
 			for (const file of commandFiles) {
-				const {default: Command} = await import(`../${commandsFolder}/${folder}/${file}`);
+				const {default: Command} = await import(`${rootFolder}/${folder}/${file}`);
 
 				this.commands.set(new Command().getName().toLowerCase(), new Command());
 			}

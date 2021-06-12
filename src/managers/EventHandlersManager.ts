@@ -10,10 +10,10 @@ class EventHandlersManager {
 	}
 
 	private async loadEventFiles() {
-		const eventFiles = fs.readdirSync(this.filePath).filter((file: string) => file.endsWith(".js"));
+		const eventFiles = fs.readdirSync(this.filePath).filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
 
 		for (const file of eventFiles) {
-			const {default: EventHandler} = await import(`../${this.filePath}/${file}`);
+			const {default: EventHandler} = await import(`${this.filePath}/${file}`);
 
 			const eventHandler = new EventHandler();
 
