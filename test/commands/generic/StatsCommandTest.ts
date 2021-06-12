@@ -1,6 +1,6 @@
 import { createSandbox, SinonSandbox } from "sinon";
 import { expect } from "chai";
-import {Message, MessageEmbed} from "discord.js";
+import {Message} from "discord.js";
 import {CustomMocks} from "@lambocreeper/mock-discord.js";
 
 import StatsCommand from "../../../src/commands/generic/StatsCommand";
