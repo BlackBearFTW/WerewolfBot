@@ -23,4 +23,6 @@ This bot is written in Typescript and is made to be hostable on Heroku. The bot 
 - uuid: ^8.3.2
 
 ## Contributions
-Although I haven't had any opened issues or merge requests yet, I will only accept contributions after the initial version has been released.
+Before you submit a pull request, Please first make an issue stating what you would like to change or what your issue is. 
+I also recommend you to first get the accepted label on your issue before starting to work on your pull request.
+Lastly, all pull requests must be linked to an issue.
