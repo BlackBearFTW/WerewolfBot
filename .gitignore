@@ -1,8 +1,17 @@
+# Real .env file, look at env.example for template.
 .env
+
+# Use "npm install" to get these.
 node_modules
-.idea
+
+# Heroku compiles this, so this doesn't have to be part of the repository.
 build
+
+# Temporary commands
 /src/commands/dev/
 
-# Visual Studio Code stuff
+# VS code
 .vscode
+
+# Jetbrains
+.idea
