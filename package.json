@@ -6,10 +6,10 @@
   "main": "./build/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "cd build && node index.js",
+    "start": "node build/index.js",
     "build": "tsc",
     "dev": "nodemon --watch src --ext ts --exec npm run dev:serve",
-    "dev:serve": "tsc && npm start",
+    "dev:serve": "ts-node --files src/index.ts",
     "test": "ts-mocha test/**/*Test.ts test/**/**/*Test.ts --exit",
     "lint": "eslint src test --ext .js,.ts"
   },
@@ -17,6 +17,7 @@
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "mysql2": "^2.1.0",
+    "ts-node": "^10.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
