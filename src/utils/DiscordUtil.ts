@@ -1,4 +1,4 @@
-import {CategoryChannel, Guild} from "discord.js";
+import {CategoryChannel, Guild, VoiceChannel} from "discord.js";
 
 class DiscordUtil {
 	static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: any[]) {
@@ -14,6 +14,10 @@ class DiscordUtil {
 			type: "category",
 			permissionOverwrites: permissionOverwrite
 		});
+	}
+
+	static async getVoiceChannelMembers(voiceChannel: VoiceChannel) {
+		return voiceChannel.members.array();
 	}
 }
 

@@ -63,6 +63,12 @@ class ParticipationRepository extends BaseRepository {
 		return results.length >= lobbySize.max;
 	}
 
+	async isMinSize(participationData: ParticipationData) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ?", [participationData.lobby_id]);
+
+		return results.length >= lobbySize.min;
+	}
+
 	async getAllParticipants(lobbyID: number) {
 		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ?", [lobbyID]);
 		const data: ParticipationData[] = [];

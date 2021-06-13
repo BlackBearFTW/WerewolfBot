@@ -3,9 +3,10 @@ import UserRepository from "../repositories/UserRepository";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
-import {CategoryChannel, TextChannel, User} from "discord.js";
+import {CategoryChannel, Message, TextChannel, User, VoiceChannel} from "discord.js";
 import UserData from "../data/UserData";
 import ParticipationData from "../data/ParticipationData";
+import DiscordUtil from "../utils/DiscordUtil";
 
 @Singleton
 class ParticipationService {
@@ -143,6 +144,36 @@ class ParticipationService {
 		participationData.lobby_id = lobbyData.id;
 
 		return await participationRepository.isMaxSize(participationData);
+	}
+
+	async isMinSize(inviteCode: string) {
+		const lobbyRepository = new LobbyRepository();
+		const lobbyData = await lobbyRepository.findByInviteCode(inviteCode);
+
+		if (lobbyData === null) return null;
+
+		const participationRepository = new ParticipationRepository();
+		const participationData = new ParticipationData();
+
+		participationData.lobby_id = lobbyData.id;
+
+		return await participationRepository.isMinSize(participationData);
+	}
+
+	async allInVoiceChannel(message: Message, category: CategoryChannel) {
+		const lobbyRepository = new LobbyRepository();
+		const participationRepository = new ParticipationRepository();
+		const lobbyData = await lobbyRepository.findByCategory(category);
+
+		if (lobbyData === null) return null;
+
+		const participants = await participationRepository.getAllParticipants(lobbyData.id!);
+		const participantsID = participants.map(participant => participant.user_id!).sort();
+
+		const users = await DiscordUtil.getVoiceChannelMembers(category.children.last() as VoiceChannel);
+		const usersID = users.map(user => user.id).sort();
+
+		return usersID.every((value, index) => value === participantsID[index]);
 	}
 }
 

@@ -14,7 +14,7 @@
     "denyColor": "#DF2A41"
   },
   "lobbySize": {
-    "min": 5,
+    "min": 8,
     "max": 20
   }
 

@@ -39,9 +39,11 @@ class LobbyService {
 		const channels: Channel[] = [];
 
 		for (const item of channelNames) {
-			const newChannel = await DiscordUtil.createChannel(item, category);
-
-			channels.push(newChannel);
+			if (item === "🎤｜voice") {
+				channels.push(await DiscordUtil.createChannel(item, category, "voice"));
+			} else {
+				channels.push(await DiscordUtil.createChannel(item, category));
+			}
 		}
 
 		const informationChannel = channels[0] as TextChannel;
