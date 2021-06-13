@@ -16,6 +16,11 @@
   "lobbySize": {
     "min": 8,
     "max": 20
+  },
+  "werewolfCount": {
+    "8": 2,
+    "12": 3,
+    "18": 4
   }
 
 }

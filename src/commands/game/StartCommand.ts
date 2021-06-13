@@ -34,7 +34,7 @@ class StartCommand extends BaseCommand {
 			}
 
 			if (!await participationService.isMinSize(lobbyData?.invite_code!)) {
-				return await NotificationUtil.sendErrorEmbed(message, `You need at least ${lobbySize.min - 1} other players.`);
+				return await NotificationUtil.sendErrorEmbed(message, `You need at least ${lobbySize.min} users to start.`);
 			}
 
 			if (!await participationService.allInVoiceChannel(message, channel.parent!)) {
