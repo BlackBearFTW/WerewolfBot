@@ -170,10 +170,10 @@ class ParticipationService {
 		const participants = await participationRepository.getAllParticipants(lobbyData.id!);
 		const participantsID = participants.map(participant => participant.user_id!).sort();
 
-		const users = await DiscordUtil.getVoiceChannelMembers(category.children.last() as VoiceChannel);
-		const usersID = users.map(user => user.id).sort();
+		const guildMembers = await DiscordUtil.getVoiceChannelMembers(category.children.last() as VoiceChannel);
+		const usersID = guildMembers.map(member => member.user.id).sort();
 
-		return usersID.every((value, index) => value === participantsID[index]);
+		return participantsID.every((value, index) => value === usersID[index]);
 	}
 }
 
