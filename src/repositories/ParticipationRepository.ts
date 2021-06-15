@@ -46,6 +46,7 @@ class ParticipationRepository extends BaseRepository {
 		participationData.id = results[0].id;
 		participationData.lobby_id = results[0].lobby_id;
 		participationData.user_id = results[0].user_id;
+		participationData.role_id = results[0].role_id;
 		participationData.leader = results[0].leader;
 
 		return participationData;
@@ -79,12 +80,23 @@ class ParticipationRepository extends BaseRepository {
 			participationData.id = row.id;
 			participationData.lobby_id = row.lobby_id;
 			participationData.user_id = row.user_id;
+			participationData.role_id = row.role_id;
 			participationData.leader = row.leader;
 
 			data.push(participationData);
 		}
 
 		return data;
+	}
+
+	async assignRole(participationData: ParticipationData) {
+		try {
+			await this.connection.execute("UPDATE participations SET role_id = ? WHERE lobby_id = ? AND user_id = ?", [participationData.role_id, participationData.lobby_id, participationData.user_id]);
+			return true;
+		} catch (error) {
+			console.log(error);
+			return false;
+		}
 	}
 }
 

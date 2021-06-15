@@ -1,10 +1,13 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, Message} from "discord.js";
+import {CategoryChannel, Message, MessageEmbed} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
-import { werewolfCount } from "../config.json";
-import AssignedRolesInterface from "../interfaces/AssignedRolesInterface";
+import { werewolfCount, embedColors } from "../config.json";
 import {client} from "../index";
+import RoleRepository from "../repositories/RoleRepository";
+import RolesEnum from "../types/RolesEnum";
+import ParticipationData from "../data/ParticipationData";
+import LobbyData from "../data/LobbyData";
 
 @Singleton
 class GameService {
@@ -19,34 +22,60 @@ class GameService {
 		const participants = await participationRepository.getAllParticipants(lobbyData?.id!);
 		const participantsID = participants.map(participant => participant.user_id!);
 
-		const roles = await this.assignRoles(participantsID);
-
-		this.directMessageRoles(roles);
+		await this.assignRoles(participantsID, lobbyData);
 	}
 
-	private assignRoles(participantsID: string[]): AssignedRolesInterface {
-		const participants = ManipulationUtil.shuffle(participantsID);
+	private assignRoles(participantsID: string[], lobbyData: LobbyData) {
+		const shuffledParticipants = ManipulationUtil.shuffle(participantsID);
 
 		/* eslint-disable */
-		const count = Object.entries(werewolfCount).flatMap(([key, value]) => {
-				return participants.length >= parseInt(key) ? value : [];
+		const amountOfWerewolves = Object.entries(werewolfCount).flatMap(([key, value]) => {
+				return shuffledParticipants.length >= parseInt(key) ? value : [];
 			}).pop();
 		/* eslint-enable */
 
-		return {
-			werewolf: participantsID.splice(0, count),
-			seer: participantsID.splice(0, 1),
-			villager: participantsID
-		};
-	}
+		const assignedParticipants = [];
 
-	directMessageRoles(roles: AssignedRolesInterface) {
-		Object.entries(roles).forEach(([key, value]) => {
-			value.map(async (id: string) => {
-				const user = await client.users.fetch(id);
-
-				await user.send(`You are a ${key}`);
+		participantsID.splice(0, amountOfWerewolves).map(value => {
+			assignedParticipants.push({
+				user_id: value,
+				role_id: RolesEnum.WEREWOLF
 			});
+		});
+
+		assignedParticipants.push({
+			user_id: participantsID.shift(),
+			role_id: RolesEnum.SEER
+		});
+
+		participantsID.map(value => {
+			assignedParticipants.push({
+				user_id: value,
+				role_id: RolesEnum.VILLAGER
+			});
+		});
+
+		const roleRepository = new RoleRepository();
+		const participationRepository = new ParticipationRepository();
+
+		assignedParticipants.map(async (value, index) => {
+			const user = await client.users.fetch(value.user_id!);
+			const participationData = new ParticipationData();
+
+			participationData.lobby_id = lobbyData.id!;
+			participationData.user_id = value.user_id!;
+			participationData.role_id = value.role_id!;
+
+			await participationRepository.assignRole(participationData);
+
+			const roleData = await roleRepository.getById(value.role_id!);
+			const embed = new MessageEmbed();
+
+			embed.setTitle(`${roleData.emote} ${roleData.name}`);
+			embed.setColor(embedColors.neutralColor);
+			embed.setDescription(roleData.description);
+
+			await user.send(`You got the ${roleData.name} role for the game in lobby \`${lobbyData.invite_code}\`.`, {embed});
 		});
 	}
 }
