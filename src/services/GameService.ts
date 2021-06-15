@@ -3,6 +3,8 @@ import {CategoryChannel, Message} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import { werewolfCount } from "../config.json";
+import AssignedRolesInterface from "../interfaces/AssignedRolesInterface";
+import {client} from "../index";
 
 @Singleton
 class GameService {
@@ -12,15 +14,18 @@ class GameService {
 
 		const lobbyData = await lobbyRepository.findByCategory(category);
 
+		if (lobbyData === null) return null;
+
 		const participants = await participationRepository.getAllParticipants(lobbyData?.id!);
 		const participantsID = participants.map(participant => participant.user_id!);
 
-		await this.assignRoles(participantsID);
+		const roles = await this.assignRoles(participantsID);
+
+		this.directMessageRoles(roles);
 	}
 
-	private async assignRoles(participantsID: string[]) {
+	private assignRoles(participantsID: string[]): AssignedRolesInterface {
 		const participants = ManipulationUtil.shuffle(participantsID);
-		const roles: {[key: string]: string[]} = {};
 
 		/* eslint-disable */
 		const count = Object.entries(werewolfCount).flatMap(([key, value]) => {
@@ -28,11 +33,21 @@ class GameService {
 			}).pop();
 		/* eslint-enable */
 
-		roles.werewolves = participantsID.splice(0, count);
-		roles.seer = participantsID.splice(0, 1);
-		roles.villagers = participantsID;
+		return {
+			werewolf: participantsID.splice(0, count),
+			seer: participantsID.splice(0, 1),
+			villager: participantsID
+		};
+	}
 
-		return roles;
+	directMessageRoles(roles: AssignedRolesInterface) {
+		Object.entries(roles).forEach(([key, value]) => {
+			value.map(async (id: string) => {
+				const user = await client.users.fetch(id);
+
+				await user.send(`You are a ${key}`);
+			});
+		});
 	}
 }
 
