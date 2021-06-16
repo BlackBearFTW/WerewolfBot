@@ -9,3 +9,5 @@ class ManipulationUtil {
 		return array;
 	}
 }
+
+export default ManipulationUtil;

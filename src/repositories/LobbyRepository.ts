@@ -51,6 +51,12 @@ class LobbyRepository extends BaseRepository {
 		}
 	}
 
+	async update(lobbyData: LobbyData) {
+		const [results]: any[] = await this.connection.execute("UPDATE lobbies SET started = ? WHERE id = ?", [lobbyData.started, lobbyData.id]);
+
+		return results.length > 0;
+	}
+
 	async delete(lobbyData: LobbyData) {
 		const result = await ErrorUtil.handle(() => {
 			this.connection.execute("DELETE FROM lobbies WHERE id = ?", [lobbyData.id]);

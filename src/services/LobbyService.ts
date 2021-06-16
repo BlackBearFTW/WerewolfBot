@@ -9,9 +9,9 @@ import DiscordUtil from "../utils/DiscordUtil";
 @Singleton
 class LobbyService {
 	async setupLobby(message: Message) {
-		const category = await this.createCategory(message);
-		const informationChannel = await this.createChannels(message, category!);
 		const inviteCode = uuid().substr(-6).toUpperCase();
+		const category = await this.createCategory(message, inviteCode);
+		const informationChannel = await this.createChannels(message, category!);
 
 		await this.sendInitialMessages(informationChannel!, inviteCode);
 
@@ -27,8 +27,8 @@ class LobbyService {
 		return inviteCode;
 	}
 
-	private async createCategory(message: Message) {
-		return await DiscordUtil.createCategory(`WEREWOLF LOBBY: ${message.author.username}`, message.guild!, [{
+	private async createCategory(message: Message, inviteCode: string) {
+		return await DiscordUtil.createCategory(`WEREWOLF LOBBY: ${inviteCode}`, message.guild!, [{
 			id: message.guild?.roles.everyone.id!,
 			deny: ["VIEW_CHANNEL"]
 		}]);

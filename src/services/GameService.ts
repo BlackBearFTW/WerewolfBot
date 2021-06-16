@@ -1,5 +1,5 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, Message, MessageEmbed} from "discord.js";
+import {CategoryChannel, Message, MessageEmbed, Role, TextChannel, VoiceChannel} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import { werewolfCount, embedColors } from "../config.json";
@@ -8,6 +8,8 @@ import RoleRepository from "../repositories/RoleRepository";
 import RolesEnum from "../types/RolesEnum";
 import ParticipationData from "../data/ParticipationData";
 import LobbyData from "../data/LobbyData";
+import ManipulationUtil from "../utils/ManipulationUtil";
+import {createReadStream} from "fs";
 
 @Singleton
 class GameService {
@@ -22,7 +24,12 @@ class GameService {
 		const participants = await participationRepository.getAllParticipants(lobbyData?.id!);
 		const participantsID = participants.map(participant => participant.user_id!);
 
+		lobbyData.started = true;
+
 		await this.assignRoles(participantsID, lobbyData);
+
+		await lobbyRepository.update(lobbyData);
+		await this.playIntro(category);
 	}
 
 	private assignRoles(participantsID: string[], lobbyData: LobbyData) {
@@ -45,7 +52,7 @@ class GameService {
 
 		assignedParticipants.push({
 			user_id: participantsID.shift(),
-			role_id: RolesEnum.SEER
+			role_id: RolesEnum.FORTUNE_TELLER
 		});
 
 		participantsID.map(value => {
@@ -58,9 +65,10 @@ class GameService {
 		const roleRepository = new RoleRepository();
 		const participationRepository = new ParticipationRepository();
 
-		assignedParticipants.map(async (value, index) => {
+		assignedParticipants.map(async value => {
 			const user = await client.users.fetch(value.user_id!);
 			const participationData = new ParticipationData();
+			const embed = new MessageEmbed();
 
 			participationData.lobby_id = lobbyData.id!;
 			participationData.user_id = value.user_id!;
@@ -69,14 +77,31 @@ class GameService {
 			await participationRepository.assignRole(participationData);
 
 			const roleData = await roleRepository.getById(value.role_id!);
-			const embed = new MessageEmbed();
+			const guild = await client.guilds.fetch(lobbyData.guild!);
 
 			embed.setTitle(`${roleData.emote} ${roleData.name}`);
 			embed.setColor(embedColors.neutralColor);
 			embed.setDescription(roleData.description);
+			embed.setTimestamp();
 
-			await user.send(`You got the ${roleData.name} role for the game in lobby \`${lobbyData.invite_code}\`.`, {embed});
+			await user.send(`You got the ${roleData.name} role for the game in lobby \`${lobbyData.invite_code}\`, which is hosted on ${guild.name}.`, {embed});
 		});
+	}
+
+	private async playIntro(category: CategoryChannel) {
+		const mainChannel = category.children.array()[1] as TextChannel;
+		const voiceChannel = category.children.last() as VoiceChannel;
+
+		const connection = await voiceChannel.join();
+
+		connection.play(createReadStream("./assets/audio/night.webm"), { type: "webm/opus" });
+
+		await mainChannel.send("Intro blahblabah, its night");
+	}
+
+	async startCycle() {
+		const roleRepository = new RoleRepository();
+		const roleData = await roleRepository.getAll();
 	}
 }
 
