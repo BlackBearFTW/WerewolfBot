@@ -62,6 +62,8 @@ class NotificationUtil {
 		for (const index of options.keys()) {
 			await pollMessage.react(numberEmotes[index]);
 		}
+
+		return pollMessage;
 	}
 
 	private static async generateEmbed(description: string, title: string, color: string, addCurrentTime = false) {

@@ -6,6 +6,7 @@ class ParticipationData {
 	user_id: string | null
 	role_id: RolesEnum | null
 	leader: boolean | null
+	dead: boolean | null
 
 	constructor() {
 		this.id = null;
@@ -13,6 +14,7 @@ class ParticipationData {
 		this.user_id = null;
 		this.role_id = null;
 		this.leader = null;
+		this.dead = null;
 	}
 }
 

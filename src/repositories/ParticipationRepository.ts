@@ -48,6 +48,7 @@ class ParticipationRepository extends BaseRepository {
 		participationData.user_id = results[0].user_id;
 		participationData.role_id = results[0].role_id;
 		participationData.leader = results[0].leader;
+		participationData.dead = results[0].dead;
 
 		return participationData;
 	}
@@ -82,6 +83,7 @@ class ParticipationRepository extends BaseRepository {
 			participationData.user_id = row.user_id;
 			participationData.role_id = row.role_id;
 			participationData.leader = row.leader;
+			participationData.dead = row.dead;
 
 			data.push(participationData);
 		}

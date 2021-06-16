@@ -1,5 +1,5 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, Message, MessageEmbed, Role, TextChannel, VoiceChannel} from "discord.js";
+import {CategoryChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import { werewolfCount, embedColors } from "../config.json";
@@ -105,9 +105,9 @@ class GameService {
 
 		roleData.sort((a, b) => a.position! - b.position!);
 
-		roleData.map(role => {
-
-		});
+		// RoleData.map(role => {
+		//
+		// });
 	}
 }
 
