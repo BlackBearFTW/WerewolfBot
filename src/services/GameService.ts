@@ -102,6 +102,12 @@ class GameService {
 	async startCycle() {
 		const roleRepository = new RoleRepository();
 		const roleData = await roleRepository.getAll();
+
+		roleData.sort((a, b) => a.position! - b.position!);
+
+		roleData.map(role => {
+
+		});
 	}
 }
 

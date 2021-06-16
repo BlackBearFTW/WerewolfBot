@@ -21,6 +21,25 @@ class RoleRepository extends BaseRepository {
 
 		return roleData;
 	}
+
+	async getAll() {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM roles", []);
+		const data: RoleData[] = [];
+
+		for (const row of results) {
+			const roleData = new RoleData();
+
+			roleData.id = row.id;
+			roleData.name = row.name;
+			roleData.description = row.description;
+			roleData.emote = row.emote;
+			roleData.position = row.position;
+
+			data.push(roleData);
+		}
+
+		return data;
+	}
 }
 
 export default RoleRepository;

@@ -2,7 +2,7 @@ import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
 import LobbyRepository from "../../repositories/LobbyRepository";
-// Import {lobbySize} from "../../config.json";
+import {lobbySize} from "../../config.json";
 import ParticipationService from "../../services/ParticipationService";
 import NotificationUtil from "../../utils/NotificationUtil";
 import GameService from "../../services/GameService";
@@ -44,6 +44,7 @@ class StartCommand extends BaseCommand {
 			}
 
 			await gameService.setupGame(message, channel.parent!);
+			await gameService.startCycle();
 		} catch (error) {
 			console.log(error);
 		}
