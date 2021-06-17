@@ -6,11 +6,11 @@ import DateUtil from "../utils/DateUtil";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
-import ParticipationData from "../data/ParticipationData";
+import RolesManager from "../managers/RolesManager";
 
 class WerewolfRole extends BaseRole {
 	constructor() {
-		super(RolesEnum.WEREWOLF, "Werewolf", "Lorem Ipsum", ":wolf:", 2);
+		super(RolesEnum.FORTUNE_TELLER, "Fortune Teller", "Lorem Ipsum", ":crystal_ball:", 1);
 	}
 
 	async execute(channel: TextChannel) {
@@ -34,19 +34,15 @@ class WerewolfRole extends BaseRole {
 		}
 
 		const pollMessage = await NotificationUtil.sendPollEmbed(
-			channel.messages.cache.last()!, participants, "Pick someone you would like to brutally murder.");
+			channel.messages.cache.last()!, participants, "Pick a user to see their role.");
 
 		await DateUtil.sleep(30000);
 
 		const optionsThatHaveVotes = pollMessage.reactions.cache.filter(value => value.count! > 1);
 
 		if (optionsThatHaveVotes.size === 0) {
-			await channel.send("Missed your chance, sun is rising.");
+			await channel.send("Missed your chance, you hear werewolf houls.");
 			return;
-		}
-
-		if (optionsThatHaveVotes.size > 1 && optionsThatHaveVotes.array()[0].count === optionsThatHaveVotes.array()[1].count) {
-			await channel.send("Looks like the werewolves couldn't make up their mind and now missed their window of opportunity");
 		}
 
 		const highestPick = optionsThatHaveVotes.sort((a, b) => b.count! - a.count!).first();
@@ -60,15 +56,12 @@ class WerewolfRole extends BaseRole {
 
 		const user = client.users.cache.get(userID!);
 
-		await channel.send(`${user?.username} was chosen to be killed.`);
+		const participant = await participationRepository.findById(lobbyData?.id!, userID!);
+		const rolesManager = new RolesManager();
 
-		const participant = new ParticipationData();
+		const role = await rolesManager.getRole(participant.role_id!);
 
-		participant.lobby_id = lobbyData?.id!;
-		participant.user_id = userID!;
-		participant.dead = true;
-
-		await participationRepository.killParticipant(participant);
+		await channel.send(`${user?.username} has the ${role?.getName()} role`);
 	}
 }
 

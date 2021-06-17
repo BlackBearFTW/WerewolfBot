@@ -20,7 +20,7 @@ class ParticipationRepository extends BaseRepository {
 		}
 	}
 
-	async update(participationData: ParticipationData) {
+	async updateLeader(participationData: ParticipationData) {
 		const [results]: any[] = await this.connection.execute("UPDATE participations SET leader = ? WHERE lobby_id = ? AND user_id = ?", [participationData.leader, participationData.lobby_id, participationData.user_id]);
 
 		return results.length > 0;
@@ -83,7 +83,7 @@ class ParticipationRepository extends BaseRepository {
 			participationData.user_id = row.user_id;
 			participationData.role_id = row.role_id;
 			participationData.leader = row.leader;
-			participationData.dead = row.dead;
+			participationData.dead = row.dead === 1;
 
 			data.push(participationData);
 		}
@@ -99,6 +99,30 @@ class ParticipationRepository extends BaseRepository {
 			console.log(error);
 			return false;
 		}
+	}
+
+	async killParticipant(participationData: ParticipationData) {
+		try {
+			await this.connection.execute("UPDATE participations SET dead = ? WHERE lobby_id = ? AND user_id = ?", [participationData.dead, participationData.lobby_id, participationData.user_id]);
+			return true;
+		} catch (error) {
+			console.log(error);
+			return false;
+		}
+	}
+
+	async findById(lobbyID: number, userID: string) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [lobbyID, userID]);
+		const participationData = new ParticipationData();
+
+		participationData.id = results[0].id;
+		participationData.lobby_id = results[0].lobby_id;
+		participationData.user_id = results[0].user_id;
+		participationData.role_id = results[0].role_id;
+		participationData.leader = results[0].leader;
+		participationData.dead = results[0].dead === 1;
+
+		return participationData;
 	}
 }
 

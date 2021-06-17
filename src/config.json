@@ -6,6 +6,7 @@
   },
   "commandsFolder": "commands",
   "eventHandlersFolder": "events",
+  "rolesFolder": "roles",
   "embedColors": {
     "neutralColor": "#3498DB",
     "errorColor": "#DB3445",

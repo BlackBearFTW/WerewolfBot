@@ -83,7 +83,7 @@ class ParticipationService {
 
 		currentLeader.leader = false;
 
-		await participationRepository.update(currentLeader);
+		await participationRepository.updateLeader(currentLeader);
 
 		const newLeader = new ParticipationData();
 
@@ -91,7 +91,7 @@ class ParticipationService {
 		newLeader.user_id = user.id;
 		newLeader.leader = true;
 
-		await participationRepository.update(newLeader);
+		await participationRepository.updateLeader(newLeader);
 	}
 
 	async isLeader(user: User, category: CategoryChannel) {
