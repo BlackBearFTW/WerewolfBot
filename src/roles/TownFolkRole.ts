@@ -8,31 +8,34 @@ import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
 import ParticipationData from "../data/ParticipationData";
 
-class WerewolfRole extends BaseRole {
+class TownFolkRole extends BaseRole {
 	constructor() {
-		super(RolesEnum.WEREWOLF,
-			"Werewolf",
+		super(RolesEnum.TOWN_FOLK,
+			"Town Folk",
 			`
-			Each night, the Werewolves bite, kill and devour one Townsperson. 
-			During the day they try to conceal their identity and vile deeds from the Townsfolk. 
-			Depending upon the number of players and variants used in the game, there are 1, 2, 3 or 4 Werewolves in play.`,
-			":wolf:",
-			2
-		);
+			These folks have no abilities other than their own intuition.
+	
+			Each Ordinary Townsperson must analyze the players' behavior to guess who is a Werewolf, 
+			and try not to be falsely mistaken for a Werewolf and unduly lynched, hanged and burned.`,
+			":house:",
+			3);
 	}
 
 	async execute(channel: TextChannel) {
 		const lobbyRepository = new LobbyRepository();
 		const participationRepository = new ParticipationRepository();
 
-		const lobbyData = await lobbyRepository.findByCategory(channel.parent!);
+		const category = channel.parent!;
+		const mainChannel = category.children.array()[1] as TextChannel;
+
+		await mainChannel.send("Its finally morning, after a good night of sleep you wake up to a loud scream. Someone was murdered again.");
+
+		const lobbyData = await lobbyRepository.findByCategory(category);
 
 		const participationData = await participationRepository.getAllParticipants(lobbyData?.id!);
 		const participants: string[] = [];
 
 		for (const item of participationData) {
-			// eslint-disable-next-line no-continue
-			if (item.role_id === this.getId()) continue;
 			// eslint-disable-next-line no-continue
 			if (item.dead) continue;
 
@@ -42,19 +45,19 @@ class WerewolfRole extends BaseRole {
 		}
 
 		const pollMessage = await NotificationUtil.sendPollEmbed(
-			channel, participants, "Pick someone you would like to brutally murder.");
+			channel, participants, "Pick the person you suspect of being a werewolf.");
 
 		await DateUtil.sleep(30000);
 
 		const optionsThatHaveVotes = pollMessage.reactions.cache.filter(value => value.count! > 1);
 
 		if (optionsThatHaveVotes.size === 0) {
-			await channel.send("Missed your chance, sun is rising.");
+			await channel.send("There was so much debate, but none of the town folks could decide who to lynch.");
 			return;
 		}
 
 		if (optionsThatHaveVotes.size > 1 && optionsThatHaveVotes.array()[0].count === optionsThatHaveVotes.array()[1].count) {
-			await channel.send("Looks like the werewolves couldn't make up their mind and now missed their window of opportunity");
+			await channel.send("Looks like the town folks couldn't make up their mind, now its evening again, everyone goes back to bed.");
 		}
 
 		const highestPick = optionsThatHaveVotes.sort((a, b) => b.count! - a.count!).first();
@@ -68,7 +71,7 @@ class WerewolfRole extends BaseRole {
 
 		const user = client.users.cache.get(userID!);
 
-		await channel.send(`${user?.username} was chosen to be killed.`);
+		await channel.send(`${user?.username} was chosen to be lynched.`);
 
 		const participant = new ParticipationData();
 
@@ -80,4 +83,4 @@ class WerewolfRole extends BaseRole {
 	}
 }
 
-export default WerewolfRole;
+export default TownFolkRole;

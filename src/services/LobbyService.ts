@@ -5,6 +5,7 @@ import { embedColors } from "../config.json";
 import LobbyRepository from "../repositories/LobbyRepository";
 import LobbyData from "../data/LobbyData";
 import DiscordUtil from "../utils/DiscordUtil";
+import DateUtil from "../utils/DateUtil";
 
 @Singleton
 class LobbyService {
@@ -44,6 +45,7 @@ class LobbyService {
 			} else {
 				channels.push(await DiscordUtil.createChannel(item, category));
 			}
+			await DateUtil.sleep(500);
 		}
 
 		const informationChannel = channels[0] as TextChannel;
@@ -55,7 +57,8 @@ class LobbyService {
 
 		await movesChannel?.updateOverwrite(message.guild?.roles.everyone!, {
 			SEND_MESSAGES: false,
-			VIEW_CHANNEL: false
+			VIEW_CHANNEL: false,
+			READ_MESSAGE_HISTORY: false
 		});
 
 		return informationChannel;

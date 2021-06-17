@@ -26,7 +26,9 @@ class ParticipationService {
 
 		const informationChannel = category.children.first();
 
-		await informationChannel!.updateOverwrite(user, {VIEW_CHANNEL: true});
+		await informationChannel!.updateOverwrite(user.id, {
+			VIEW_CHANNEL: true
+		});
 
 		const userData = new UserData();
 

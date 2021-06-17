@@ -1,4 +1,4 @@
-import {Message, MessageEmbed, MessageReaction, User} from "discord.js";
+import {Message, MessageEmbed, MessageReaction, TextChannel, User} from "discord.js";
 import {embedColors} from "../config.json";
 import {client} from "../index";
 
@@ -45,7 +45,7 @@ class NotificationUtil {
 		}
 	}
 
-	static async sendPollEmbed(message: Message, options: string[], title = "Poll", description = "") {
+	static async sendPollEmbed(channel: TextChannel, options: string[], title = "Poll", description = "") {
 		if (options.length > 20) throw new Error("You can't have more then 20 options");
 		const numberEmotes = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇻", "🇼", "🇽", "🇾", "🇿"];
 		let descriptionWithOptions = description;
@@ -57,7 +57,7 @@ class NotificationUtil {
 		}
 
 		const embed = await this.generateEmbed(descriptionWithOptions, `Vote: ${title}`, embedColors.neutralColor, true);
-		const pollMessage = await message.channel.send(embed);
+		const pollMessage = await channel.send(embed);
 
 		for (const index of options.keys()) {
 			await pollMessage.react(numberEmotes[index]);

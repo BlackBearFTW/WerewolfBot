@@ -10,7 +10,16 @@ import RolesManager from "../managers/RolesManager";
 
 class WerewolfRole extends BaseRole {
 	constructor() {
-		super(RolesEnum.FORTUNE_TELLER, "Fortune Teller", "Lorem Ipsum", ":crystal_ball:", 1);
+		super(RolesEnum.FORTUNE_TELLER,
+			"Fortune Teller",
+			`
+			Each night, the fortune teller can see the true personality of one player.
+			
+			The fortune teller chooses which player this will be. 
+			The fortune teller must help the other Townsfolk to correctly identify the Werewolves, 
+			without being discovered out by the Werewolves, thus making him/herself a target.`,
+			":crystal_ball:",
+			1);
 	}
 
 	async execute(channel: TextChannel) {
@@ -24,9 +33,7 @@ class WerewolfRole extends BaseRole {
 
 		for (const item of participationData) {
 			// eslint-disable-next-line no-continue
-			if (item.role_id === this.getId()) continue;
-			// eslint-disable-next-line no-continue
-			if (item.dead) continue;
+			if (item.role_id === this.getId() || item.dead) continue;
 
 			const guildMember = await channel.guild!.members.fetch(item.user_id!);
 
@@ -34,7 +41,7 @@ class WerewolfRole extends BaseRole {
 		}
 
 		const pollMessage = await NotificationUtil.sendPollEmbed(
-			channel.messages.cache.last()!, participants, "Pick a user to see their role.");
+			channel, participants, "Pick a user to see their role.");
 
 		await DateUtil.sleep(30000);
 

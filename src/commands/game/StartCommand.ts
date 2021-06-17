@@ -40,11 +40,10 @@ class StartCommand extends BaseCommand {
 			}
 
 			if (!await participationService.allInVoiceChannel(message, channel.parent!)) {
-				return await NotificationUtil.sendErrorEmbed(message, "Some users haven't joined voice chat yet.", undefined, false);
+				// Return await NotificationUtil.sendErrorEmbed(message, "Some users haven't joined voice chat yet.", undefined, false);
 			}
 
-			await gameService.setupGame(message, channel.parent!);
-			await gameService.startCycle();
+			await gameService.startGame(message, channel.parent!);
 		} catch (error) {
 			console.log(error);
 		}

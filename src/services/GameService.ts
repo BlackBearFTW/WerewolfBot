@@ -4,16 +4,16 @@ import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import { werewolfCount, embedColors } from "../config.json";
 import {client} from "../index";
-import RoleRepository from "../repositories/RoleRepository";
 import RolesEnum from "../types/RolesEnum";
 import ParticipationData from "../data/ParticipationData";
 import LobbyData from "../data/LobbyData";
 import ManipulationUtil from "../utils/ManipulationUtil";
-import {createReadStream} from "fs";
+import RolesManager from "../managers/RolesManager";
+import DateUtil from "../utils/DateUtil";
 
 @Singleton
 class GameService {
-	async setupGame(message: Message, category: CategoryChannel) {
+	async startGame(message: Message, category: CategoryChannel) {
 		const lobbyRepository = new LobbyRepository();
 		const participationRepository = new ParticipationRepository();
 
@@ -26,10 +26,11 @@ class GameService {
 
 		lobbyData.started = true;
 
-		await this.assignRoles(participantsID, lobbyData);
+		const assignedParticipants = await this.assignRoles(participantsID, lobbyData);
 
 		await lobbyRepository.update(lobbyData);
 		await this.playIntro(category);
+		await this.startCycle(category.children.array()[2] as TextChannel, assignedParticipants);
 	}
 
 	private assignRoles(participantsID: string[], lobbyData: LobbyData) {
@@ -45,24 +46,23 @@ class GameService {
 
 		participantsID.splice(0, amountOfWerewolves).map(value => {
 			assignedParticipants.push({
-				user_id: value,
+				user_id: value!,
 				role_id: RolesEnum.WEREWOLF
 			});
 		});
 
 		assignedParticipants.push({
-			user_id: participantsID.shift(),
+			user_id: participantsID.shift()!,
 			role_id: RolesEnum.FORTUNE_TELLER
 		});
 
 		participantsID.map(value => {
 			assignedParticipants.push({
-				user_id: value,
-				role_id: RolesEnum.VILLAGER
+				user_id: value!,
+				role_id: RolesEnum.TOWN_FOLK
 			});
 		});
 
-		const roleRepository = new RoleRepository();
 		const participationRepository = new ParticipationRepository();
 
 		assignedParticipants.map(async value => {
@@ -76,38 +76,56 @@ class GameService {
 
 			await participationRepository.assignRole(participationData);
 
-			const roleData = await roleRepository.getById(value.role_id!);
+			const rolesManager = new RolesManager();
+			const roleData = await rolesManager.getRole(value.role_id!);
 			const guild = await client.guilds.fetch(lobbyData.guild!);
 
-			embed.setTitle(`${roleData.emote} ${roleData.name}`);
+			embed.setTitle(`${roleData?.getEmote()} ${roleData?.getName()}`);
 			embed.setColor(embedColors.neutralColor);
-			embed.setDescription(roleData.description);
+			embed.setDescription(roleData?.getDescription());
 			embed.setTimestamp();
 
-			await user.send(`You got the ${roleData.name} role for the game in lobby \`${lobbyData.invite_code}\`, which is hosted on ${guild.name}.`, {embed});
+			await user.send(`You got the ${roleData?.getName()} role for the game in lobby \`${lobbyData.invite_code}\`, which is hosted on ${guild.name}.`, {embed});
 		});
+
+		return assignedParticipants;
 	}
 
 	private async playIntro(category: CategoryChannel) {
 		const mainChannel = category.children.array()[1] as TextChannel;
 		const voiceChannel = category.children.last() as VoiceChannel;
 
-		const connection = await voiceChannel.join();
+		await voiceChannel.join();
 
-		connection.play(createReadStream("./assets/audio/night.webm"), { type: "webm/opus" });
+		// Connection.play(createReadStream("./assets/audio/night.webm"), { type: "webm/opus" });
 
 		await mainChannel.send("Intro blahblabah, its night");
 	}
 
-	async startCycle() {
-		const roleRepository = new RoleRepository();
-		const roleData = await roleRepository.getAll();
+	private async startCycle(movesChannel: TextChannel, participants: {user_id: string, role_id: RolesEnum}[]) {
+		const rolesManager = new RolesManager();
+		const rolesCollection = await rolesManager.getAllRoles();
 
-		roleData.sort((a, b) => a.position! - b.position!);
+		rolesCollection.sort((a, b) => a.getTurnPosition()! - b.getTurnPosition()!);
 
-		// RoleData.map(role => {
-		//
-		// });
+		for (const role of rolesCollection.array().values()) {
+			const participantsWithRole = participants.filter(item => item.role_id === role.getId());
+
+			for (const participant of participantsWithRole) {
+				await movesChannel.updateOverwrite(participant.user_id!, {
+					VIEW_CHANNEL: true
+				});
+			}
+
+			await role.execute(movesChannel);
+			await DateUtil.sleep(5000);
+
+			for (const participant of participantsWithRole) {
+				await movesChannel.updateOverwrite(participant.user_id!, {
+					VIEW_CHANNEL: false
+				});
+			}
+		}
 	}
 }
 

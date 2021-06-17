@@ -18,6 +18,12 @@ class RolesManager {
 		return this.roles.get(id.toLowerCase());
 	}
 
+	async getAllRoles() {
+		if (this.roles.size === 0) await this.loadRoleFiles();
+
+		return this.roles;
+	}
+
 	private async loadRoleFiles() {
 		const rootFolder = path.join(__dirname, "../", rolesFolder);
 
