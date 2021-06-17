@@ -40,6 +40,13 @@ class WerewolfRole extends BaseRole {
 			participants.push(guildMember.user.toString());
 		}
 
+		const currentParticipants = participationData.flatMap(user => {
+			if (user.role_id !== this.getId()) return [];
+			return user.user_id;
+		});
+
+		await channel.send(`<@${currentParticipants.join("> <@")}>`);
+
 		const pollMessage = await NotificationUtil.sendPollEmbed(
 			channel, participants, "Pick a user to see their role.");
 

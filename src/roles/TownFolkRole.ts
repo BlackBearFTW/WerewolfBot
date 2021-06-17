@@ -15,7 +15,7 @@ class TownFolkRole extends BaseRole {
 			`
 			These folks have no abilities other than their own intuition.
 	
-			Each Ordinary Townsperson must analyze the players' behavior to guess who is a Werewolf, 
+			Each Ordinary Towns folk must analyze the players' behavior to guess who is a Werewolf, 
 			and try not to be falsely mistaken for a Werewolf and unduly lynched, hanged and burned.`,
 			":house:",
 			3);
@@ -43,6 +43,13 @@ class TownFolkRole extends BaseRole {
 
 			participants.push(guildMember.user.toString());
 		}
+
+		const currentParticipants = participationData.flatMap(user => {
+			if (user.role_id !== this.getId()) return [];
+			return user.user_id;
+		});
+
+		await channel.send(`<@${currentParticipants.join("> <@")}>`);
 
 		const pollMessage = await NotificationUtil.sendPollEmbed(
 			channel, participants, "Pick the person you suspect of being a werewolf.");
