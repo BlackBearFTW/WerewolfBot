@@ -2,7 +2,7 @@ import Singleton from "../decorators/Singleton";
 import {CategoryChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
-import { werewolfCount, embedColors } from "../config.json";
+import {embedColors, werewolfCount} from "../config.json";
 import {client} from "../index";
 import RolesEnum from "../types/RolesEnum";
 import ParticipationData from "../data/ParticipationData";
@@ -80,12 +80,20 @@ class GameService {
 			const roleData = await rolesManager.getRole(value.role_id!);
 			const guild = await client.guilds.fetch(lobbyData.guild!);
 
+			const category = await client.channels.fetch(lobbyData.category!) as CategoryChannel;
+
 			embed.setTitle(`${roleData?.getEmote()} ${roleData?.getName()}`);
 			embed.setColor(embedColors.neutralColor);
 			embed.setDescription(roleData?.getDescription());
 			embed.setTimestamp();
 
-			await user.send(`You got the ${roleData?.getName()} role for the game in lobby \`${lobbyData.invite_code}\`, which is hosted on ${guild.name}.`, {embed});
+			await user.send(
+				`You got the ${roleData?.getName()} role for the game in lobby \`${lobbyData.invite_code}\`, which is hosted on ${guild.name}.`, {embed})
+				.catch(async () => {
+					const channel = category.children.array()[1] as TextChannel;
+
+					await channel.send(`${user.toString()} Please open your direct messages.`);
+				});
 		});
 
 		return assignedParticipants;
@@ -105,25 +113,63 @@ class GameService {
 	private async startCycle(movesChannel: TextChannel, participants: {user_id: string, role_id: RolesEnum}[]) {
 		const rolesManager = new RolesManager();
 		const rolesCollection = await rolesManager.getAllRoles();
+		const lobbyRepository = new LobbyRepository();
+		const lobbyData = await lobbyRepository.findByCategory(movesChannel.parent!);
 
 		rolesCollection.sort((a, b) => a.getTurnPosition()! - b.getTurnPosition()!);
 
-		for (const role of rolesCollection.array().values()) {
-			const participantsWithRole = participants.filter(item => item.role_id === role.getId());
+		let stillGoing = true;
 
-			for (const participant of participantsWithRole) {
-				await movesChannel.updateOverwrite(participant.user_id!, {
-					VIEW_CHANNEL: true
+		while (stillGoing) {
+			// TODO: mute everyone and stop send_message permission
+			const voiceChannel = await movesChannel.parent?.children.last();
+
+			voiceChannel!.members.map(member => {
+				voiceChannel!.updateOverwrite(member, {
+					SPEAK: false
 				});
+			});
+
+			for (const role of rolesCollection.array().values()) {
+				const participantsWithRole = participants.filter(item => item.role_id === role.getId());
+
+				for (const participant of participantsWithRole) {
+					await movesChannel.updateOverwrite(participant.user_id!, {
+						VIEW_CHANNEL: true
+					});
+				}
+
+				await role.execute(movesChannel);
+				await DateUtil.sleep(5000);
+
+				for (const participant of participantsWithRole) {
+					await movesChannel.updateOverwrite(participant.user_id!, {
+						VIEW_CHANNEL: false
+					});
+				}
 			}
 
-			await role.execute(movesChannel);
-			await DateUtil.sleep(5000);
+			// TODO: check if teams are still alive, mute channels, etc
+			const participationRepository = new ParticipationRepository();
+			const survivors = await participationRepository.getSurvivors(lobbyData?.id!);
 
-			for (const participant of participantsWithRole) {
-				await movesChannel.updateOverwrite(participant.user_id!, {
-					VIEW_CHANNEL: false
-				});
+			const werewolvesAreAlive = survivors.filter(survivor => survivor.role_id === RolesEnum.WEREWOLF).length > 0;
+			const townFolksAreAlive = survivors.filter(survivor => survivor.role_id !== RolesEnum.WEREWOLF).length > 0;
+
+			if (werewolvesAreAlive && !townFolksAreAlive) {
+				const channel = movesChannel.parent?.children.array()[1] as TextChannel;
+
+				await channel.send("Werewolves have won.");
+				stillGoing = false;
+				return;
+			}
+
+			if (townFolksAreAlive && !werewolvesAreAlive) {
+				const channel = movesChannel.parent?.children.array()[1] as TextChannel;
+
+				await channel.send("Town Folks have won.");
+				stillGoing = false;
+				return;
 			}
 		}
 	}

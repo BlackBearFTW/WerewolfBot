@@ -12,10 +12,7 @@ class WerewolfRole extends BaseRole {
 	constructor() {
 		super(RolesEnum.WEREWOLF,
 			"Werewolf",
-			`
-			Each night, the Werewolves bite, kill and devour one Townsperson. 
-			During the day they try to conceal their identity and vile deeds from the Townsfolk. 
-			Depending upon the number of players and variants used in the game, there are 1, 2, 3 or 4 Werewolves in play.`,
+			"Each night, the Werewolves bite, kill and devour one Townsperson. During the day they try to conceal their identity and vile deeds from the Townsfolk. Depending upon the number of players and variants used in the game, there are 1, 2, 3 or 4 Werewolves in play.",
 			":wolf:",
 			2
 		);

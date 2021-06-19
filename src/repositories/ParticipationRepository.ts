@@ -124,6 +124,26 @@ class ParticipationRepository extends BaseRepository {
 
 		return participationData;
 	}
+
+	async getSurvivors(lobbyID: number) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND dead = ?", [lobbyID, false]);
+		const data: ParticipationData[] = [];
+
+		for (const row of results) {
+			const participationData = new ParticipationData();
+
+			participationData.id = row.id;
+			participationData.lobby_id = row.lobby_id;
+			participationData.user_id = row.user_id;
+			participationData.role_id = row.role_id;
+			participationData.leader = row.leader;
+			participationData.dead = row.dead === 1;
+
+			data.push(participationData);
+		}
+
+		return data;
+	}
 }
 
 export default ParticipationRepository;

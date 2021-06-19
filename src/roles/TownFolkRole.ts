@@ -12,11 +12,9 @@ class TownFolkRole extends BaseRole {
 	constructor() {
 		super(RolesEnum.TOWN_FOLK,
 			"Town Folk",
-			`
-			These folks have no abilities other than their own intuition.
+			`These folks have no abilities other than their own intuition.
 	
-			Each Ordinary Towns folk must analyze the players' behavior to guess who is a Werewolf, 
-			and try not to be falsely mistaken for a Werewolf and unduly lynched, hanged and burned.`,
+			Each Ordinary Towns folk must analyze the players' behavior to guess who is a Werewolf, and try not to be falsely mistaken for a Werewolf and unduly lynched, hanged and burned.`,
 			":house:",
 			3);
 	}
@@ -46,10 +44,23 @@ class TownFolkRole extends BaseRole {
 
 		const currentParticipants = participationData.flatMap(user => {
 			if (user.role_id !== this.getId()) return [];
-			return user.user_id;
+			return user.user_id!;
 		});
 
-		await channel.send(`<@${currentParticipants.join("> <@")}>`);
+		const voiceChannel = channel.parent?.children.last();
+
+		currentParticipants.map(userID => {
+			const member = channel.guild.members.cache.get(userID!);
+
+			console.log(userID);
+			console.log(member);
+
+			voiceChannel!.updateOverwrite(member!, {
+				SPEAK: true
+			});
+		});
+
+		// Await channel.send(`<@${currentParticipants.join("> <@")}>`);
 
 		const pollMessage = await NotificationUtil.sendPollEmbed(
 			channel, participants, "Pick the person you suspect of being a werewolf.");
