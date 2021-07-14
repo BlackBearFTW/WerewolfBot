@@ -12,7 +12,8 @@ class KickCommand extends BaseCommand {
 			{
 				onlyLeader: true,
 				onlyInLobby: true,
-				selfDestruct: true
+				selfDestruct: true,
+				disableWhenStarted: true
 			}
 		);
 	}

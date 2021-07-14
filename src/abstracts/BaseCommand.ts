@@ -8,7 +8,8 @@ abstract class BaseCommand {
 	private readonly defaultOptions: CommandOptionsInterface = {
 		selfDestruct: false,
 		onlyInLobby: false,
-		onlyLeader: false
+		onlyLeader: false,
+		disableWhenStarted: false
 	}
 
 	protected constructor(name: string, description: string, options?: CommandOptionsInterface) {

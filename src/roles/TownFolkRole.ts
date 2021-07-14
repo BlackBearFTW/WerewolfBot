@@ -1,12 +1,13 @@
 import BaseRole from "../abstracts/BaseRole";
 import RolesEnum from "../types/RolesEnum";
-import {TextChannel} from "discord.js";
+import {TextChannel, VoiceChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
 import DateUtil from "../utils/DateUtil";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
 import ParticipationData from "../data/ParticipationData";
+import DiscordUtil from "../utils/DiscordUtil";
 
 class TownFolkRole extends BaseRole {
 	constructor() {
@@ -37,7 +38,7 @@ class TownFolkRole extends BaseRole {
 			// eslint-disable-next-line no-continue
 			if (item.dead) continue;
 
-			const guildMember = await channel.guild!.members.fetch(item.user_id!);
+			const guildMember = await channel.guild?.members.fetch(item.user_id!);
 
 			participants.push(guildMember.user.toString());
 		}
@@ -47,20 +48,11 @@ class TownFolkRole extends BaseRole {
 			return user.user_id!;
 		});
 
-		const voiceChannel = channel.parent?.children.last();
+		await channel.send(`<@${currentParticipants.join("> <@")}>`);
 
-		currentParticipants.map(userID => {
-			const member = channel.guild.members.cache.get(userID!);
+		const voiceChannel = channel.parent?.children.last() as VoiceChannel;
 
-			console.log(userID);
-			console.log(member);
-
-			voiceChannel!.updateOverwrite(member!, {
-				SPEAK: true
-			});
-		});
-
-		// Await channel.send(`<@${currentParticipants.join("> <@")}>`);
+		await DiscordUtil.muteVoiceChannel(voiceChannel, false);
 
 		const pollMessage = await NotificationUtil.sendPollEmbed(
 			channel, participants, "Pick the person you suspect of being a werewolf.");

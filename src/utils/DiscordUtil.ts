@@ -19,6 +19,12 @@ class DiscordUtil {
 	static async getVoiceChannelMembers(voiceChannel: VoiceChannel) {
 		return voiceChannel.members.array();
 	}
+
+	static async muteVoiceChannel(voiceChannel: VoiceChannel, muted: boolean) {
+		voiceChannel.members.map(member => {
+			member.voice.setMute(muted);
+		});
+	}
 }
 
 export default DiscordUtil;

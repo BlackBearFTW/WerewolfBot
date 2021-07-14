@@ -10,7 +10,8 @@ class LeaveCommand extends BaseCommand {
 			"Leaves an existing lobby category",
 			{
 				selfDestruct: true,
-				onlyInLobby: true
+				onlyInLobby: true,
+				disableWhenStarted: true
 			}
 		);
 	}

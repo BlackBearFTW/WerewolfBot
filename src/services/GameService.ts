@@ -10,6 +10,7 @@ import LobbyData from "../data/LobbyData";
 import ManipulationUtil from "../utils/ManipulationUtil";
 import RolesManager from "../managers/RolesManager";
 import DateUtil from "../utils/DateUtil";
+import DiscordUtil from "../utils/DiscordUtil";
 
 @Singleton
 class GameService {
@@ -116,19 +117,14 @@ class GameService {
 		const lobbyRepository = new LobbyRepository();
 		const lobbyData = await lobbyRepository.findByCategory(movesChannel.parent!);
 
+		// Sort roles to be in according turn order
 		rolesCollection.sort((a, b) => a.getTurnPosition()! - b.getTurnPosition()!);
 
-		let stillGoing = true;
-
-		while (stillGoing) {
+		while (true) {
 			// TODO: mute everyone and stop send_message permission
-			const voiceChannel = await movesChannel.parent?.children.last();
+			const voiceChannel = await movesChannel.parent?.children.last() as VoiceChannel;
 
-			voiceChannel!.members.map(member => {
-				voiceChannel!.updateOverwrite(member, {
-					SPEAK: false
-				});
-			});
+			await DiscordUtil.muteVoiceChannel(voiceChannel, true);
 
 			for (const role of rolesCollection.array().values()) {
 				const participantsWithRole = participants.filter(item => item.role_id === role.getId());
@@ -160,16 +156,14 @@ class GameService {
 				const channel = movesChannel.parent?.children.array()[1] as TextChannel;
 
 				await channel.send("Werewolves have won.");
-				stillGoing = false;
-				return;
+				break;
 			}
 
 			if (townFolksAreAlive && !werewolvesAreAlive) {
 				const channel = movesChannel.parent?.children.array()[1] as TextChannel;
 
 				await channel.send("Town Folks have won.");
-				stillGoing = false;
-				return;
+				break;
 			}
 		}
 	}

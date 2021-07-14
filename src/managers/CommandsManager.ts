@@ -17,42 +17,13 @@ class CommandsManager {
 
 		if (!this.commands.has(command.toLowerCase())) return;
 
-		const returnedCommand = await this.commands.get(command.toLowerCase());
+		const commandInstance = await this.commands.get(command.toLowerCase())!;
 
-		// Todo: add check to see if user is leader
+		if (!await this.doPropertyChecks(commandInstance, message)) return;
 
-		if (returnedCommand!.getProperty("onlyInLobby")) {
-			const lobbyRepository = new LobbyRepository();
-			const channel = message.channel as TextChannel;
+		commandInstance?.execute(message, args);
 
-			const lobbyData = await lobbyRepository.findByCategory(channel.parent as CategoryChannel);
-
-			if (lobbyData === null) {
-				await NotificationUtil.sendErrorEmbed(message, "This channel doesn't belong to a lobby.");
-				if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
-
-				return;
-			}
-		}
-
-		if (returnedCommand!.getProperty("onlyLeader")) {
-			const participationService = new ParticipationService();
-
-			const channel = message.channel as TextChannel;
-
-			const isLeader = await participationService.isLeader(message.author, channel.parent!);
-
-			if (!isLeader) {
-				await NotificationUtil.sendErrorEmbed(message, "Only the lobby leader can use this command.");
-				if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
-
-				return;
-			}
-		}
-
-		returnedCommand?.execute(message, args);
-
-		if (returnedCommand!.getProperty("selfDestruct")) message?.delete();
+		if (commandInstance!.getProperty("selfDestruct")) message?.delete();
 	}
 
 	parseMessage(message: Message) {
@@ -86,6 +57,40 @@ class CommandsManager {
 				this.commands.set(new Command().getName().toLowerCase(), new Command());
 			}
 		}
+	}
+
+	private async doPropertyChecks(commandInstance: BaseCommand, message: Message): Promise<boolean> {
+		let allowedToExecute = true;
+		const lobbyRepository = new LobbyRepository();
+		const participationService = new ParticipationService();
+		const channel = message.channel as TextChannel;
+		const category = channel.parent as CategoryChannel;
+
+		if (commandInstance.getProperty("onlyInLobby")) {
+			if (await lobbyRepository.findByCategory(category) === null) {
+				await NotificationUtil.sendErrorEmbed(message, "This channel doesn't belong to a lobby.");
+				allowedToExecute = false;
+			}
+		}
+
+		if (commandInstance.getProperty("onlyLeader")) {
+			if (!await participationService.isLeader(message.author, category)) {
+				await NotificationUtil.sendErrorEmbed(message, "Only the lobby leader can use this command.");
+				allowedToExecute = false;
+			}
+		}
+
+		if (commandInstance.getProperty("disableWhenStarted")) {
+			const lobbyData = await lobbyRepository.findByCategory(category);
+
+			if (lobbyData === null || lobbyData?.started === true) {
+				await NotificationUtil.sendErrorEmbed(message, "Can't use this command, the game has already started.");
+				allowedToExecute = false;
+			}
+		}
+
+		if (commandInstance!.getProperty("selfDestruct")) message?.delete();
+		return allowedToExecute;
 	}
 }
 

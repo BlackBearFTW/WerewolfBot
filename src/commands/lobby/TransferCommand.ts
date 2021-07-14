@@ -13,7 +13,8 @@ class TransferCommand extends BaseCommand {
 			{
 				selfDestruct: true,
 				onlyInLobby: true,
-				onlyLeader: true
+				onlyLeader: true,
+				disableWhenStarted: true
 			}
 		);
 	}
