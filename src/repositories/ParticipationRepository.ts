@@ -144,6 +144,13 @@ class ParticipationRepository extends BaseRepository {
 
 		return data;
 	}
+
+	async isAlive(lobbyID: number, userID: string) {
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [lobbyID, userID]);
+
+		console.log(results);
+		return results[0].dead === 1;
+	}
 }
 
 export default ParticipationRepository;
