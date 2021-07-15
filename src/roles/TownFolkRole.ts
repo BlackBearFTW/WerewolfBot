@@ -43,13 +43,6 @@ class TownFolkRole extends BaseRole {
 			participants.push(guildMember.user.toString());
 		}
 
-		const currentParticipants = participationData.flatMap(user => {
-			if (user.dead) return [];
-			return user.user_id!;
-		});
-
-		await channel.send(`<@${currentParticipants.join("> <@")}>`);
-
 		const voiceChannel = channel.parent?.children.last() as VoiceChannel;
 
 		await DiscordUtil.muteVoiceChannel(voiceChannel, false);
