@@ -1,5 +1,5 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, GuildChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
+import {CategoryChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {embedColors, werewolfCount} from "../config.json";
@@ -11,6 +11,7 @@ import ManipulationUtil from "../utils/ManipulationUtil";
 import RolesManager from "../managers/RolesManager";
 import DateUtil from "../utils/DateUtil";
 import DiscordUtil from "../utils/DiscordUtil";
+import NotificationUtil from "../utils/NotificationUtil";
 
 @Singleton
 class GameService {
@@ -29,13 +30,16 @@ class GameService {
 
 		const assignedParticipants = await this.assignRoles(participantsID, lobbyData);
 
+		if (assignedParticipants === null) return NotificationUtil.sendErrorEmbed(message, "Please restart, some roles couldn't be assigned");
+
 		await lobbyRepository.update(lobbyData);
 		await this.playIntro(category);
-		await this.startCycle(category.children.array()[2] as TextChannel, assignedParticipants);
+		await this.startCycle(category.children.array()[2] as TextChannel, assignedParticipants!);
 	}
 
 	private assignRoles(participantsID: string[], lobbyData: LobbyData) {
 		const shuffledParticipants = ManipulationUtil.shuffle(participantsID);
+		let successfulAssignment = true;
 
 		/* eslint-disable */
 		const amountOfWerewolves = Object.entries(werewolfCount).flatMap(([key, value]) => {
@@ -93,9 +97,12 @@ class GameService {
 				.catch(async () => {
 					const channel = category.children.array()[1] as TextChannel;
 
+					successfulAssignment = false;
 					await channel.send(`${user.toString()} Please open your direct messages.`);
 				});
 		});
+
+		if (!successfulAssignment) return null;
 
 		return assignedParticipants;
 	}
@@ -114,6 +121,7 @@ class GameService {
 	private async startCycle(movesChannel: TextChannel, participants: {user_id: string, role_id: RolesEnum}[]) {
 		const rolesManager = new RolesManager();
 		const rolesCollection = await rolesManager.getAllRoles();
+		const participationRepository = new ParticipationRepository();
 		const lobbyRepository = new LobbyRepository();
 		const lobbyData = await lobbyRepository.findByCategory(movesChannel.parent!);
 		let gameIsOngoing = true;
@@ -125,20 +133,31 @@ class GameService {
 			// TODO: mute everyone and stop send_message permission
 			const voiceChannel = await movesChannel.parent?.children.last() as VoiceChannel;
 
+			await movesChannel.bulkDelete(100);
 			await DiscordUtil.muteVoiceChannel(voiceChannel, true);
 
-			// TODO: Add check to see if user is dead, if so, don't ping them and don't allow access to moves channel
-			// FIXME: Do not only ping the users who have the villager role
+			// TODO: Add check to see if user is dead, if so, don't allow access to moves channel
+			// FIXME: Does not show channel to users and pings death people
 			for (const role of rolesCollection.values()) {
-				const participantsWithRole = participants.filter(item => item.role_id === role.getId());
+				let participantsWithRole;
+
+				if (role.getId() === RolesEnum.TOWN_FOLK) {
+					participantsWithRole = participants;
+				} else {
+					participantsWithRole = participants.filter(item => item.role_id === role.getId());
+				}
+
+				participantsWithRole = participants.filter(async item => await participationRepository.isAlive(lobbyData?.id!, item.user_id));
 
 				await movesChannel.bulkDelete(100);
 				await this.toggleMovesView(participantsWithRole, movesChannel, true);
 
+				await movesChannel.send(`<@${participantsWithRole.map(item => item.user_id).join("> <@")}>`);
 				await role.execute(movesChannel);
 
-				if (!await this.checkForSurvivors(lobbyData!, movesChannel)) {
+				if (!await this.checkForSurvivors(lobbyData!, movesChannel.parent!)) {
 					gameIsOngoing = false;
+					await this.toggleMovesView(participantsWithRole, movesChannel, false);
 					break;
 				}
 
@@ -146,12 +165,11 @@ class GameService {
 
 				await DateUtil.sleep(5000);
 
-				// TODO: Don't execute villagerRole if everyone is death
 				await this.toggleMovesView(participantsWithRole, movesChannel, false);
 			}
 		}
 
-		// TODO: set started to false and set death to false for everyone
+		// TODO: set death to false for everyone
 		lobbyData!.started = false;
 		await lobbyRepository.update(lobbyData!);
 	}
@@ -164,14 +182,15 @@ class GameService {
 		}
 	}
 
-	private async checkForSurvivors(lobbyData: LobbyData, movesChannel: GuildChannel) {
+	private async checkForSurvivors(lobbyData: LobbyData, category: CategoryChannel) {
+		// TODO: use category instead of movesChannel
 		const participationRepository = new ParticipationRepository();
 		const survivors = await participationRepository.getSurvivors(lobbyData?.id!);
 
 		const werewolvesAreAlive = survivors.filter(survivor => survivor.role_id === RolesEnum.WEREWOLF).length > 0;
 		const townFolksAreAlive = survivors.filter(survivor => survivor.role_id !== RolesEnum.WEREWOLF).length > 0;
 
-		const channel = movesChannel.parent?.children.array()[1] as TextChannel;
+		const channel = category.children.array()[1] as TextChannel;
 
 		if (werewolvesAreAlive && !townFolksAreAlive) {
 			await channel.send("**Werewolves have won.**");
