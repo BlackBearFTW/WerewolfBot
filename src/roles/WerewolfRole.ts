@@ -39,7 +39,7 @@ class WerewolfRole extends BaseRole {
 		}
 
 		const currentParticipants = participationData.flatMap(user => {
-			if (user.role_id !== this.getId()) return [];
+			if (user.role_id !== this.getId() || user.dead) return [];
 			return user.user_id;
 		});
 

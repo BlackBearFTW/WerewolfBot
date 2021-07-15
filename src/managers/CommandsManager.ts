@@ -22,8 +22,6 @@ class CommandsManager {
 		if (!await this.doPropertyChecks(commandInstance, message)) return;
 
 		commandInstance?.execute(message, args);
-
-		if (commandInstance!.getProperty("selfDestruct")) message?.delete();
 	}
 
 	parseMessage(message: Message) {

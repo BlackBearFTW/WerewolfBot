@@ -57,8 +57,7 @@ class LobbyService {
 
 		await movesChannel?.updateOverwrite(message.guild?.roles.everyone!, {
 			SEND_MESSAGES: false,
-			VIEW_CHANNEL: false,
-			READ_MESSAGE_HISTORY: false
+			VIEW_CHANNEL: false
 		});
 
 		return informationChannel;

@@ -1,5 +1,5 @@
 import Singleton from "../decorators/Singleton";
-import {CategoryChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
+import {CategoryChannel, GuildChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {embedColors, werewolfCount} from "../config.json";
@@ -108,7 +108,7 @@ class GameService {
 
 		// Connection.play(createReadStream("./assets/audio/night.webm"), { type: "webm/opus" });
 
-		await mainChannel.send("Intro blahblabah, its night");
+		await mainChannel.send("Intro blahblabah (coming soon™), its night");
 	}
 
 	private async startCycle(movesChannel: TextChannel, participants: {user_id: string, role_id: RolesEnum}[]) {
@@ -116,56 +116,74 @@ class GameService {
 		const rolesCollection = await rolesManager.getAllRoles();
 		const lobbyRepository = new LobbyRepository();
 		const lobbyData = await lobbyRepository.findByCategory(movesChannel.parent!);
+		let gameIsOngoing = true;
 
 		// Sort roles to be in according turn order
 		rolesCollection.sort((a, b) => a.getTurnPosition()! - b.getTurnPosition()!);
 
-		while (true) {
+		while (gameIsOngoing) {
 			// TODO: mute everyone and stop send_message permission
 			const voiceChannel = await movesChannel.parent?.children.last() as VoiceChannel;
 
 			await DiscordUtil.muteVoiceChannel(voiceChannel, true);
 
-			for (const role of rolesCollection.array().values()) {
+			// TODO: Add check to see if user is dead, if so, don't ping them and don't allow access to moves channel
+			// FIXME: Do not only ping the users who have the villager role
+			for (const role of rolesCollection.values()) {
 				const participantsWithRole = participants.filter(item => item.role_id === role.getId());
 
-				for (const participant of participantsWithRole) {
-					await movesChannel.updateOverwrite(participant.user_id!, {
-						VIEW_CHANNEL: true
-					});
-				}
+				await movesChannel.bulkDelete(100);
+				await this.toggleMovesView(participantsWithRole, movesChannel, true);
 
 				await role.execute(movesChannel);
+
+				if (!await this.checkForSurvivors(lobbyData!, movesChannel)) {
+					gameIsOngoing = false;
+					break;
+				}
+
+				// TODO: check if teams are still alive, mute channels, etc
+
 				await DateUtil.sleep(5000);
 
-				for (const participant of participantsWithRole) {
-					await movesChannel.updateOverwrite(participant.user_id!, {
-						VIEW_CHANNEL: false
-					});
-				}
-			}
-
-			// TODO: check if teams are still alive, mute channels, etc
-			const participationRepository = new ParticipationRepository();
-			const survivors = await participationRepository.getSurvivors(lobbyData?.id!);
-
-			const werewolvesAreAlive = survivors.filter(survivor => survivor.role_id === RolesEnum.WEREWOLF).length > 0;
-			const townFolksAreAlive = survivors.filter(survivor => survivor.role_id !== RolesEnum.WEREWOLF).length > 0;
-
-			if (werewolvesAreAlive && !townFolksAreAlive) {
-				const channel = movesChannel.parent?.children.array()[1] as TextChannel;
-
-				await channel.send("Werewolves have won.");
-				break;
-			}
-
-			if (townFolksAreAlive && !werewolvesAreAlive) {
-				const channel = movesChannel.parent?.children.array()[1] as TextChannel;
-
-				await channel.send("Town Folks have won.");
-				break;
+				// TODO: Don't execute villagerRole if everyone is death
+				await this.toggleMovesView(participantsWithRole, movesChannel, false);
 			}
 		}
+
+		// TODO: set started to false and set death to false for everyone
+		lobbyData!.started = false;
+		await lobbyRepository.update(lobbyData!);
+	}
+
+	private async toggleMovesView(participantsWithRole: {user_id: string, role_id: RolesEnum}[], movesChannel: TextChannel, allowView: boolean) {
+		for (const participant of participantsWithRole) {
+			await movesChannel.updateOverwrite(participant.user_id!, {
+				VIEW_CHANNEL: allowView
+			});
+		}
+	}
+
+	private async checkForSurvivors(lobbyData: LobbyData, movesChannel: GuildChannel) {
+		const participationRepository = new ParticipationRepository();
+		const survivors = await participationRepository.getSurvivors(lobbyData?.id!);
+
+		const werewolvesAreAlive = survivors.filter(survivor => survivor.role_id === RolesEnum.WEREWOLF).length > 0;
+		const townFolksAreAlive = survivors.filter(survivor => survivor.role_id !== RolesEnum.WEREWOLF).length > 0;
+
+		const channel = movesChannel.parent?.children.array()[1] as TextChannel;
+
+		if (werewolvesAreAlive && !townFolksAreAlive) {
+			await channel.send("**Werewolves have won.**");
+			return false;
+		}
+
+		if (townFolksAreAlive && !werewolvesAreAlive) {
+			await channel.send("**Town Folks have won.**");
+			return false;
+		}
+
+		return true;
 	}
 }
 
