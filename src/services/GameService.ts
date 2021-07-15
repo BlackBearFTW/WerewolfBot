@@ -126,8 +126,8 @@ class GameService {
 		const lobbyData = await lobbyRepository.findByCategory(movesChannel.parent!);
 		let gameIsOngoing = true;
 
-		// Sort roles to be in according turn order
-		rolesCollection.sort((a, b) => a.getTurnPosition()! - b.getTurnPosition()!);
+		// Sort roles to be in ascending order, uses turnPosition property
+		rolesCollection.sort((a, b) => a.getTurnPosition() - b.getTurnPosition());
 
 		while (gameIsOngoing) {
 			// TODO: mute everyone and stop send_message permission
