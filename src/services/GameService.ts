@@ -35,6 +35,13 @@ class GameService {
 		await lobbyRepository.update(lobbyData);
 		await this.playIntro(category);
 		await this.startCycle(category.children.array()[2] as TextChannel, assignedParticipants!);
+
+		lobbyData!.started = false;
+		await lobbyRepository.update(lobbyData!);
+
+		for (const participant of participants) {
+			await participationRepository.makeAlive(participant);
+		}
 	}
 
 	private assignRoles(participantsID: string[], lobbyData: LobbyData) {
@@ -136,9 +143,8 @@ class GameService {
 			await movesChannel.bulkDelete(100);
 			await DiscordUtil.muteVoiceChannel(voiceChannel, true);
 
-			// TODO: Add check to see if user is dead, if so, don't allow access to moves channel
-			// FIXME: Does not show channel to users and pings death people
 			for (const role of rolesCollection.values()) {
+				await movesChannel.bulkDelete(100);
 				let participantsWithRole;
 
 				if (role.getId() === RolesEnum.TOWN_FOLK) {
@@ -147,9 +153,15 @@ class GameService {
 					participantsWithRole = participants.filter(item => item.role_id === role.getId());
 				}
 
-				participantsWithRole = participants.filter(async item => await participationRepository.isAlive(lobbyData?.id!, item.user_id));
+				for (const [key, value] of participantsWithRole.entries()) {
+					if (!await participationRepository.isAlive(lobbyData?.id!, value.user_id)) {
+						participantsWithRole.splice(key, 1);
+					}
+				}
 
-				await movesChannel.bulkDelete(100);
+				// eslint-disable-next-line no-continue
+				if (participantsWithRole.length < 1) continue;
+
 				await this.toggleMovesView(participantsWithRole, movesChannel, true);
 
 				await movesChannel.send(`<@${participantsWithRole.map(item => item.user_id).join("> <@")}>`);
@@ -158,6 +170,7 @@ class GameService {
 				if (!await this.checkForSurvivors(lobbyData!, movesChannel.parent!)) {
 					gameIsOngoing = false;
 					await this.toggleMovesView(participantsWithRole, movesChannel, false);
+					await movesChannel.bulkDelete(100);
 					break;
 				}
 
@@ -168,13 +181,9 @@ class GameService {
 				await this.toggleMovesView(participantsWithRole, movesChannel, false);
 			}
 		}
-
-		// TODO: set death to false for everyone
-		lobbyData!.started = false;
-		await lobbyRepository.update(lobbyData!);
 	}
 
-	private async toggleMovesView(participantsWithRole: {user_id: string, role_id: RolesEnum}[], movesChannel: TextChannel, allowView: boolean) {
+	private async toggleMovesView(participantsWithRole: {user_id: string, role_id: RolesEnum}[], movesChannel: TextChannel, allowView: boolean = false) {
 		for (const participant of participantsWithRole) {
 			await movesChannel.updateOverwrite(participant.user_id!, {
 				VIEW_CHANNEL: allowView
@@ -195,9 +204,7 @@ class GameService {
 		if (werewolvesAreAlive && !townFolksAreAlive) {
 			await channel.send("**Werewolves have won.**");
 			return false;
-		}
-
-		if (townFolksAreAlive && !werewolvesAreAlive) {
+		} else if (townFolksAreAlive && !werewolvesAreAlive) {
 			await channel.send("**Town Folks have won.**");
 			return false;
 		}

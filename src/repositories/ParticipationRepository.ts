@@ -146,10 +146,15 @@ class ParticipationRepository extends BaseRepository {
 	}
 
 	async isAlive(lobbyID: number, userID: string) {
-		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ?", [lobbyID, userID]);
+		const [results]: any[] = await this.connection.execute("SELECT * FROM participations WHERE lobby_id = ? AND user_id = ? LIMIT 1", [lobbyID, userID]);
 
-		console.log(results);
-		return results[0].dead === 1;
+		return results[0].dead === 0;
+	}
+
+	async makeAlive(participationData: ParticipationData) {
+		const [results]: any[] = await this.connection.execute("UPDATE participations SET dead = ? WHERE lobby_id = ? AND user_id = ?", [false, participationData.lobby_id, participationData.user_id]);
+
+		return results.length > 0;
 	}
 }
 
