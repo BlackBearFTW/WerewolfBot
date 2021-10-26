@@ -2,7 +2,6 @@ import BaseRole from "../abstracts/BaseRole";
 import RolesEnum from "../types/RolesEnum";
 import {TextChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
-import DateUtil from "../utils/DateUtil";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
@@ -37,12 +36,8 @@ class WerewolfRole extends BaseRole {
 			participants.push(guildMember.user.toString());
 		}
 
-		const pollMessage = await NotificationUtil.sendPollEmbed(
+		const [pollMessage, optionsThatHaveVotes] = await NotificationUtil.sendPollEmbed(
 			channel, participants, "Pick a user to see their role.");
-
-		await DateUtil.sleep(30000);
-
-		const optionsThatHaveVotes = pollMessage.reactions.cache.filter(value => value.count! > 1);
 
 		if (optionsThatHaveVotes.size === 0) {
 			await channel.send("Missed your chance, you hear werewolf houls.");

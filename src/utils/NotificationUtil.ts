@@ -1,17 +1,18 @@
-import {Message, MessageEmbed, MessageReaction, TextChannel, User} from "discord.js";
+import {Collection, Message, MessageEmbed, MessageReaction, TextChannel, User} from "discord.js";
 import {embedColors} from "../config.json";
 import {client} from "../index";
+import DateUtil from "./DateUtil";
 
 class NotificationUtil {
 	static async sendErrorEmbed(message: Message, description = "There was an error", title = "Error", selfDestruct = true) {
-		const embed = await this.generateEmbed(description, title, embedColors.errorColor);
+		const embed = await this.generateEmbed(description, title, "", embedColors.errorColor);
 		const errorMessage = await message.channel.send(embed);
 
 		if (selfDestruct) await errorMessage.delete({ timeout: 7500 });
 	}
 
 	static async sendConfirmationEmbed(message: Message, user: User, description = "Confirm this action", title = "Confirm Action") {
-		const embed = await this.generateEmbed(description, title, embedColors.warningColor);
+		const embed = await this.generateEmbed(description, title, "", embedColors.warningColor);
 		const confirmMessage = await message.channel.send(embed);
 
 		await confirmMessage.react("✅");
@@ -45,7 +46,7 @@ class NotificationUtil {
 		}
 	}
 
-	static async sendPollEmbed(channel: TextChannel, options: string[], title = "Poll", description = "") {
+	static async sendPollEmbed(channel: TextChannel, options: string[], title = "Poll", description = ""): Promise<[Message, Collection<string, MessageReaction>]> {
 		if (options.length > 20) throw new Error("You can't have more then 20 options");
 		const numberEmotes = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯", "🇰", "🇱", "🇲", "🇳", "🇴", "🇵", "🇶", "🇷", "🇸", "🇹", "🇺", "🇻", "🇼", "🇽", "🇾", "🇿"];
 		let descriptionWithOptions = description;
@@ -56,21 +57,26 @@ class NotificationUtil {
 			descriptionWithOptions += `${numberEmotes[index]} ${value}\n`;
 		}
 
-		const embed = await this.generateEmbed(descriptionWithOptions, `Vote: ${title}`, embedColors.neutralColor, true);
+		const embed = await this.generateEmbed(descriptionWithOptions, `Vote: ${title}`, "You have 30 seconds to vote.", embedColors.neutralColor, true);
 		const pollMessage = await channel.send(embed);
 
 		for (const index of options.keys()) {
 			await pollMessage.react(numberEmotes[index]);
 		}
 
-		return pollMessage;
+		await DateUtil.sleep(30000);
+
+		const optionsThatHaveVotes = pollMessage.reactions.cache.filter(value => value.count! > 1);
+
+		return [pollMessage, optionsThatHaveVotes];
 	}
 
-	private static async generateEmbed(description: string, title: string, color: string, addCurrentTime = false) {
+	private static async generateEmbed(description: string, title: string, footer: string, color: string, addCurrentTime = false) {
 		const embed = new MessageEmbed();
 
 		embed.setTitle(title);
 		embed.setDescription(description);
+		embed.setFooter(footer);
 		embed.setColor(color);
 
 		if (addCurrentTime) embed.setTimestamp();

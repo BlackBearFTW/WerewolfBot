@@ -2,7 +2,6 @@ import BaseRole from "../abstracts/BaseRole";
 import RolesEnum from "../types/RolesEnum";
 import {TextChannel, VoiceChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
-import DateUtil from "../utils/DateUtil";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {client} from "../index";
@@ -47,12 +46,8 @@ class TownFolkRole extends BaseRole {
 
 		await DiscordUtil.muteVoiceChannel(voiceChannel, false);
 
-		const pollMessage = await NotificationUtil.sendPollEmbed(
+		const [pollMessage, optionsThatHaveVotes] = await NotificationUtil.sendPollEmbed(
 			channel, participants, "Pick the person you suspect of being a werewolf.");
-
-		await DateUtil.sleep(30000);
-
-		const optionsThatHaveVotes = pollMessage.reactions.cache.filter(value => value.count! > 1);
 
 		if (optionsThatHaveVotes.size === 0) {
 			await channel.send("There was so much debate, but none of the town folks could decide who to lynch.");
