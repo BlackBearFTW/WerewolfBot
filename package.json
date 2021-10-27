@@ -14,30 +14,26 @@
     "lint": "eslint src test --ext .js,.ts"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
-    "mysql2": "^2.1.0",
-    "ts-node": "^10.0.0",
+    "mysql2": "^2.3.2",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.38",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@lambocreeper/mock-discord.js": "^1.0.9",
-    "@types/chai": "^4.2.18",
-    "@types/mocha": "^8.2.2",
-    "@types/mysql2": "github:types/mysql2",
-    "@types/node": "^15.12.2",
-    "@types/sinon": "^10.0.2",
-    "@types/uuid": "^8.3.0",
-    "@typescript-eslint/eslint-plugin": "^4.26.1",
-    "@typescript-eslint/parser": "^4.26.1",
+    "@types/sinon": "^10.0.6",
+    "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
     "chai": "^4.3.4",
-    "eslint": "^7.28.0",
+    "eslint": "^8.1.0",
     "eslint-config-codesupport": "^1.0.2",
-    "mocha": "^9.0.0",
-    "nodemon": "^2.0.7",
-    "sinon": "^11.1.1",
-    "typescript": "^4.3.2",
-    "ts-mocha": "^8.0.0"
+    "mocha": "^8.4.0",
+    "nodemon": "^2.0.14",
+    "sinon": "^11.1.2",
+    "ts-mocha": "^8.0.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
   }
 }

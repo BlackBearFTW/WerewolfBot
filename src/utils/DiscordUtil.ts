@@ -1,29 +1,35 @@
-import {CategoryChannel, Guild, VoiceChannel} from "discord.js";
+import {BitFieldResolvable, Intents, IntentsString} from "discord.js";
 
 class DiscordUtil {
-	static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: any[]) {
-		return await category.guild.channels.create(name, {
-			type: type || "text",
-			parent: category,
-			permissionOverwrites: permissionOverwrite
-		});
-	}
+	// Static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: any[]) {
+	// 	Return await category.guild.channels.create(name, {
+	// 		Type: type || "text",
+	// 		Parent: category,
+	// 		PermissionOverwrites: permissionOverwrite
+	// 	});
+	// }
+	//
+	// Static async createCategory(name: string, guild: Guild, permissionOverwrite?: any[]) {
+	// 	Return await guild.channels.create(name, {
+	// 		Type: "category",
+	// 		PermissionOverwrites: permissionOverwrite
+	// 	});
+	// }
+	//
+	// Static async getVoiceChannelMembers(voiceChannel: VoiceChannel) {
+	// 	Return voiceChannel.members.array();
+	// }
+	//
+	// Static async muteVoiceChannel(voiceChannel: VoiceChannel, muted: boolean) {
+	// 	VoiceChannel.members.map(member => {
+	// 		Member.voice.setMute(muted);
+	// 	});
+	// }
 
-	static async createCategory(name: string, guild: Guild, permissionOverwrite?: any[]) {
-		return await guild.channels.create(name, {
-			type: "category",
-			permissionOverwrites: permissionOverwrite
-		});
-	}
-
-	static async getVoiceChannelMembers(voiceChannel: VoiceChannel) {
-		return voiceChannel.members.array();
-	}
-
-	static async muteVoiceChannel(voiceChannel: VoiceChannel, muted: boolean) {
-		voiceChannel.members.map(member => {
-			member.voice.setMute(muted);
-		});
+	static getAllIntents(): BitFieldResolvable<IntentsString, number> {
+		// Stole... copied from an older version of discord.js...
+		// https://github.com/discordjs/discord.js/blob/51551f544b80d7d27ab0b315da01dfc560b2c115/src/util/Intents.js#L75
+		return Object.values(Intents.FLAGS).reduce((acc, p) => acc | p, 0);
 	}
 }
 

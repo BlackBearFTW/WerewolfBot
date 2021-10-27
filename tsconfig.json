@@ -11,7 +11,11 @@
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
+  "files": [
+    "src/index.ts"
+  ],
   "exclude": ["test"]
 }
