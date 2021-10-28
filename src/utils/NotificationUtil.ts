@@ -3,6 +3,7 @@ import {embedColors} from "../config.json";
 import {client} from "../index";
 import DateUtil from "./DateUtil";
 
+// TODO: Refactor Class
 class NotificationUtil {
 	static async sendErrorEmbed(message: Message, description = "There was an error", title = "Error", selfDestruct = true) {
 		const embed = await this.generateEmbed(description, title, "", embedColors.errorColor);
