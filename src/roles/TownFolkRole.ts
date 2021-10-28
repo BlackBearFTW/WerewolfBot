@@ -1,5 +1,5 @@
 import BaseRole from "../abstracts/BaseRole";
-import RolesEnum from "../types/RolesEnum";
+import RolesEnum from "../types/enums/RolesEnum";
 import {TextChannel, VoiceChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
 import LobbyRepository from "../repositories/LobbyRepository";

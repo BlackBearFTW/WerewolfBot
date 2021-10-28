@@ -1,4 +1,4 @@
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import BaseRepository from "../abstracts/BaseRepository";
 import UserData from "../data/UserData";
 

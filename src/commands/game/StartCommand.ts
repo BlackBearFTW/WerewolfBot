@@ -21,7 +21,7 @@ class StartCommand extends BaseCommand {
 	}
 
 	async execute(message: Message, args: string[]) {
-		try {
+		/*		Try {
 			const participationService = new ParticipationService();
 			const lobbyService = new LobbyService();
 			const lobbyRepository = new LobbyRepository();
@@ -46,7 +46,32 @@ class StartCommand extends BaseCommand {
 			await gameService.startGame(message, channel.parent!);
 		} catch (error) {
 			console.log(error);
-		}
+		}*/
+
+		// Do necessary checks:
+		// - Check if game hasn't already started.
+		// - Check if lobby has enough players.
+		// - Check if all users are in the designated voice channel.
+
+		// Change lobby status from waiting to playing.
+		// Block anyone from leaving / joining.
+		// Startup game:
+		// - Send initial message.
+		// - Tell storyline in voice channel.
+		// - Start game logic loop:
+		// // - Say that it's night.
+		// // - Get all roles and get role with current turn and check if anyone with that role is still alive.
+		// // - Allow access to moves channel for that specific role.
+		// // - Execute role specific logic.
+		// // - Remove access to moves channel for that specific role.
+		// // - Check if someone died and set their status to dead.
+		// // - Check if there are any werewolves left compared to town folks, otherwise announce winner.
+		// // - Check if there are any town folks left compared to werewolves, otherwise announce winner.
+		// // - Say its day again and mention any events that happened that night.
+		// // - Allow players to speak in voice channel and discus potential werewolves.
+		// // - Allow all players to vote for someone to lynch, continue game if votes are equal somehow.
+		// // - Kill voted player and reveal their role, disallow speaking and writing.
+		// // - Check again if there are any werewolves / town folks left.
 	}
 }
 

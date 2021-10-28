@@ -1,5 +1,5 @@
 import {Message} from "discord.js";
-import CommandOptionsInterface from "../interfaces/CommandOptionsInterface";
+import CommandOptionsInterface from "../types/interfaces/CommandOptionsInterface";
 
 abstract class BaseCommand {
 	private readonly name: string;

@@ -2,6 +2,7 @@ import {Message} from "discord.js";
 import CommandsManager from "../managers/CommandsManager";
 import BaseEventHandler from "../abstracts/BaseEventHandler";
 
+// TODO: Change / Fix To Support Slash Commands
 class MessageCommandHandler extends BaseEventHandler {
 	constructor() {
 		super("message", false);

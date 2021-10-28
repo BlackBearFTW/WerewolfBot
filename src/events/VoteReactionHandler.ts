@@ -2,6 +2,7 @@ import {client} from "../index";
 import BaseEventHandler from "../abstracts/BaseEventHandler";
 import {MessageReaction, User} from "discord.js";
 
+// TODO: Use Select Menu's instead
 class VoteReactionHandler extends BaseEventHandler {
 	constructor() {
 		super("messageReactionAdd", false);

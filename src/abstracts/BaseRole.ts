@@ -1,4 +1,4 @@
-import RolesEnum from "../types/RolesEnum";
+import RolesEnum from "../types/enums/RolesEnum";
 
 abstract class BaseRole {
 	private readonly id: RolesEnum;

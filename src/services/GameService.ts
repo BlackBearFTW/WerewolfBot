@@ -1,10 +1,10 @@
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import {CategoryChannel, Message, MessageEmbed, TextChannel, VoiceChannel} from "discord.js";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
 import {embedColors, werewolfCount} from "../config.json";
 import {client} from "../index";
-import RolesEnum from "../types/RolesEnum";
+import RolesEnum from "../types/enums/RolesEnum";
 import ParticipationData from "../data/ParticipationData";
 import LobbyData from "../data/LobbyData";
 import ManipulationUtil from "../utils/ManipulationUtil";

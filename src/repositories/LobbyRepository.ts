@@ -1,4 +1,4 @@
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import BaseRepository from "../abstracts/BaseRepository";
 import LobbyData from "../data/LobbyData";
 import {CategoryChannel} from "discord.js";

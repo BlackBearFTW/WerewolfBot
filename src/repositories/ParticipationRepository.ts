@@ -1,4 +1,4 @@
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import BaseRepository from "../abstracts/BaseRepository";
 import ParticipationData from "../data/ParticipationData";
 import {lobbySize} from "../config.json";

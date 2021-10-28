@@ -1,7 +1,7 @@
 import fs from "fs";
 import {client} from "../index";
 import {eventHandlersFolder} from "../config.json";
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import path from "path";
 
 @Singleton

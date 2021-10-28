@@ -2,11 +2,13 @@ import fs from "fs";
 import {CategoryChannel, Collection, Message, TextChannel} from "discord.js";
 import BaseCommand from "../abstracts/BaseCommand";
 import {commandsFolder, prefix} from "../config.json";
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import LobbyRepository from "../repositories/LobbyRepository";
 import NotificationUtil from "../utils/NotificationUtil";
 import ParticipationService from "../services/ParticipationService";
 import path from "path";
+
+// TODO: Support Slash Commands
 
 @Singleton
 class CommandsManager {

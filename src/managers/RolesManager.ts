@@ -1,10 +1,10 @@
 import fs from "fs";
 import {Collection} from "discord.js";
 import {rolesFolder} from "../config.json";
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import path from "path";
 import BaseRole from "../abstracts/BaseRole";
-import RolesEnum from "../types/RolesEnum";
+import RolesEnum from "../types/enums/RolesEnum";
 
 @Singleton
 class RolesManager {

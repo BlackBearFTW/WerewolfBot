@@ -1,4 +1,4 @@
-import Singleton from "../decorators/Singleton";
+import Singleton from "../types/decorators/Singleton";
 import UserRepository from "../repositories/UserRepository";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
@@ -20,7 +20,7 @@ class ParticipationService {
 
 		const category = await client.channels.fetch(lobbyData.category!) as CategoryChannel;
 
-		await category.updateOverwrite(user, {
+		await category.permissionOverwrites.set(user, {
 			VIEW_CHANNEL: true
 		});
 

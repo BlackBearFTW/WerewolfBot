@@ -5,7 +5,9 @@ import { config } from "dotenv";
 import {createConnection} from "typeorm";
 import DiscordUtil from "./utils/DiscordUtil";
 
-export const client = new Client({intents: DiscordUtil.getAllIntents()});
+const client = new Client({intents: DiscordUtil.getAllIntents()});
+
+DiscordUtil.setClient(client);
 // New EventHandlersManager();
 
 if (process.env.NODE_ENV !== "production") config();
