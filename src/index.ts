@@ -1,14 +1,14 @@
 import "reflect-metadata";
 import {Client} from "discord.js";
 import { config } from "dotenv";
-// Import EventHandlersManager from "./managers/EventHandlersManager";
+import EventHandlersManager from "./managers/EventHandlersManager";
 import {createConnection} from "typeorm";
 import DiscordUtil from "./utils/DiscordUtil";
 
 const client = new Client({intents: DiscordUtil.getAllIntents()});
 
 DiscordUtil.setClient(client);
-// New EventHandlersManager();
+new EventHandlersManager();
 
 if (process.env.NODE_ENV !== "production") config();
 

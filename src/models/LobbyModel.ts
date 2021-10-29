@@ -1,11 +1,9 @@
 import {Column, CreateDateColumn, Entity, getConnection, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ParticipationModel} from "./ParticipationModel";
 import {v4 as uuid} from "uuid";
-import {CategoryChannel, ColorResolvable, Guild, MessageEmbed, TextChannel, User} from "discord.js";
+import {CategoryChannel, ColorResolvable, Guild, MessageEmbed, TextChannel} from "discord.js";
 import { embedColors } from "../config.json";
-import DiscordUtil from "../utils/DiscordUtil";
 import {UserModel} from "./UserModel";
-import NotificationUtil from "../utils/NotificationUtil";
 
 @Entity("lobbies")
 export class LobbyModel {
@@ -27,7 +25,7 @@ export class LobbyModel {
     @CreateDateColumn({name: "created_at"})
     	createdAt!: Date;
 
-    @OneToMany(() => ParticipationModel, participation => participation.userId, {onUpdate: "CASCADE", onDelete: "CASCADE"})
+    @OneToMany(() => ParticipationModel, participation => participation.user, {onUpdate: "CASCADE", onDelete: "CASCADE"})
     	participations!: ParticipationModel[];
 
     private guild!: Guild;
@@ -131,13 +129,17 @@ export class LobbyModel {
 
     	const participationModel = new ParticipationModel();
 
-    	participationModel.lobbyId = this;
+    	participationModel.lobby = this;
 
-    	participationModel.userId = user;
+    	participationModel.user = user;
 
     	participationModel.leader = makeLobbyLeader;
 
 	    await participationRepository.save(participationModel);
+
+	    await this.category.permissionOverwrites.create(user.id, {
+    		VIEW_CHANNEL: true
+	    });
     }
 
     /**
@@ -148,8 +150,8 @@ export class LobbyModel {
 	    const participationRepository = getConnection().getRepository(ParticipationModel);
 
     	const participationModel = await participationRepository.findOneOrFail({where: {
-    		lobbyId: this,
-    		userId: user
+    		lobby: this,
+    		user: user
     	}});
 
 	    if (!participationModel) throw new Error("This user is not a participant of this lobby");
@@ -159,6 +161,8 @@ export class LobbyModel {
 	    if (participationModel.leader) throw new Error("User needs to transfer leadership before leaving");
 
     	await participationRepository.remove(participationModel);
+
+    	await this.category.permissionOverwrites.delete(user.id);
     }
 
     /**
@@ -168,8 +172,8 @@ export class LobbyModel {
     public async changeLeader(user: UserModel) {
 	    const participationRepository = getConnection().getRepository(ParticipationModel);
 
-    	await participationRepository.update({lobbyId: this, leader: true}, {leader: false});
-    	await participationRepository.update({lobbyId: this, userId: user}, {leader: true});
+    	await participationRepository.update({lobby: this, leader: true}, {leader: false});
+    	await participationRepository.update({lobby: this, user: user}, {leader: true});
     }
 
 	// StartGame

@@ -9,11 +9,11 @@ export class ParticipationModel {
 
     @ManyToOne(() => LobbyModel, lobby => lobby.participations)
     @JoinColumn({ name: "lobby_id" })
-    	lobbyId!: LobbyModel;
+    	lobby!: LobbyModel;
 
     @ManyToOne(() => UserModel, user => user.participations)
     @JoinColumn({ name: "user_id" })
-    	userId!: UserModel;
+    	user!: UserModel;
 
     @Column({name: "role_id" })
     	roleId!: number;
