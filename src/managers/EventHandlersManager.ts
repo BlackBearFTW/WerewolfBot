@@ -1,8 +1,8 @@
 import fs from "fs";
-import {client} from "../index";
 import {eventHandlersFolder} from "../config.json";
 import Singleton from "../types/decorators/Singleton";
 import path from "path";
+import DiscordUtil from "../utils/DiscordUtil";
 
 @Singleton
 class EventHandlersManager {
@@ -11,6 +11,7 @@ class EventHandlersManager {
 	}
 
 	private async loadEventFiles() {
+		const client = DiscordUtil.getClient();
 		const rootFolder = path.join(__dirname, "../", eventHandlersFolder);
 
 		const eventFiles = fs.readdirSync(rootFolder).filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));

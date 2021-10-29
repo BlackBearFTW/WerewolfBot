@@ -18,6 +18,6 @@ export class UserModel {
 	@Column({name: "played_as_werewolf"})
 		playedAsWerewolf!: number;
 
-	@OneToMany(() => ParticipationModel, participation => participation.userId, {onUpdate: "CASCADE", onDelete: "CASCADE"})
+	@OneToMany(() => ParticipationModel, participation => participation.user, {onUpdate: "CASCADE", onDelete: "CASCADE"})
 		participations!: ParticipationModel[];
 }
