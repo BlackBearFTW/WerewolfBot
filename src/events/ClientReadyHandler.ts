@@ -16,6 +16,7 @@ class ClientReadyHandler extends BaseEventHandler {
 			client.user!.setActivity(status.message, {type: "PLAYING"});
 
 			await commandsHandler.loadCommandFiles();
+
 			await client.application!.commands.set(commandsHandler.getCommandsJson(), "772538571386519562");
 
 			console.log(`${client.user!.username} is ready!`);

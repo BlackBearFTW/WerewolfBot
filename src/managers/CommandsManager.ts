@@ -1,5 +1,11 @@
 import fs from "fs";
-import {Collection, ColorResolvable, CommandInteraction, MessageEmbed} from "discord.js";
+import {
+	ApplicationCommandDataResolvable,
+	Collection,
+	ColorResolvable,
+	CommandInteraction,
+	MessageEmbed
+} from "discord.js";
 import BaseCommand from "../abstracts/BaseCommand";
 import {commandsFolder, embedColors} from "../config.json";
 import Singleton from "../types/decorators/Singleton";
@@ -85,11 +91,8 @@ class CommandsManager {
 		return [allowedToExecute, errorMessage];
 	}
 
-	public getCommandsJson() {
-		return this.commands.map(command => ({
-			name: command.getName(),
-			description: command.getDescription()
-		}));
+	public getCommandsJson(): ApplicationCommandDataResolvable[] {
+		return this.commands.map(command => command.getSlashCommandData());
 	}
 }
 

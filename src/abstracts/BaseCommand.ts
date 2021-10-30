@@ -1,9 +1,8 @@
-import {CommandInteraction} from "discord.js";
+import {ApplicationCommandData, CommandInteraction} from "discord.js";
 import CommandOptionsInterface from "../types/interfaces/CommandOptionsInterface";
 
 abstract class BaseCommand {
-	private readonly name: string;
-	private readonly description: string;
+	private readonly slashCommandData: ApplicationCommandData;
 	private readonly customOptions: CommandOptionsInterface;
 	private readonly defaultOptions: CommandOptionsInterface = {
 		onlyInLobby: false,
@@ -11,21 +10,20 @@ abstract class BaseCommand {
 		disableWhenStarted: false
 	};
 
-	protected constructor(name: string, description: string, options?: CommandOptionsInterface) {
-		this.name = name;
-		this.description = description;
-		this.customOptions = {...this.defaultOptions, ...options};
+	protected constructor(slashCommandData: ApplicationCommandData, customOptions?: CommandOptionsInterface) {
+		this.slashCommandData = slashCommandData;
+		this.customOptions = {...this.defaultOptions, ...customOptions};
 	}
 
 	// @ts-ignore
 	abstract async execute(interaction: CommandInteraction): Promise<void>;
 
 	getName(): string {
-		return this.name;
+		return this.slashCommandData.name;
 	}
 
-	getDescription(): string {
-		return this.description;
+	getSlashCommandData(): ApplicationCommandData {
+		return this.slashCommandData;
 	}
 
 	getProperty(key: keyof CommandOptionsInterface): boolean {
