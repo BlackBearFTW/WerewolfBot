@@ -1,38 +1,46 @@
-import {Message, MessageEmbed} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import UserRepository from "../../repositories/UserRepository";
-import NotificationUtil from "../../utils/NotificationUtil";
-import { embedColors } from "../../config.json";
+import {ColorResolvable, CommandInteraction, MessageEmbed} from "discord.js";
+import {getConnection} from "typeorm";
+import {UserModel} from "../../models/UserModel";
+import {embedColors} from "../../config.json";
 
-class PingCommand extends BaseCommand {
+class StatsCommand extends BaseCommand {
 	constructor() {
-		super(
-			"stats",
-			"Shows the stats about a user"
-		);
+		super({
+			name: "stats",
+			description: "Shows stats of given user",
+			options: [{
+				name: "user",
+				description: "the user you would like to see the stats off.",
+				type: "USER",
+				required: true
+			}]
+		});
 	}
 
-	async execute(message: Message, args: string[]) {
-		const userRepository = new UserRepository();
+	async execute(interaction: CommandInteraction) {
+		const userRepository = getConnection().getRepository(UserModel);
+		const user = interaction.options.getUser("user")!;
 
-		const user = message.mentions.users.first() || message.author;
+		const userModel = await userRepository.findOneOrFail({where: {
+			id: user?.id
+		}});
 
-		const result = await userRepository.getById(user.id);
-
-		if (result === null) {
-			return NotificationUtil.sendErrorEmbed(message, "This user hasn't been found on this plane of existence.");
-		}
+		if (!userModel) return;
 
 		const embed = new MessageEmbed();
 
-		// eslint-disable-next-line
 		embed.setTitle(`${user.username} Stats`);
-		embed.setColor(embedColors.neutralColor);
-		embed.setDescription(`**Wins:** ${result.wins}\n**Losses:** ${result.losses}\n**Deaths:** ${result.deaths}\n**Played as Werewolf:** ${result.as_werewolf!}`);
+		embed.setColor(embedColors.neutralColor as ColorResolvable);
+		embed.setDescription(`**Wins:** ${userModel.wins}\n**Losses:** ${userModel.losses}\n**Deaths:** ${userModel.deaths}\n**Played as Werewolf:** ${userModel.playedAsWerewolf!}`);
 		embed.setTimestamp();
+		embed.setThumbnail(user.avatarURL() ?? user.defaultAvatarURL);
 
-		await message.channel.send(embed);
+		await interaction.reply({
+			embeds: [embed],
+			ephemeral: true
+		});
 	}
 }
 
-export default PingCommand;
+export default StatsCommand;

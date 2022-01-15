@@ -1,43 +1,56 @@
-import {Message} from "discord.js";
+import {CommandInteraction} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import NotificationUtil from "../../utils/NotificationUtil";
-import ParticipationService from "../../services/ParticipationService";
-import LobbyService from "../../services/LobbyService";
-import LobbyRepository from "../../repositories/LobbyRepository";
+import {LobbyModel} from "../../models/LobbyModel";
+import {getConnection} from "typeorm";
+import {UserModel} from "../../models/UserModel";
 
 class JoinCommand extends BaseCommand {
 	constructor() {
-		super(
-			"join",
-			"Joins an existing lobby category",
-		);
+		super({
+			name: "join",
+			description: "Join a lobby",
+			options: [{
+				name: "invite_code",
+				description: "The invite code of the lobby you would like to join",
+				type: "STRING",
+				required: true
+			}]
+		});
 	}
 
-	async execute(message: Message, args: string[]) {
+	async execute(interaction: CommandInteraction) {
 		try {
-			const participationService = new ParticipationService();
-			const lobbyService = new LobbyService();
-			const lobbyRepository = new LobbyRepository();
+			const lobbyRepository = getConnection().getRepository(LobbyModel);
+			const userRepository = getConnection().getRepository(UserModel);
 
-			if (!args[0]) return await NotificationUtil.sendErrorEmbed(message, "Please give a valid invite code as argument.");
+			const lobbyModel = await lobbyRepository.findOneOrFail({where: {
+				inviteCode: interaction.options.getString("invite_code")
+			}});
 
-			if (!await lobbyRepository.findByInviteCode(args[0])) {
-				return await NotificationUtil.sendErrorEmbed(message, "Unknown invite code.", undefined, false);
+			if (!lobbyModel) {
+				await interaction.reply({
+					content: "Unknown invite code.",
+					ephemeral: true
+				});
 			}
 
-			if (await lobbyService.hasStarted(args[0])) {
-				return await NotificationUtil.sendErrorEmbed(message, "This ritual has already started, better to stay away.");
+			const userModel = new UserModel();
+
+			userModel.id = interaction.user.id;
+
+			await userRepository.save(userModel);
+
+			if (!await lobbyModel.addParticipant(userModel)) {
+				return interaction.reply({
+					content: "You already joined this lobby.",
+					ephemeral: true
+				});
 			}
 
-			if (await participationService.isParticipant(message.author, args[0])) {
-				return await NotificationUtil.sendErrorEmbed(message, "You are already part of this lobby.");
-			}
-
-			if (await participationService.isMaxSize(args[0])) {
-				return await NotificationUtil.sendErrorEmbed(message, "This lobby already has the max amount of players.");
-			}
-
-			await participationService.addUser(message.author, args[0]);
+			await interaction.reply({
+				content: "Joining lobby...",
+				ephemeral: true
+			});
 		} catch (error) {
 			console.log(error);
 		}

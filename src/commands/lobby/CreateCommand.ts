@@ -1,26 +1,47 @@
-import {Message} from "discord.js";
+import {ColorResolvable, CommandInteraction, MessageEmbed} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import LobbyService from "../../services/LobbyService";
-import ParticipationService from "../../services/ParticipationService";
+import {LobbyModel} from "../../models/LobbyModel";
+import {getConnection} from "typeorm";
+import {UserModel} from "../../models/UserModel";
+import {embedColors} from "../../config.json";
 
 class CreateCommand extends BaseCommand {
 	constructor() {
-		super(
-			"create",
-			"Creates a new lobby category",
-			{
-				selfDestruct: true
-			}
-		);
+		super({
+			name: "create",
+			description: "Creates a new lobby"
+		});
 	}
 
-	async execute(message: Message, args: string[]) {
+	async execute(interaction: CommandInteraction) {
 		try {
-			const lobbyService = new LobbyService();
-			const participationService = new ParticipationService();
-			const inviteCode = await lobbyService.setupLobby(message);
+			const lobbyRepository = getConnection().getRepository(LobbyModel);
+			const userRepository = getConnection().getRepository(UserModel);
+			const lobbyModel = new LobbyModel();
 
-			await participationService.addUser(message.author, inviteCode, true);
+			await lobbyModel.createDiscordStructure(interaction.guild!);
+			await lobbyModel.sendInformationEmbeds();
+
+			await lobbyRepository.save(lobbyModel);
+
+			const userModel = new UserModel();
+
+			userModel.id = interaction.user.id;
+
+			await userRepository.save(userModel);
+
+			await lobbyModel.addParticipant(userModel, true);
+
+			const embed = new MessageEmbed();
+
+			embed.setTitle("Lobby Created");
+			embed.setDescription(`Your invite code: \`${lobbyModel.inviteCode}\``);
+			embed.setColor(embedColors.neutralColor as ColorResolvable);
+
+			await interaction.reply({
+				embeds: [embed],
+				ephemeral: true
+			});
 		} catch (error) {
 			console.log(error);
 		}

@@ -1,17 +1,22 @@
-import {Message} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
-import {client} from "../../index";
+import {CommandInteraction} from "discord.js";
+import DiscordUtil from "../../utils/DiscordUtil";
 
 class PingCommand extends BaseCommand {
 	constructor() {
-		super(
-			"ping",
-			"This command shows the ping latency"
-		);
+		super({
+			name: "ping",
+			description: "Shows latency"
+		});
 	}
 
-	async execute(message: Message, args: string[]) {
-		await message.channel.send(`Pong! Latency is ${Date.now() - message.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`);
+	async execute(interaction: CommandInteraction) {
+		const client = DiscordUtil.getClient();
+
+		await interaction.reply({
+			content: `Pong! Latency is ${Date.now() - interaction.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`,
+			ephemeral: true
+		});
 	}
 }
 
