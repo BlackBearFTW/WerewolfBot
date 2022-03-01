@@ -1,4 +1,5 @@
-import {Message, TextChannel} from "discord.js";
+/*
+Import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import ParticipationRepository from "../../repositories/ParticipationRepository";
 import LobbyRepository from "../../repositories/LobbyRepository";
@@ -33,4 +34,4 @@ class LeaderCommand extends BaseCommand {
 	}
 }
 
-export default LeaderCommand;
+export default LeaderCommand;*/

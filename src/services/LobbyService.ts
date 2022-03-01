@@ -1,4 +1,5 @@
-import Singleton from "../types/decorators/Singleton";
+/*
+Import Singleton from "../types/decorators/Singleton";
 import {CategoryChannel, Channel, Message, MessageEmbed, TextChannel} from "discord.js";
 import {v4 as uuid} from "uuid";
 import { embedColors } from "../config.json";
@@ -98,4 +99,4 @@ class LobbyService {
 	}
 }
 
-export default LobbyService;
+export default LobbyService;*/

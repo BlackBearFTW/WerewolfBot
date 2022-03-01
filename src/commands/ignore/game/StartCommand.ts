@@ -1,3 +1,4 @@
+/* F
 import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
@@ -21,7 +22,7 @@ class StartCommand extends BaseCommand {
 	}
 
 	async execute(message: Message, args: string[]) {
-		/*		Try {
+		/!*		Try {
 			const participationService = new ParticipationService();
 			const lobbyService = new LobbyService();
 			const lobbyRepository = new LobbyRepository();
@@ -46,7 +47,7 @@ class StartCommand extends BaseCommand {
 			await gameService.startGame(message, channel.parent!);
 		} catch (error) {
 			console.log(error);
-		}*/
+		}*!/
 
 		// Do necessary checks:
 		// - Check if game hasn't already started.
@@ -76,3 +77,4 @@ class StartCommand extends BaseCommand {
 }
 
 export default StartCommand;
+*/

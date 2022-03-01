@@ -1,4 +1,5 @@
-import Singleton from "../types/decorators/Singleton";
+/*
+Import Singleton from "../types/decorators/Singleton";
 import UserRepository from "../repositories/UserRepository";
 import LobbyRepository from "../repositories/LobbyRepository";
 import ParticipationRepository from "../repositories/ParticipationRepository";
@@ -108,7 +109,7 @@ class ParticipationService {
 		return user.id === currentLeader?.user_id;
 	}
 
-	/* eslint-disable */
+	/!* eslint-disable *!/
 	async isParticipant(user: User, category: CategoryChannel): Promise<any>
 	async isParticipant(user: User, inviteCode: string): Promise<any>
 
@@ -124,7 +125,6 @@ class ParticipationService {
 			lobbyData = await lobbyRepository.findByCategory(categoryOrInviteCode);
 		}
 
-
 		if (lobbyData === null) return null;
 
 		participationData.user_id = user.id;
@@ -132,7 +132,7 @@ class ParticipationService {
 		return participationRepository.inLobby(participationData);
 	}
 
-	/* eslint-enable */
+	/!* eslint-enable *!/
 
 	async isMaxSize(inviteCode: string) {
 		const lobbyRepository = new LobbyRepository();
@@ -179,4 +179,4 @@ class ParticipationService {
 	}
 }
 
-export default ParticipationService;
+export default ParticipationService;*/

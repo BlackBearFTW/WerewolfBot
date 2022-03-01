@@ -1,4 +1,5 @@
-import BaseRole from "../abstracts/BaseRole";
+/*
+Import BaseRole from "../abstracts/BaseRole";
 import RolesEnum from "../types/enums/RolesEnum";
 import {TextChannel, VoiceChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
@@ -13,7 +14,7 @@ class TownFolkRole extends BaseRole {
 		super(RolesEnum.TOWN_FOLK,
 			"Town Folk",
 			`These folks have no abilities other than their own intuition.
-	
+
 			Each Ordinary Towns folk must analyze the players' behavior to guess who is a Werewolf, and try not to be falsely mistaken for a Werewolf and unduly lynched, hanged and burned.`,
 			":house:",
 			3);
@@ -81,4 +82,4 @@ class TownFolkRole extends BaseRole {
 	}
 }
 
-export default TownFolkRole;
+export default TownFolkRole;*/

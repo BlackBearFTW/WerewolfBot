@@ -1,4 +1,5 @@
-import {Message, TextChannel} from "discord.js";
+/*
+Import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import ParticipationService from "../../services/ParticipationService";
 import NotificationUtil from "../../utils/NotificationUtil";
@@ -33,4 +34,4 @@ class LeaveCommand extends BaseCommand {
 	}
 }
 
-export default LeaveCommand;
+export default LeaveCommand;*/

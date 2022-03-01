@@ -1,4 +1,5 @@
-import BaseCommand from "../../abstracts/BaseCommand";
+/*
+Import BaseCommand from "../../abstracts/BaseCommand";
 import {ColorResolvable, CommandInteraction, MessageEmbed, TextChannel} from "discord.js";
 import {getConnection} from "typeorm";
 import {UserModel} from "../../models/UserModel";
@@ -40,4 +41,4 @@ class TransferCommand extends BaseCommand {
 	}
 }
 
-export default TransferCommand;
+export default TransferCommand;*/

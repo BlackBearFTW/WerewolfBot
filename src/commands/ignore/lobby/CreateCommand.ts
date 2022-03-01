@@ -1,9 +1,9 @@
 import {ColorResolvable, CommandInteraction, MessageEmbed} from "discord.js";
-import BaseCommand from "../../abstracts/BaseCommand";
-import {LobbyModel} from "../../models/LobbyModel";
+import BaseCommand from "../../../abstracts/BaseCommand";
+import {LobbyModel} from "../../../models/LobbyModel";
 import {getConnection} from "typeorm";
-import {UserModel} from "../../models/UserModel";
-import {embedColors} from "../../config.json";
+import {UserModel} from "../../../models/UserModel";
+import {embedColors} from "../../../config.json";
 
 class CreateCommand extends BaseCommand {
 	constructor() {

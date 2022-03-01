@@ -1,8 +1,8 @@
 import {CommandInteraction} from "discord.js";
-import BaseCommand from "../../abstracts/BaseCommand";
-import {LobbyModel} from "../../models/LobbyModel";
+import BaseCommand from "../../../abstracts/BaseCommand";
+import {LobbyModel} from "../../../models/LobbyModel";
 import {getConnection} from "typeorm";
-import {UserModel} from "../../models/UserModel";
+import {UserModel} from "../../../models/UserModel";
 
 class JoinCommand extends BaseCommand {
 	constructor() {

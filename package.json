@@ -22,6 +22,9 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@lambocreeper/mock-discord.js": "^2.0.1",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.0.0",
     "@types/sinon": "^10.0.6",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
@@ -30,7 +33,7 @@
     "eslint": "^8.1.0",
     "eslint-config-codesupport": "^1.0.2",
     "mocha": "^8.4.0",
-    "nodemon": "^2.0.14",
+    "nodemon": "^2.0.1",
     "sinon": "^11.1.2",
     "ts-mocha": "^8.0.0",
     "ts-node": "^10.4.0",

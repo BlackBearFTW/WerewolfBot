@@ -1,4 +1,5 @@
-import {Collection, Message, MessageEmbed, MessageReaction, TextChannel, User} from "discord.js";
+/*
+Import {Collection, Message, MessageEmbed, MessageReaction, TextChannel, User} from "discord.js";
 import {embedColors} from "../config.json";
 import {client} from "../index";
 import DateUtil from "./DateUtil";
@@ -86,4 +87,4 @@ class NotificationUtil {
 	}
 }
 
-export default NotificationUtil;
+export default NotificationUtil;*/

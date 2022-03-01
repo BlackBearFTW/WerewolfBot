@@ -1,4 +1,5 @@
-import BaseRole from "../abstracts/BaseRole";
+/*
+Import BaseRole from "../abstracts/BaseRole";
 import RolesEnum from "../types/enums/RolesEnum";
 import {TextChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
@@ -12,7 +13,7 @@ class WerewolfRole extends BaseRole {
 		super(RolesEnum.FORTUNE_TELLER,
 			"Fortune Teller",
 			`Each night, the fortune teller can see the true personality of one player.
-			
+
 			The fortune teller chooses which player this will be. The fortune teller must help the other Townsfolk to correctly identify the Werewolves, without being discovered out by the Werewolves, thus making him/herself a target.`,
 			":crystal_ball:",
 			1);
@@ -64,4 +65,4 @@ class WerewolfRole extends BaseRole {
 	}
 }
 
-export default WerewolfRole;
+export default WerewolfRole;*/

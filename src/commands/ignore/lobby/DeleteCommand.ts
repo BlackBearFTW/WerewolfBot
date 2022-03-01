@@ -1,4 +1,5 @@
-import { Message, TextChannel} from "discord.js";
+/* E
+import {Message, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import LobbyService from "../../services/LobbyService";
 import NotificationUtil from "../../utils/NotificationUtil";
@@ -33,4 +34,4 @@ class DeleteCommand extends BaseCommand {
 	}
 }
 
-export default DeleteCommand;
+export default DeleteCommand;*/

@@ -18,17 +18,11 @@ abstract class BaseCommand {
 	// @ts-ignore
 	abstract async execute(interaction: CommandInteraction): Promise<void>;
 
-	getName(): string {
-		return this.slashCommandData.name;
-	}
+	getName = (): string => this.slashCommandData.name;
 
-	getSlashCommandData(): ApplicationCommandData {
-		return this.slashCommandData;
-	}
+	getSlashCommandData = (): ApplicationCommandData => this.slashCommandData;
 
-	getProperty(key: keyof CommandOptionsInterface): boolean {
-		return this.customOptions[key]!;
-	}
+	getProperty = (key: keyof CommandOptionsInterface): boolean => this.customOptions[key]!;
 }
 
 export default BaseCommand;

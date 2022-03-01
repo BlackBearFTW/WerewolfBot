@@ -1,4 +1,5 @@
-import BaseRole from "../abstracts/BaseRole";
+/*
+Import BaseRole from "../abstracts/BaseRole";
 import RolesEnum from "../types/enums/RolesEnum";
 import {TextChannel} from "discord.js";
 import NotificationUtil from "../utils/NotificationUtil";
@@ -72,4 +73,4 @@ class WerewolfRole extends BaseRole {
 	}
 }
 
-export default WerewolfRole;
+export default WerewolfRole;*/

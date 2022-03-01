@@ -1,4 +1,5 @@
-import { Message, MessageEmbed, TextChannel} from "discord.js";
+/*
+Import { Message, MessageEmbed, TextChannel} from "discord.js";
 import BaseCommand from "../../abstracts/BaseCommand";
 import {embedColors} from "../../config.json";
 import ParticipationService from "../../services/ParticipationService";
@@ -53,4 +54,4 @@ class KickCommand extends BaseCommand {
 	}
 }
 
-export default KickCommand;
+export default KickCommand;*/
