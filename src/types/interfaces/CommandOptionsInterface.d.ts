@@ -1,7 +1,7 @@
-interface CommandOptionsInterface {
+interface ICommandOptions {
     onlyLeader?: boolean;
     onlyInLobby?: boolean;
     disableWhenStarted?: boolean;
 }
 
-export default CommandOptionsInterface;
+export default ICommandOptions;

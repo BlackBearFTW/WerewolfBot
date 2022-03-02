@@ -1,17 +1,13 @@
 import {Column, CreateDateColumn, Entity, getConnection, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ParticipationModel} from "./ParticipationModel";
 import {v4 as uuid} from "uuid";
-import {CategoryChannel, ColorResolvable, Guild, MessageEmbed, TextChannel} from "discord.js";
-import { embedColors } from "../config.json";
-import {UserModel} from "./UserModel";
-import DiscordUtil from "../utils/DiscordUtil";
 
 @Entity("lobbies")
 export class LobbyModel {
     @PrimaryGeneratedColumn()
     	id!: number;
 
-    @Column({name: "invite_code", unique: true, default: uuid().substr(-6).toUpperCase()})
+    @Column({name: "invite_code", unique: true})
     	inviteCode: string = uuid().substr(-6).toUpperCase();
 
     @Column({name: "guild_id"})
@@ -29,14 +25,13 @@ export class LobbyModel {
     @OneToMany(() => ParticipationModel, participation => participation.user, {onUpdate: "CASCADE", onDelete: "CASCADE"})
     	participations!: ParticipationModel[];
 
-    private guild!: Guild;
-    private category!: CategoryChannel;
+	// REPLACE WITH FACTORY
 
-    // Two states:
-    // - First initialization
-    // - After being stored in database
+	// Two states:
+	// - First initialization
+	// - After being stored in database
 
-    /*
+	/*
 	First initialization
 	- create instance
 	- generate invite code
@@ -45,21 +40,21 @@ export class LobbyModel {
 	- add user who created instance as participant
 	 */
 
-    /*
+	/*
 	After being stored in database:
 	- find database record with provided lobby id
 	- get guild and category from discord client
 	- manipulate fields or delete structure or add participant
 	 */
 
-    /**
+	/**
      * Creates the category and channels inside Discord that will be used for the lobby
      */
-    public async createDiscordStructure(guild: Guild): Promise<void> {
-    	this.guild = guild;
+	/*    Public async createDiscordStructure(guild: Guild): Promise<void> {
+    	const guild = guild;
     	this.guildId = guild.id;
 
-	    this.category = await this.guild.channels.create(`WEREWOLF LOBBY: ${this.inviteCode}`, {
+	    this.category = await guild.channels.create(`WEREWOLF LOBBY: ${this.inviteCode}`, {
 		    type: "GUILD_CATEGORY",
 		    permissionOverwrites: [{
 			    id: this.guildId,
@@ -98,9 +93,9 @@ export class LobbyModel {
     	this.categoryId = this.category.id;
     }
 
-    /**
+    /!**
      * Sends all the instructions and information to the lobby
-     */
+     *!/
     public async sendInformationEmbeds() {
     	const informationChannel = this.category.children.first()! as TextChannel;
 
@@ -115,9 +110,9 @@ export class LobbyModel {
     	});
     }
 
-    /**
+    /!**
      * Deletes the category and channels inside Discord that will be used for the lobby
-     */
+     *!/
     public async deleteDiscordStructure(): Promise<void> {
     	await this.getGuildAndCategoryFromDiscord();
 
@@ -125,11 +120,11 @@ export class LobbyModel {
     	await this.category.delete();
     }
 
-    /**
+    /!**
      * Adds a user to this lobby
      * @param user: the UserModel of the user that needs to be added
      * @param makeLobbyLeader: if the participant should be the lobbyLeader
-     */
+     *!/
     public async addParticipant(user: UserModel, makeLobbyLeader: boolean = false): Promise<boolean> {
     	const participationRepository = getConnection().getRepository(ParticipationModel);
 
@@ -159,10 +154,10 @@ export class LobbyModel {
     	return true;
     }
 
-    /**
+    /!**
 	 * Removes a user from this lobby
 	 * @param user: the UserModel of the user that needs to be removed
-	 */
+	 *!/
     public async removeParticipant(user: UserModel) {
 	    const participationRepository = getConnection().getRepository(ParticipationModel);
 
@@ -184,10 +179,10 @@ export class LobbyModel {
     	await this.category.permissionOverwrites.delete(user.id);
     }
 
-    /**
+    /!**
 	 * Changes the leader of this lobby
 	 * @param user: the user that should become the new leader
-	 */
+	 *!/
     public async changeLeader(user: UserModel) {
 	    const participationRepository = getConnection().getRepository(ParticipationModel);
 
@@ -195,14 +190,16 @@ export class LobbyModel {
     	await participationRepository.update({lobby: this, user: user}, {leader: true});
     }
 
-    private async getGuildAndCategoryFromDiscord() {
+    public async getGuildAndCategoryFromDiscord() {
     	if (!this.guildId || !this.categoryId) return;
 
     	const client = DiscordUtil.getClient();
 
-    	this.guild = await client.guilds.cache.get(this.guildId)!;
-    	this.category = client.channels.cache.get(this.categoryId) as CategoryChannel;
-    }
+    	const guild = await client.guilds.cache.get(this.guildId)!;
+    	const category = client.channels.cache.get(this.categoryId) as CategoryChannel;
+
+    	return [guild, category];
+    }*/
 
 	// StartGame
 }

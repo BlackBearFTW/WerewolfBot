@@ -74,3 +74,62 @@ class WerewolfRole extends BaseRole {
 }
 
 export default WerewolfRole;*/
+
+import IRole from "../types/interfaces/RoleInterface";
+import IRoleInfo from "../types/interfaces/RoleInformationInterface";
+import RolesEnum from "../types/enums/RolesEnum";
+import {ParticipationModel} from "../models/ParticipationModel";
+import MessagePoll from "../abstracts/MessagePoll";
+import {LobbyModel} from "../models/LobbyModel";
+import DiscordUtil from "../utils/DiscordUtil";
+import {CategoryChannel, TextChannel} from "discord.js";
+import {EntityManager} from "typeorm";
+
+class WerewolfRole implements IRole {
+	private poll?: MessagePoll;
+	private lobbyModel: LobbyModel | undefined;
+
+	public constructor(private context: EntityManager, lobbyId: string) {
+		this.getLobbyData(lobbyId);
+	}
+
+	private async getLobbyData(lobbyId: string) {
+		if (await this.context.findOne(LobbyModel, lobbyId)) return;
+	}
+
+	public async startTurn(): Promise<void> {
+		const client = DiscordUtil.getClient();
+		const nonWerewolves: ParticipationModel[] = this.lobbyModel!.participations
+			.filter((i: ParticipationModel) => i.roleId === null || i.roleId === RolesEnum.WEREWOLF);
+
+		this.poll = new MessagePoll(
+			"Pick user", "",
+			nonWerewolves.map(participation => client.users.cache.get(participation.user.id)!.username));
+
+		const category = client.channels.cache.get(this.lobbyModel!.categoryId) as CategoryChannel;
+
+		const channels = [...category.children.values()];
+
+		this.poll.send(channels[1] as TextChannel);
+		// Create messagePoll
+	}
+
+	public endTurn(): void {
+		this.poll!.getResults();
+
+		// Get poll votes
+		// Send message based on poll results
+		// Change status of picked player in database
+	}
+
+	getInfo(): IRoleInfo {
+		return {
+			id: RolesEnum.WEREWOLF,
+			name: "Werewolf",
+			description: "",
+			emote: "🐺"
+		};
+	}
+}
+
+export default WerewolfRole;

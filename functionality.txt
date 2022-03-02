@@ -1,0 +1,42 @@
+Commands:
+- (Mod) Start* (Starts a game in a lobby)
+- (Mod) Stop* (Stops a game in a lobby)
+- Create (Create a lobby)
+- (Mod) Delete* (Delete an existing lobby)
+- Join (Join a lobby, using an invitation code)
+- Leave* (Leave a lobby)
+- (Mod) Kick* (Kicks another user from the lobby)
+- (Mod) Transfer* (Transfer leadership to another user)
+- Stats (See the stats of any user including self)
+
+* Executes for the lobby the command is being used in
+
+Input / Output:
+- Voting system (Input)
+- Audio (Output)
+- Replies (Output)
+
+Game Logic:
+- Every user gets a role (not a discord role).
+- You have two categories: villagers & werewolves, everything that is not a werewolf is a villager.
+- Werewolves and non-normal villagers, make their move at night, villagers vote at day.
+- Everyone is a villager at daytime.
+- Each role has some sort of choice to make when its their turn.
+- One user gets voted to be lynched at daytime by the other villagers and their card gets revealed,
+  if they can't come to an agreement, the vote gets dismissed.
+- Werewolves pick one person in the night to murder,
+  if they can't come to an agreement, they miss their window of opportunity.
+- Game ends when there are either more werewolves or more villagers left.
+
+Roles:
+- Villager (Does nothing, besides voting for a suspect).
+- Werewolf (Murders a single person each night).
+- Seer (Picks one user each night, which they can then see the role of).
+- Hunter (Picks one other user to kill while being killed).
+- Witch (Has two potions for the entire game, one to kill and one to heal, can be used on any player including herself, but only once).
+- Cupido (Picks two users who fall in love, without knowing their role. If one dies, so does the other).
+
+Database:
+- Users (user_id (from discord), win count, lose count, death count, played as werewolf count)
+- Lobbies (id, guild id, category id, hasStarted)
+- Participations (id, user_id, lobby_id, isLeader, role_id)
