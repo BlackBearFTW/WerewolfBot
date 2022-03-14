@@ -22,7 +22,12 @@ class EventHandlersManager {
 			const eventHandler = new EventHandler();
 
 			if (eventHandler.isDisabled()) return;
-			client[eventHandler.onlyOnce() ? "once" : "on"](eventHandler.event, (...args) => eventHandler.handle(...args));
+
+			if (eventHandler.onlyOnce()) {
+				client.once(eventHandler.event, (...args) => eventHandler.handle(...args));
+			} else {
+				client.on(eventHandler.event, (...args) => eventHandler.handle(...args));
+			}
 		}
 	}
 }

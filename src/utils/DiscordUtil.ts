@@ -2,30 +2,6 @@ import {BitFieldResolvable, Client, Intents, IntentsString} from "discord.js";
 
 class DiscordUtil {
 	private static client: Client | null = null;
-	// Static async createChannel(name: string, category: CategoryChannel, type?: "text" | "voice", permissionOverwrite?: any[]) {
-	// 	Return await category.guild.channels.create(name, {
-	// 		Type: type || "text",
-	// 		Parent: category,
-	// 		PermissionOverwrites: permissionOverwrite
-	// 	});
-	// }
-	//
-	// Static async createCategory(name: string, guild: Guild, permissionOverwrite?: any[]) {
-	// 	Return await guild.channels.create(name, {
-	// 		Type: "category",
-	// 		PermissionOverwrites: permissionOverwrite
-	// 	});
-	// }
-	//
-	// Static async getVoiceChannelMembers(voiceChannel: VoiceChannel) {
-	// 	Return voiceChannel.members.array();
-	// }
-	//
-	// Static async muteVoiceChannel(voiceChannel: VoiceChannel, muted: boolean) {
-	// 	VoiceChannel.members.map(member => {
-	// 		Member.voice.setMute(muted);
-	// 	});
-	// }
 
 	static getAllIntents(): BitFieldResolvable<IntentsString, number> {
 		// Stole... copied from an older version of discord.js...

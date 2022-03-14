@@ -23,16 +23,11 @@ createConnection({
 	"entities": [
 		"src/models/*.ts"
 	],
-	"subscribers": [
-		"src/subscribers/*.ts"
-	],
 	"migrations": [
 		"src/migrations/*.ts"
 	],
 	"cli": {
-		"entitiesDir": "src/models",
-		"migrationsDir": "src/migrations",
-		"subscribersDir": "src/subscribers"
+		"entitiesDir": "src/models"
 	}
 });
 

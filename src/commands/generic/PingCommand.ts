@@ -1,6 +1,5 @@
 import BaseCommand from "../../abstracts/BaseCommand";
 import {CommandInteraction} from "discord.js";
-import DiscordUtil from "../../utils/DiscordUtil";
 
 class PingCommand extends BaseCommand {
 	constructor() {
@@ -11,10 +10,8 @@ class PingCommand extends BaseCommand {
 	}
 
 	async execute(interaction: CommandInteraction) {
-		const client = DiscordUtil.getClient();
-
 		await interaction.reply({
-			content: `Pong! Latency is ${Date.now() - interaction.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`,
+			content: `Pong! Latency is ${Date.now() - interaction.createdTimestamp}ms. API Latency is ${Math.round(interaction.client.ws.ping)}ms`,
 			ephemeral: true
 		});
 	}
