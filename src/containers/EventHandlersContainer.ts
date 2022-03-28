@@ -5,12 +5,8 @@ import path from "path";
 import DiscordUtil from "../utils/DiscordUtil";
 
 @Singleton
-class EventHandlersManager {
-	constructor() {
-		this.loadEventFiles();
-	}
-
-	private async loadEventFiles() {
+class EventHandlersContainer {
+	public async runSetup() {
 		const client = DiscordUtil.getClient();
 		const rootFolder = path.join(__dirname, "../", eventHandlersFolder);
 
@@ -32,4 +28,4 @@ class EventHandlersManager {
 	}
 }
 
-export default EventHandlersManager;
+export default EventHandlersContainer;

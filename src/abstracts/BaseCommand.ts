@@ -16,7 +16,7 @@ abstract class BaseCommand {
 	}
 
 	// @ts-ignore
-	abstract async execute(interaction: CommandInteraction): Promise<void>;
+	abstract async onInteraction(interaction: CommandInteraction): Promise<void>;
 
 	getName = (): string => this.slashCommandData.name;
 

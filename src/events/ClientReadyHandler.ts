@@ -1,7 +1,7 @@
 import {status} from "../config.json";
 import BaseEventHandler from "../abstracts/BaseEventHandler";
 import DiscordUtil from "../utils/DiscordUtil";
-import CommandsManager from "../managers/CommandsManager";
+import CommandsContainer from "../containers/CommandsContainer";
 
 class ClientReadyHandler extends BaseEventHandler {
 	constructor() {
@@ -11,13 +11,13 @@ class ClientReadyHandler extends BaseEventHandler {
 	async handle() {
 		try {
 			const client = DiscordUtil.getClient();
-			const commandsHandler = new CommandsManager();
+			const commandsContainer = new CommandsContainer();
 
 			client.user!.setActivity(status.message, {type: "PLAYING"});
 
-			await commandsHandler.loadCommandFiles();
+			await commandsContainer.runSetup();
 
-			await client.application!.commands.set(commandsHandler.getCommandsJson(), "772538571386519562");
+			await client.application!.commands.set(commandsContainer.getCommandsJson(), "772538571386519562");
 
 			console.log(`${client.user!.username} is ready!`);
 		} catch (error) {

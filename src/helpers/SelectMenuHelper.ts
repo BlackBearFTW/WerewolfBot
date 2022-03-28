@@ -3,8 +3,8 @@ import {v4 as uuid} from "uuid";
 import DiscordUtil from "../utils/DiscordUtil";
 
 class SelectMenuHelper {
-	private id: string;
-	private callback: (interaction: Interaction) => Promise<void> = this.interactionCallback;
+	private readonly id: string;
+	private callback?: (interaction: Interaction) => Promise<void>;
 	private readonly results = new Collection<String, String[]>();
 	public component: MessageSelectMenu;
 	// eslint-disable-next-line
@@ -20,14 +20,15 @@ class SelectMenuHelper {
 			})));
 	}
 
-	public startListener() {
+	public startListener(): void {
+		if (this.callback !== null) return;
 		this.callback = this.interactionCallback.bind(this);
 		DiscordUtil.getClient().on("interactionCreate", this.callback);
 	}
 
-	public stopListener(disable = true) {
-		DiscordUtil.getClient().removeListener("interactionCreate", this.callback);
-		this.component.setDisabled(disable);
+	public stopListener(): void {
+		if (this.callback === null) return;
+		DiscordUtil.getClient().removeListener("interactionCreate", this.callback!);
 	}
 
 	public getResults() {

@@ -1,6 +1,6 @@
 import BaseEventHandler from "../abstracts/BaseEventHandler";
 import {Interaction} from "discord.js";
-import CommandsManager from "../managers/CommandsManager";
+import CommandsContainer from "../containers/CommandsContainer";
 
 class CommandInteractionHandler extends BaseEventHandler {
 	constructor() {
@@ -10,9 +10,9 @@ class CommandInteractionHandler extends BaseEventHandler {
 	async handle(interaction: Interaction) {
 		try {
 			if (!interaction.isCommand()) return;
-			const commandsManager = new CommandsManager();
+			const commandsManager = new CommandsContainer();
 
-			await commandsManager.executeCommand(interaction);
+			await commandsManager.handleCommandInteraction(interaction);
 		} catch (error) {
 			console.log(error);
 		}

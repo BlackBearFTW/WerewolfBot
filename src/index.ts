@@ -1,34 +1,18 @@
 import "reflect-metadata";
 import {Client} from "discord.js";
 import { config } from "dotenv";
-import EventHandlersManager from "./managers/EventHandlersManager";
+import EventHandlersContainer from "./containers/EventHandlersContainer";
 import {createConnection} from "typeorm";
 import DiscordUtil from "./utils/DiscordUtil";
 
 const client = new Client({intents: DiscordUtil.getAllIntents()});
 
 DiscordUtil.setClient(client);
-new EventHandlersManager();
+new EventHandlersContainer().runSetup();
 
 if (process.env.NODE_ENV !== "production") config();
 
-createConnection({
-	"type": "mysql",
-	"host": process.env.DB_HOST,
-	"port": 3306,
-	"username": process.env.DB_USER,
-	"password": process.env.DB_PASSWORD,
-	"database": process.env.DB_NAME,
-	"synchronize": true,
-	"entities": [
-		"src/models/*.ts"
-	],
-	"migrations": [
-		"src/migrations/*.ts"
-	],
-	"cli": {
-		"entitiesDir": "src/models"
-	}
-});
+// Config in ormconfig.json
+createConnection();
 
 client.login(process.env.BOT_TOKEN);

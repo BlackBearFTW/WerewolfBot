@@ -14,10 +14,10 @@ import path from "path";
 // TODO: Support Slash Commands
 
 @Singleton
-class CommandsManager {
+class CommandsContainer {
 	private commands = new Collection<string, BaseCommand>();
 
-	public async loadCommandFiles() {
+	public async runSetup() {
 		const rootFolder = path.join(__dirname, "../", commandsFolder);
 
 		// Retrieves all folders inside the given folder and then the files inside those folders get imported
@@ -34,12 +34,12 @@ class CommandsManager {
 		}
 	}
 
-	public async executeCommand(interaction: CommandInteraction): Promise<void> {
+	public async handleCommandInteraction(interaction: CommandInteraction): Promise<void> {
 		const commandInstance = await this.commands.get(interaction.commandName.toLowerCase())!;
 
 		const [allowedToExecute, errorMessage] = await this.doPropertyChecks(commandInstance);
 
-		if (allowedToExecute) return commandInstance.execute(interaction);
+		if (allowedToExecute) return commandInstance.onInteraction(interaction);
 
 		const embed = new MessageEmbed();
 
@@ -96,4 +96,4 @@ class CommandsManager {
 	}
 }
 
-export default CommandsManager;
+export default CommandsContainer;
