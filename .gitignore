@@ -8,7 +8,7 @@ node_modules
 build
 
 # Temporary commands
-/src/commands/dev/
+/src/dev/
 
 # VS code
 .vscode
