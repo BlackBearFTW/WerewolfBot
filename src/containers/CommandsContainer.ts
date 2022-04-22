@@ -1,43 +1,40 @@
-import fs from "fs";
 import {
-	ApplicationCommandDataResolvable,
-	Collection,
-	ColorResolvable,
-	CommandInteraction,
-	MessageEmbed
+	ApplicationCommandData,
+	CommandInteraction, MessageEmbed
 } from "discord.js";
-import BaseCommand from "../abstracts/BaseCommand";
-import {commandsFolder, embedColors} from "../config.json";
+import {commandsFolder} from "../config.json";
 import Singleton from "../types/decorators/Singleton";
 import path from "path";
+import glob from "glob";
+import ApplicationCommandStorage from "../types/ApplicationCommandStorage";
 
 // TODO: Support Slash Commands
 
 @Singleton
 class CommandsContainer {
-	private commands = new Collection<string, BaseCommand>();
-
 	public async runSetup() {
-		const rootFolder = path.join(__dirname, "../", commandsFolder);
-
-		// Retrieves all folders inside the given folder and then the files inside those folders get imported
-		const commandFolderContent = fs.readdirSync(rootFolder, {withFileTypes: true}).filter(folder => folder.isDirectory()).map(folder => folder.name);
-
-		for (const folder of commandFolderContent) {
-			const commandFiles = fs.readdirSync(`${rootFolder}/${folder}`).filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"));
-
-			for (const file of commandFiles) {
-				const {default: Command} = await import(`${rootFolder}/${folder}/${file}`);
-
-				this.commands.set(new Command().getName().toLowerCase(), new Command());
-			}
-		}
+		glob
+			.sync(`${path.join(__dirname, "../")}${commandsFolder}/**/*.+(js|ts)`)
+			.map(i => import(i));
 	}
 
 	public async handleCommandInteraction(interaction: CommandInteraction): Promise<void> {
-		const commandInstance = await this.commands.get(interaction.commandName.toLowerCase())!;
+		if (!interaction.guild) {
+			return interaction.reply({embeds: [new MessageEmbed({
+				title: "Can't use commands here....",
+				description: "Commands can only be used in servers",
+				color: "RED"
+			})]});
+		}
 
-		const [allowedToExecute, errorMessage] = await this.doPropertyChecks(commandInstance);
+		const data = await ApplicationCommandStorage
+			.getInstance().find((v, k) => v.name === interaction.commandName.toLowerCase());
+
+		const commandInstance = new data.target();
+
+		commandInstance.onInteraction(interaction);
+
+		/*		Const [allowedToExecute, errorMessage] = await this.doPropertyChecks(commandInstance);
 
 		if (allowedToExecute) return commandInstance.onInteraction(interaction);
 
@@ -50,10 +47,10 @@ class CommandsContainer {
 		await interaction.reply({
 			embeds: [embed],
 			ephemeral: true
-		});
+		});*/
 	}
 
-	private async doPropertyChecks(commandInstance: BaseCommand): Promise<[boolean, string | null]> {
+	/* Private async doPropertyChecks(commandInstance: BaseCommand): Promise<[boolean, string | null]> {
 		let allowedToExecute = true;
 		let errorMessage: string | null = null;
 
@@ -89,10 +86,10 @@ class CommandsContainer {
 		}
 
 		return [allowedToExecute, errorMessage];
-	}
+	}*/
 
-	public getCommandsJson(): ApplicationCommandDataResolvable[] {
-		return this.commands.map(command => command.getSlashCommandData());
+  	public getCommandsJson(): ApplicationCommandData[] {
+		return ApplicationCommandStorage.getInstance().map(v => v);
 	}
 }
 

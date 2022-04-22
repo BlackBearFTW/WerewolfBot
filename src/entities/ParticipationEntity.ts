@@ -8,7 +8,7 @@ export class Participation {
     @PrimaryGeneratedColumn("uuid")
     	id!: number;
 
-    @ManyToOne(() => Lobby, lobby => lobby.participations)
+    @ManyToOne(() => Lobby, lobby => lobby.participations, {cascade: false})
     @JoinColumn({ name: "lobby_id" })
     	lobby!: Lobby;
 
@@ -16,13 +16,12 @@ export class Participation {
     @JoinColumn({ name: "user_id" })
     	user!: User;
 
-    @Column({name: "role_id", enum: RolesEnum, default: RolesEnum.TOWN_FOLK })
+    @Column({name: "role_id", type: "enum", enum: RolesEnum, default: RolesEnum.TOWN_FOLK })
     	roleId!: RolesEnum;
 
     @Column()
     	leader!: boolean;
 
     @Column()
-
     	dead!: boolean;
 }

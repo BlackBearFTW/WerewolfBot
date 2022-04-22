@@ -1,4 +1,4 @@
-import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Participation} from "./ParticipationEntity";
 import {v4 as uuid} from "uuid";
 
@@ -19,9 +19,9 @@ export class Lobby {
     @Column({name: "has_active_game", default: false})
     	hasActiveGame!: boolean;
 
-    @CreateDateColumn({name: "created_at"})
-    	createdAt!: Date;
-
-    @OneToMany(() => Participation, participation => participation.user)
+    @OneToMany(
+    	() => Participation,
+    	participation => participation.lobby,
+    	{cascade: true})
     	participations!: Participation[];
 }

@@ -1,38 +1,27 @@
-import BaseCommand from "../../abstracts/BaseCommand";
 import {CommandInteraction, MessageEmbed} from "discord.js";
 import {getConnection} from "typeorm";
 import {Lobby} from "../../entities/LobbyEntity";
 import {User} from "../../entities/UserEntity";
 import {Participation} from "../../entities/ParticipationEntity";
+import SlashCommand from "../../types/decorators/SlashCommand";
+import SlashOption from "../../types/decorators/SlashOption";
+import ICommand from "../../types/interfaces/CommandInterface";
 
-/* @SlashCommand("poll", "Shows test poll")
-@SlashOption("foo", "description", {required: true, choices: [], type: "STRING"})
-@SlashOption("bar", "description", {required: true, choices: [], type: "STRING"})*/
-class JoinCommand extends BaseCommand {
-	constructor() {
-		super({
-			name: "join",
-			description: "Join an existing lobby",
-			options: [{
-				name: "invite_code",
-				description: "the invite code of the game",
-				type: "STRING",
-				required: true
-			}]
-		});
-	}
-
+@SlashCommand("join", "Join an existing lobby")
+@SlashOption("invite_code", "the invite code of the game", {required: true, type: "STRING"})
+class JoinCommand implements ICommand {
 	async onInteraction(interaction: CommandInteraction): Promise<void> {
 		const entityManager = getConnection().createEntityManager();
 		const inviteCode = interaction.options.getString("invite_code", true);
 
 		const lobby = await entityManager.findOne(Lobby, {
 			where: {
-				inviteCode
+				inviteCode,
+				guildId: interaction.guildId
 			}
 		});
 
-		if (!lobby || lobby?.participations.filter(x => x.user.id === interaction.user.id).length > 0) {
+		if (!lobby) {
 			return interaction.reply({
 				ephemeral: true,
 				embeds: [new MessageEmbed({
@@ -42,6 +31,10 @@ class JoinCommand extends BaseCommand {
 				})]
 			});
 		}
+
+		if (!lobby.participations) lobby.participations = [];
+
+		if (lobby.participations.filter(x => x.user.id === interaction.user.id).length > 0) return interaction.deleteReply();
 
 		let fetchedUser = await entityManager.findOne(User, interaction.user.id);
 
@@ -56,6 +49,8 @@ class JoinCommand extends BaseCommand {
 		lobby.participations.push(entityManager.create(Participation, {
 			user: fetchedUser
 		}));
+
+		await entityManager.save(lobby);
 
 		await interaction.reply({
 			ephemeral: true,
