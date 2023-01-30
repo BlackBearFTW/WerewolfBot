@@ -1,9 +1,8 @@
-using Werewolf.Bot.Domain;
-using Werewolf.Bot.Items;
+using Werewolf.Bot.Contracts.Types;
 
-namespace Werewolf.Bot.Persistence.Entities;
+namespace Werewolf.Bot.Contracts.Entities;
 
-public class Participation
+public class ParticipationEntity
 {
     public Guid Id { get; set; }
 
@@ -14,10 +13,10 @@ public class Participation
 
     // Navigation Properties
     
-    public Match Match { get; set; }
+    public MatchEntity Match { get; set; }
     public ulong MatchId { get; set; }
     
-    public User User { get; set; }
+    public UserEntity User { get; set; }
     public ulong UserId { get; set; }
     
 }

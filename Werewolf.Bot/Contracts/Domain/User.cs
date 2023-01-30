@@ -1,4 +1,4 @@
-﻿namespace Werewolf.Bot.Persistence.Entities;
+﻿namespace Werewolf.Bot.Contracts.Domain;
 
 public class User
 {

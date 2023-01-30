@@ -1,9 +1,9 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Werewolf.Bot.Domain;
+using Werewolf.Bot.Contracts.Entities;
+using Werewolf.Bot.Contracts.Types;
 using Werewolf.Bot.Persistence;
-using Werewolf.Bot.Persistence.Entities;
 using Werewolf.Bot.Utilities;
 
 namespace Werewolf.Bot.Commands;
@@ -11,15 +11,16 @@ namespace Werewolf.Bot.Commands;
 [SlashCommandGroup("lobby", "A collection of commands related to lobby management")]
 public class LobbyCommands : ApplicationCommandModule
 {
+    private readonly TestClass _testClass;
     private readonly DataContext _context;
-
-
-    public LobbyCommands(DataContext context)
+    
+    public LobbyCommands(TestClass testClass, DataContext context)
     {
+        _testClass = testClass;
         _context = context;
+        //_logger = logger;
     }
-    
-    
+
     [SlashCommand("create", "Create a new lobby")]
     public async Task OnCreateCommand(InteractionContext ctx)
     {
@@ -40,14 +41,17 @@ public class LobbyCommands : ApplicationCommandModule
                 .Deny(Permissions.AccessChannels).Deny(Permissions.SendMessages)
         });
 
-        _context.Matches.Add(new Match()
+        _context.Matches.Add(new MatchEntity()
         {
             Id = category.Id,
             InviteCode = inviteCode,
-            Status =Status.InLobby
+            Status = Status.InLobby
         });
- 
+        
         await _context.SaveChangesAsync();
+        
+        //_logger.LogInformation($"Created new lobby, invite code: {inviteCode}");
+        _testClass.Run();
         
         await ctx.CreateResponseAsync(
             $"Successfully created lobby `{inviteCode}`",
@@ -58,6 +62,16 @@ public class LobbyCommands : ApplicationCommandModule
     [SlashCommand("delete", "Delete a lobby")]
     public async Task OnDeleteCommand(InteractionContext ctx)
     {
+        // Check if this is a lobby, don't delete random categories lol
+        var category = ctx.Channel.Parent;
+
+        foreach (var channel in category.Children)
+        {
+            await channel.DeleteAsync();
+        }
+
+        await category.DeleteAsync();
+        
         await ctx.CreateResponseAsync(
             "Not implemented yet",
             true

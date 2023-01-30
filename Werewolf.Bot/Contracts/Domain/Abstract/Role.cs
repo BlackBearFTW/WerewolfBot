@@ -1,17 +1,9 @@
-﻿using DSharpPlus;
-using Werewolf.Bot.Items;
+﻿using Werewolf.Bot.Contracts.Types;
 
-namespace Werewolf.Bot.Domain;
+namespace Werewolf.Bot.Contracts.Domain.Abstract;
 
 public abstract class Role
 {
-    public RoleType RoleType { get; protected set; }
-
-    protected Role(RoleType roleType)
-    {
-        RoleType = roleType;
-    }
-    
     public virtual Task OnMatchStart() => Task.CompletedTask;
     public virtual Task OnMatchEnd() => Task.CompletedTask;
     public virtual Task OnDayTime() => Task.CompletedTask;

@@ -1,9 +1,10 @@
 ﻿using DSharpPlus;
-using Werewolf.Bot.Items;
+using Werewolf.Bot.Contracts.Domain.Abstract;
+using Werewolf.Bot.Contracts.Entities;
+using Werewolf.Bot.Contracts.Types;
 using Werewolf.Bot.Persistence;
-using Werewolf.Bot.Persistence.Entities;
 
-namespace Werewolf.Bot.Domain.Roles;
+namespace Werewolf.Bot.Contracts.Domain.Roles;
 
 public class TownFolk : Role
 {
@@ -12,7 +13,7 @@ public class TownFolk : Role
     private readonly DiscordClient _client;
     
     
-    public TownFolk(Participation participant, DataContext context, DiscordClient client) : base(RoleType.TownFolk)
+    public TownFolk(Participation participant, DataContext context, DiscordClient client)
     {
         _participant = participant;
         _context = context;

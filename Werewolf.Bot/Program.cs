@@ -1,35 +1,24 @@
 using DSharpPlus;
 using DSharpPlus.SlashCommands;
+using Microsoft.EntityFrameworkCore;
 using Werewolf.Bot;
+using Werewolf.Bot.Contracts.Types.Interfaces;
 using Werewolf.Bot.Extensions;
-using Werewolf.Bot.Items.Interfaces;
+using Werewolf.Bot.Persistence;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((ctx, services )=>
     {
-        services.AddSingleton<DiscordClient>(serviceProvider =>
+        services.AddDbContext<DataContext>(options =>
         {
-            var client = new DiscordClient(new DiscordConfiguration
-            {
-                Token = ctx.Configuration.GetValue<string>("BotToken"),
-                TokenType = TokenType.Bot,
-                Intents = DiscordIntents.AllUnprivileged,
-            });
+            string connectionString = ctx.Configuration.GetConnectionString("MariaDB");
+            MariaDbServerVersion serverVersion = new(ServerVersion.AutoDetect(connectionString));
 
-
-            var slash = client.UseSlashCommands(new SlashCommandsConfiguration
-            {
-                Services = serviceProvider
-            });
-
-            slash.RegisterCommands(typeof(IAssemblyMarker).Assembly);
-
-            var listener = client.UseAsyncListeners(serviceProvider);
-            listener.RegisterListeners(typeof(IAssemblyMarker).Assembly);
-
-            return client;
+            options.UseMySql(connectionString, serverVersion,
+                mySqlOptions => mySqlOptions.EnableStringComparisonTranslations());
         });
 
+        services.AddSingleton<TestClass>();
         services.AddHostedService<Worker>();
     })
     .Build();

@@ -9,15 +9,22 @@
 
 
     <ItemGroup>
-        <PackageReference Include="DSharpPlus" Version="4.3.0" />
+        <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-00009" />
         <PackageReference Include="DSharpPlus.SlashCommands" Version="4.3.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Listeners\" />
         <Folder Include="Persistence\Configurations" />
-        <Folder Include="Services" />
     </ItemGroup>
 </Project>

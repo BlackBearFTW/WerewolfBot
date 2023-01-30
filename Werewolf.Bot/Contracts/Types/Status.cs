@@ -1,4 +1,4 @@
-﻿namespace Werewolf.Bot.Domain;
+﻿namespace Werewolf.Bot.Contracts.Types;
 
 public enum Status
 {

@@ -1,8 +1,8 @@
-using Werewolf.Bot.Domain;
+using Werewolf.Bot.Contracts.Types;
 
-namespace Werewolf.Bot.Persistence.Entities;
+namespace Werewolf.Bot.Contracts.Entities;
 
-public class Match
+public class MatchEntity
 {
     public ulong Id { get; set; }
     public string InviteCode { get; set; }

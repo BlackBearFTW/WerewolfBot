@@ -1,22 +1,47 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.SlashCommands;
+using Werewolf.Bot.Contracts.Types.Interfaces;
 
 namespace Werewolf.Bot;
 
 public class Worker : BackgroundService
 {
-    private readonly DiscordClient _client;
-    private readonly ILogger<Worker> _logger;
+    private DiscordClient _client;
+    
+    // Injected
+    private readonly IConfiguration _configuration;
+    private readonly IServiceProvider _serviceProvider;
 
-    public Worker(ILogger<Worker> logger, DiscordClient discordClient)
+    public Worker(IConfiguration configuration, IServiceProvider serviceProvider)
     {
-        _logger = logger;
-        _client = discordClient;
+        _configuration = configuration;
+        _serviceProvider = serviceProvider;
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
+        _client = new DiscordClient(new DiscordConfiguration
+        {
+            Token = _configuration.GetValue<string>("BotToken"),
+            TokenType = TokenType.Bot,
+            Intents = DiscordIntents.AllUnprivileged,
+        });
+
+        var slash = _client.UseSlashCommands(new SlashCommandsConfiguration
+        {
+            Services = _serviceProvider
+        });
+
+        slash.RegisterCommands(typeof(IAssemblyMarker).Assembly);
+
+        slash.SlashCommandErrored += (sender, eventArgs) =>
+        {
+            Console.WriteLine(eventArgs.Exception.Message);
+            return null;
+        };
+        
         await _client.ConnectAsync();
         _client.Ready += OnClientReady;
     }

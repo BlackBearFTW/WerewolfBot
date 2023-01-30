@@ -1,4 +1,4 @@
-﻿namespace Werewolf.Bot.Items;
+﻿namespace Werewolf.Bot.Contracts.Types;
 
 public enum RoleType
 {

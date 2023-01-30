@@ -1,7 +1,8 @@
 ﻿using DSharpPlus;
-using Werewolf.Bot.Domain;
+using Werewolf.Bot.Contracts.Domain;
+using Werewolf.Bot.Contracts.Domain.Abstract;
+using Werewolf.Bot.Contracts.Entities;
 using Werewolf.Bot.Persistence;
-using Werewolf.Bot.Persistence.Entities;
 
 namespace Werewolf.Bot.factories;
 

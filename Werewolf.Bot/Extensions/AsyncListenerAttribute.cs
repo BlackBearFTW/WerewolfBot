@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using DSharpPlus;
 using Emzi0767.Utilities;
-using Werewolf.Bot.Items;
+using Werewolf.Bot.Contracts.Types;
 
 namespace Werewolf.Bot.Extensions;
 
