@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-Werewolf.Bot-288d79af-5d24-4d94-a323-ab8cd554ef77</UserSecretsId>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="DSharpPlus" Version="4.3.0" />
+        <PackageReference Include="DSharpPlus.SlashCommands" Version="4.3.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Listeners\" />
+        <Folder Include="Persistence\Configurations" />
+        <Folder Include="Services" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werewolf.Bot", "Werewolf.Bot\Werewolf.Bot.csproj", "{B494F98E-4949-43D8-BFFE-B809F9B43CCF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Wide", "Solution Wide", "{BCD78295-6321-4ED8-AD50-BA706F8305B7}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B7D6592D-BCB4-49AF-BC4C-EA679D4956AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8C68BA9D-E1A4-4378-BE35-59A02A6D80DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werewolf.UnitTests", "Werewolf.UnitTests\Werewolf.UnitTests.csproj", "{0FD24E8D-6FFE-4911-893B-94EFE829E26E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B494F98E-4949-43D8-BFFE-B809F9B43CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B494F98E-4949-43D8-BFFE-B809F9B43CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B494F98E-4949-43D8-BFFE-B809F9B43CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B494F98E-4949-43D8-BFFE-B809F9B43CCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD24E8D-6FFE-4911-893B-94EFE829E26E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD24E8D-6FFE-4911-893B-94EFE829E26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD24E8D-6FFE-4911-893B-94EFE829E26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD24E8D-6FFE-4911-893B-94EFE829E26E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AD5D468B-68C4-4323-9582-03DE0CB476FB}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B494F98E-4949-43D8-BFFE-B809F9B43CCF} = {B7D6592D-BCB4-49AF-BC4C-EA679D4956AE}
+		{0FD24E8D-6FFE-4911-893B-94EFE829E26E} = {8C68BA9D-E1A4-4378-BE35-59A02A6D80DB}
+	EndGlobalSection
+EndGlobal
